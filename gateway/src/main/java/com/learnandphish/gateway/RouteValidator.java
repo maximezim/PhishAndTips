@@ -14,5 +14,6 @@ import java.util.function.Predicate;
 public class RouteValidator {
     public static final List<String> unprotectedURLs = List.of("/login");
 
-    public Predicate<ServerHttpRequest> isSecured = request -> unprotectedURLs.stream().noneMatch(uri -> request.getURI().getPath().contains(uri));
+    public Predicate<ServerHttpRequest> isSecured = request ->
+            unprotectedURLs.stream().noneMatch(uri -> request.getURI().getPath().equals(uri));
 }
