@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  authentication-service:
+    image: authentication-service:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.auth
+    ports:
+      - "8088:8088"
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+
+
+  api-gateway:
+    image: api-gateway:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.gateway
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - authentication-service
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: authentication_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  pgdata:

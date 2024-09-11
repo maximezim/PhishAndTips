@@ -7,10 +7,10 @@ spring:
 
   # PostgreSQL Database configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/your_database_name
+    url: jdbc:postgresql://localhost:5432/authentication_db
     driver-class-name: org.postgresql.Driver
-    username: your_db_username
-    password: your_db_password
+    username: postgres
+    password: password
   jpa:
     hibernate:
       ddl-auto: update # Adjust to 'validate', 'create', or 'none'
