@@ -7,7 +7,7 @@ import jakarta.persistence.*;
  * @author Robin Lafontaine
  */
 @Entity
-public class User {
+public class UserData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class User {
 
     private Enum<Roles> role;
 
-    public User() {
+    public UserData() {
 
     }
 

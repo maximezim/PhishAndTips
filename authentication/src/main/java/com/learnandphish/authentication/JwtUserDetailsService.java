@@ -1,8 +1,6 @@
 package com.learnandphish.authentication;
 
-import com.learnandphish.authentication.dao.UserData;
-import com.learnandphish.authentication.dao.Dao;
-import org.hibernate.SessionFactory;
+import com.learnandphish.authentication.UserData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**
@@ -24,22 +23,21 @@ import java.util.stream.Collectors;
 public class JwtUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserDataRepository userDataRepository;
 
     @Override
-    public UserDetails loadUserByEmail(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User user = userRepository.findByEmail(email);
+        UserData userData = (UserData) userDataRepository.findByEmail(email);
 
-        System.out.println("user:"+ user);
+        System.out.println("userData:"+ userData);
 
-        if (user != null) {
-            Collection<String> mappedAuthorities = Arrays.asList(userData.getRole().split(","));
+        if (userData != null) {
+            Collection<String> mappedAuthorities = Collections.singletonList(String.valueOf(userData.getRole()));
             // if not using role based authentication, we can pass empty List instead of mappedAuthorities
-            User user = new User(email, new BCryptPasswordEncoder().encode(userData.getPassword()), mappedAuthorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-            return user;
+            return new User(email, new BCryptPasswordEncoder().encode(userData.getPasswordHash()), mappedAuthorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
         } else {
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            throw new UsernameNotFoundException("User not found with email: " + email);
         }
     }
 }
