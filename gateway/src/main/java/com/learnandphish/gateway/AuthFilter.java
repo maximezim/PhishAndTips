@@ -13,6 +13,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+/**
+ *
+ * @author Maxime Zimmermann
+ */
 @Component
 @RefreshScope
 public class AuthFilter implements GatewayFilter {

@@ -1,0 +1,22 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: authentication
+
+  # PostgreSQL Database configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/your_database_name
+    driver-class-name: org.postgresql.Driver
+    username: your_db_username
+    password: your_db_password
+  jpa:
+    hibernate:
+      ddl-auto: update # Adjust to 'validate', 'create', or 'none'
+    show-sql: true
+
+# JWT secret configuration
+#jwt:
+#  secret: your_jwt_secret_key
+#  expirationMs: 3600000

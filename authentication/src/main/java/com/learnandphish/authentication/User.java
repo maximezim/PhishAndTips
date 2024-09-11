@@ -1,20 +1,31 @@
 package com.learnandphish.authentication;
 
+import jakarta.persistence.*;
+
+/**
+ *
+ * @author Robin Lafontaine
+ */
+@Entity
 public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     private String firstName;
+
     private String lastName;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
     private String passwordHash;
+
     private Enum<Roles> role;
 
-    public User(int id, String firstName, String lastName, String email, String passwordHash, Enum<Roles> role) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.role = role;
+    public User() {
+
     }
 
     public int getId() {
@@ -53,8 +64,8 @@ public class User {
         return passwordHash;
     }
 
-    public void getPasswordHash() {
-        return passwordHash;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public Enum<Roles> getRole() {
