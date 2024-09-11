@@ -77,20 +77,12 @@ public class JWTUtil {
     }
 
     /**
-     * Generates a new JWT for the provided username.
-     * The token will expire in 10 hours.
+     * Get the secret key.
      *
-     * @param username the name to include in the JWT's subject
-     * @return generated JWT token string
+     * @return the secret key
      */
-    public String generateToken(String username) {
-        Instant now = Instant.now();
-        return Jwts.builder()
-                .claim("sub", username)
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plus(10, ChronoUnit.HOURS)))
-                .signWith(SECRET)
-                .compact();
+    public SecretKey getSecret() {
+        return SECRET;
     }
 
 }
