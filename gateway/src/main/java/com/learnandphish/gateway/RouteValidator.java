@@ -1,4 +1,4 @@
-package com.zimzim.gateway;
+package com.learnandphish.gateway;
 
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
