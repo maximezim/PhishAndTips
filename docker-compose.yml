@@ -4,8 +4,8 @@ services:
   authentication-service:
     image: authentication-service:latest
     build:
-      context: .
-      dockerfile: Dockerfile.auth
+      context: ./authentication # Directory containing the authentication project Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8088:8088"
     networks:
@@ -18,12 +18,11 @@ services:
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
 
-
   api-gateway:
     image: api-gateway:latest
     build:
-      context: .
-      dockerfile: Dockerfile.gateway
+      context: ./gateway # Directory containing the api-gateway project Dockerfile
+      dockerfile: Dockerfile
     ports:
       - "8080:8080"
     networks:

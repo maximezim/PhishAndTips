@@ -1,4 +1,6 @@
 spring:
+  authentication:
+    enabled: true
   application:
     name: api-gateway
   cloud:
