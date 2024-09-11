@@ -11,43 +11,84 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
+/**
+ * Utility class for JWT token operations
+ *
+ * @author Maxime Zimmermann
+ */
 @Component
 public class JWTUtil {
 
+    /**
+     * Secret key used for token generation.
+     */
     private final SecretKey SECRET;
 
+    /**
+     * Constructor. Generates a random secret key.
+     */
     public JWTUtil() {
         this.SECRET = generateRandomSecretKey();
     }
 
+    /**
+     * Generates a random secret key.
+     *
+     * @return generated secret key
+     */
     private SecretKey generateRandomSecretKey() {
         byte[] keyBytes = new byte[32]; // 256 bits
         new SecureRandom().nextBytes(keyBytes);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * Parses the JWT token and returns all claims.
+     *
+     * @param token JWT token string
+     * @return Claims object containing all JWT claims
+     */
     public Claims getAllClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET)
+        return Jwts.parser()
+                .verifyWith(SECRET)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    private boolean isTokenExpired(String token ) {
-        return this.getALlClaims(token).getExpiration().before(new Date());
+    /**
+     * Checks if the JWT is expired.
+     *
+     * @param token JWT token string
+     * @return true if the JWT is expired, false if not
+     */
+    private boolean isTokenExpired(String token) {
+        return this.getAllClaims(token).getExpiration().before(new Date());
     }
 
+    /**
+     * Checks if the JWT is invalid. Currently, this only checks for expiration.
+     *
+     * @param token JWT token string
+     * @return true if the JWT is invalid, false if not
+     */
     public boolean isInvalid(String token) {
         return this.isTokenExpired(token);
     }
 
+    /**
+     * Generates a new JWT for the provided username.
+     * The token will expire in 10 hours.
+     *
+     * @param username the name to include in the JWT's subject
+     * @return generated JWT token string
+     */
     public String generateToken(String username) {
         Instant now = Instant.now();
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(now.plus(10, ChronoUnit.HOURS)))
+                .claim("sub", username)
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(now.plus(10, ChronoUnit.HOURS)))
                 .signWith(SECRET)
                 .compact();
     }
