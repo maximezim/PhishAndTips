@@ -49,7 +49,7 @@ public class GatewayConfig {
         public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
             return builder.routes()
                     .route("auth-service", r -> r.path("/authenticate")
-                            .filters(f -> f.rewritePath("/authenticate", "/authenticate"))
+                            .filters(f -> f.filter(authFilter))
                             .uri("http://authentication-service:8082"))
                     .build();
         }

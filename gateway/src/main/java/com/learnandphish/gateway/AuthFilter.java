@@ -34,33 +34,33 @@ public class AuthFilter implements GatewayFilter {
     private boolean authEnabled;
 
     @Override
-public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-    ServerHttpRequest request = exchange.getRequest();
-    
-    if (request.getURI().getPath().equals("/authenticate")) {
-        return chain.filter(exchange);
-    }
-
-    if (!authEnabled) {
-        System.out.println("Authentication is disabled. To enable it, make \"authentication.enabled\" property as true");
-        return chain.filter(exchange);
-    }
-
-    if (routeValidator.isSecured.test(request)) {
-        if (this.isCredsMissing(request)) {
-            return this.onError(exchange, "Credentials missing", HttpStatus.UNAUTHORIZED);
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        ServerHttpRequest request = exchange.getRequest();
+        
+        if (request.getURI().getPath().equals("/authenticate")) {
+            return chain.filter(exchange);
         }
 
-        String token = this.getAuthHeader(request);
-
-        if (jwtUtil.isInvalid(token)) {
-            return this.onError(exchange, "Auth header invalid", HttpStatus.UNAUTHORIZED);
+        if (!authEnabled) {
+            System.out.println("Authentication is disabled. To enable it, make \"authentication.enabled\" property as true");
+            return chain.filter(exchange);
         }
 
-        this.populateRequestWithHeaders(exchange, token);
+        if (routeValidator.isSecured.test(request)) {
+            if (this.isCredsMissing(request)) {
+                return this.onError(exchange, "Credentials missing", HttpStatus.UNAUTHORIZED);
+            }
+
+            String token = this.getAuthHeader(request);
+
+            if (jwtUtil.isInvalid(token)) {
+                return this.onError(exchange, "Auth header invalid", HttpStatus.UNAUTHORIZED);
+            }
+
+            this.populateRequestWithHeaders(exchange, token);
+        }
+        return chain.filter(exchange);
     }
-    return chain.filter(exchange);
-}
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();

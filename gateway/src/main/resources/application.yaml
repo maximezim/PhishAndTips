@@ -1,6 +1,4 @@
 spring:
-  authentication:
-    enabled: true
   application:
     name: api-gateway
   cloud:
@@ -10,3 +8,9 @@ spring:
           uri: http://authentication-service:8082
           predicates:
             - Path=/authenticate
+          filters:
+            - RewritePath=/authenticate, /authenticate
+  authentication:
+    enabled: true
+  server:
+    port: 8080
