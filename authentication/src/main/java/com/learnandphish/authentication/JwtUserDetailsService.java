@@ -26,18 +26,13 @@ public class JwtUserDetailsService implements UserDetailsService {
     private UserDataRepository userDataRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    UserData userData = userDataRepository.findByEmail(email)
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
-        UserData userData = (UserData) userDataRepository.findByEmail(email);
-
-        System.out.println("userData:"+ userData);
-
-        if (userData != null) {
-            Collection<String> mappedAuthorities = Collections.singletonList(String.valueOf(userData.getRole()));
-            // if not using role based authentication, we can pass empty List instead of mappedAuthorities
-            return new User(email, new BCryptPasswordEncoder().encode(userData.getPasswordHash()), mappedAuthorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-        } else {
-            throw new UsernameNotFoundException("User not found with email: " + email);
-        }
-    }
+    return new User(email, userData.getPasswordHash(),
+            Collections.singletonList(new SimpleGrantedAuthority(userData.getRole().name())));
+}
 }

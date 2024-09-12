@@ -31,7 +31,7 @@ class RouteValidatorTest {
     @Test
     public void testUnprotectedURL() {
         // Testing for an unprotected URL "/login"
-        ServerHttpRequest request = mockRequest("/login");
+        ServerHttpRequest request = mockRequest("/authenticate");
         boolean result = routeValidator.isSecured.test(request);
         assertFalse(result, "Request to /login should not be secured.");
     }
@@ -47,7 +47,7 @@ class RouteValidatorTest {
     @Test
     public void testPartiallyMatchingURL() {
         // Testing for a URL that partially matches "/login" like "/login-help"
-        ServerHttpRequest request = mockRequest("/login-help");
+        ServerHttpRequest request = mockRequest("/authenticate-help");
         boolean result = routeValidator.isSecured.test(request);
         assertTrue(result, "Request to /login-help should be secured.");
     }
@@ -55,7 +55,7 @@ class RouteValidatorTest {
     @Test
     public void testURLWithQueryParams() {
         // Testing for a URL with query parameters
-        ServerHttpRequest request = mockRequest("/login?redirect=/dashboard");
+        ServerHttpRequest request = mockRequest("/authenticate?redirect=/dashboard");
         boolean result = routeValidator.isSecured.test(request);
         assertFalse(result, "Request to /login?redirect=/dashboard should not be secured.");
     }
@@ -63,7 +63,7 @@ class RouteValidatorTest {
     @Test
     public void testUnprotectedURLWithSpecialCharacters() {
         // Testing for a URL with special characters in unprotected URL
-        ServerHttpRequest request = mockRequest("/login#section");
+        ServerHttpRequest request = mockRequest("/authenticate#section");
         boolean result = routeValidator.isSecured.test(request);
         assertFalse(result, "Request to /login#section should not be secured.");
     }
@@ -79,7 +79,7 @@ class RouteValidatorTest {
     @Test
     public void testCaseInsensitiveUnprotectedURL() {
         // Testing for case-insensitive match
-        ServerHttpRequest request = mockRequest("/LOGIN");
+        ServerHttpRequest request = mockRequest("/autHENticate");
         boolean result = routeValidator.isSecured.test(request);
         assertTrue(result, "Request to /LOGIN should be considered secured (case-sensitive check).");
     }

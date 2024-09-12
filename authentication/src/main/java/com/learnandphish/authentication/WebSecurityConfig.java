@@ -43,31 +43,25 @@ public class WebSecurityConfig {
     }
 
     @Bean
-        public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/h2-console/**", "/authenticate").permitAll()
+                                .requestMatchers("/authenticate").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
-                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        exceptionHandling.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 .sessionManagement(sessionManagement ->
-                        sessionManagement
-                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .csrf(csrf ->
-                        csrf
-                                .ignoringRequestMatchers("/h2-console/**", "/authenticate")
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
 
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
-        }
-
+    }
 }
 
 

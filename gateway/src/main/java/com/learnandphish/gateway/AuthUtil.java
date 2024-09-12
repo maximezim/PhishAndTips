@@ -26,16 +26,15 @@ public class AuthUtil {
     /**
      * Generates a JWT token with username and role.
      *
-     * @param username the username to include in the token
-     * @param role     the role to include in the token
+     * @param email the email to include in the token
+     * @param role  the role to include in the token
      * @return the generated JWT token
      */
-    public String getToken(String username, String role) {
-        // Combine username and role as the subject of the JWT
-        String subject = username + ":" + role;
+    public String getToken(String email, String role) {
+        // Combine email and role as the subject of the JWT
+        String subject = email + ":" + role;
         return createToken(subject);
     }
-
 
     /**
      * Generates a new JWT for the provided username.

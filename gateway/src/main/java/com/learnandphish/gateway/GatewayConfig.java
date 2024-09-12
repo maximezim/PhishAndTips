@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class GatewayConfig {
-    private final RequestFilter requestFilter;
+//    private final RequestFilter requestFilter;
     private final AuthFilter authFilter;
 
     public GatewayConfig(RequestFilter requestFilter, AuthFilter authFilter) {
-        this.requestFilter = requestFilter;
+        // this.requestFilter = requestFilter;
         this.authFilter = authFilter;
     }
 
@@ -45,11 +45,15 @@ public class GatewayConfig {
 //                .build();
 //    }
 
-    @Bean
-    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
-        return builder.routes()
-                .route("auth-service", r -> r.path("/authenticate", "/welcome")
-                        .uri("http://authentication-service:8082"))
-                .build();
-    }
+@Bean
+public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+    return builder.routes()
+            .route("auth-service", r -> r.path("/authenticate")
+                    .uri("http://authentication-service:8082"))
+            .route("protected-routes", r -> r.path("/**")
+                    .filters(f -> f.filter(authFilter))
+                    .uri("http://authentication-service:8082"))
+            .build();
+}
+
 }
