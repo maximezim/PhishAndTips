@@ -1,6 +1,24 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: authentication_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   authentication-service:
     image: authentication-service:latest
     build:
@@ -29,24 +47,6 @@ services:
       - backend
     depends_on:
       - authentication-service
-
-  postgres:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: authentication_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
-    networks:
-      - backend
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 networks:
   backend:

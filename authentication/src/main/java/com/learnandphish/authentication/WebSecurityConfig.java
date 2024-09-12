@@ -43,7 +43,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
@@ -60,14 +60,14 @@ public class WebSecurityConfig {
                 )
                 .csrf(csrf ->
                         csrf
-                                .ignoringRequestMatchers("/h2-console/**", "/authenticate") // Specify request matchers to ignore CSRF protection
+                                .ignoringRequestMatchers("/h2-console/**", "/authenticate")
                 );
 
-        // Add JWT token filter
         httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
-    }
+        }
+
 }
 
 

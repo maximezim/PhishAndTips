@@ -44,4 +44,12 @@ public class GatewayConfig {
 //                        .uri("http://localhost:8088"))
 //                .build();
 //    }
+
+    @Bean
+    public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
+        return builder.routes()
+                .route("auth-service", r -> r.path("/authenticate", "/welcome")
+                        .uri("http://authentication-service:8082"))
+                .build();
+    }
 }
