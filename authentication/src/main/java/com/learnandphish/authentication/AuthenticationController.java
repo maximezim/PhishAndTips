@@ -1,13 +1,14 @@
 package com.learnandphish.authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.http.HttpStatus;
 
 @RestController
 @CrossOrigin
@@ -31,13 +32,16 @@ public class AuthenticationController {
      */
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) throws Exception {
-        authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
+        try {
+            authenticate(authenticationRequest.getEmail(), authenticationRequest.getPassword());
 
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getEmail());
+            final String token = jwtUtil.generateToken(userDetails);
 
-        final String token = jwtUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new JwtResponse(token));
+            return ResponseEntity.ok(new JwtResponse(token));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
     }
 
     /**
