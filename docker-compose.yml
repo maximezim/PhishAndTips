@@ -25,7 +25,7 @@ services:
       context: ./authentication # Directory containing the authentication project Dockerfile
       dockerfile: Dockerfile
     ports:
-      - "8088:8088"
+      - "8082:8082"
     networks:
       - backend
     depends_on:
@@ -47,6 +47,10 @@ services:
       - backend
     depends_on:
       - authentication-service
+    environment:
+      SPRING_CLOUD_GATEWAY_ROUTES_0_ID: auth-route
+      SPRING_CLOUD_GATEWAY_ROUTES_0_URI: http://authentication-service:8082
+      SPRING_CLOUD_GATEWAY_ROUTES_0_PREDICATES_0: Path=/api/auth/**
 
 networks:
   backend:

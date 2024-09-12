@@ -34,38 +34,33 @@ public class AuthFilter implements GatewayFilter {
     private boolean authEnabled;
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        if(!authEnabled) {
-            System.out.println("Authentication is disabled. To enable it, make \"authentication.enabled\" property as true");
-            return chain.filter(exchange);
-        }
-        String token ="";
-        ServerHttpRequest request = exchange.getRequest();
-
-        if(routeValidator.isSecured.test(request)) {
-            System.out.println("validating authentication token");
-            if(this.isCredsMissing(request)) {
-                System.out.println("in error");
-                return this.onError(exchange,"Credentials missing",HttpStatus.UNAUTHORIZED);
-            }
-            if (request.getHeaders().containsKey("userName") && request.getHeaders().containsKey("role")) {
-                token = authUtil.getToken(request.getHeaders().get("userName").toString(), request.getHeaders().get("role").toString());
-            }
-            else {
-                token = request.getHeaders().get("Authorization").toString().split(" ")[1];
-            }
-
-            if(jwtUtil.isInvalid(token)) {
-                return this.onError(exchange,"Auth header invalid",HttpStatus.UNAUTHORIZED);
-            }
-            else {
-                System.out.println("Authentication is successful");
-            }
-
-            this.populateRequestWithHeaders(exchange,token);
-        }
+public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+    ServerHttpRequest request = exchange.getRequest();
+    
+    if (request.getURI().getPath().equals("/authenticate")) {
         return chain.filter(exchange);
     }
+
+    if (!authEnabled) {
+        System.out.println("Authentication is disabled. To enable it, make \"authentication.enabled\" property as true");
+        return chain.filter(exchange);
+    }
+
+    if (routeValidator.isSecured.test(request)) {
+        if (this.isCredsMissing(request)) {
+            return this.onError(exchange, "Credentials missing", HttpStatus.UNAUTHORIZED);
+        }
+
+        String token = this.getAuthHeader(request);
+
+        if (jwtUtil.isInvalid(token)) {
+            return this.onError(exchange, "Auth header invalid", HttpStatus.UNAUTHORIZED);
+        }
+
+        this.populateRequestWithHeaders(exchange, token);
+    }
+    return chain.filter(exchange);
+}
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
