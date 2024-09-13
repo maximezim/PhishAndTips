@@ -67,8 +67,8 @@ services:
 
   loki:
     image: grafana/loki:latest
-    expose:
-      - "3100"
+    ports:
+      - "3100:3100"
     networks:
       - backend
 
