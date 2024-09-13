@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-alpine
+FROM amazoncorretto:17-alpine-jdk
 LABEL maintainer1="Maxime Zimmermann"
 LABEL maintainer2="Robin Lafontaine"
 WORKDIR /app
