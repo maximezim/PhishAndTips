@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:latest
@@ -22,8 +20,7 @@ services:
       driver: fluentd
       options:
         fluentd-async: "true"
-        fluentd-address: localhost:24224
-        tag: {{.Name}}/{{.ID}}
+        fluentd-address: fluent-bit:24224
 
   authentication-service:
     image: authentication-service:latest
@@ -45,8 +42,7 @@ services:
       driver: fluentd
       options:
         fluentd-async: "true"
-        fluentd-address: localhost:24224
-        tag: {{.Name}}/{{.ID}}
+        fluentd-address: fluent-bit:24224
 
   api-gateway:
     image: api-gateway:latest
@@ -67,8 +63,7 @@ services:
       driver: fluentd
       options:
         fluentd-async: "true"
-        fluentd-address: localhost:24224
-        tag: {{.Name}}/{{.ID}}
+        fluentd-address: fluent-bit:24224
 
   loki:
     image: grafana/loki:latest
