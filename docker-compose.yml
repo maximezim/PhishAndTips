@@ -73,12 +73,12 @@ services:
       - backend
 
   fluent-bit:
+    image: grafana/fluent-bit-plugin-loki:latest
     environment:
       LOG_LEVEL: debug
-      LOKI_URL: http://loki:3100/loki/api/v1/push # log datastore
-    build:
-      context: ./fluent-bit
-      dockerfile: Dockerfile
+      LOKI_URL: http://loki:3100/loki/api/v1/push
+    volumes:
+      - ./fluent-bit/conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
     ports:
       - "24224:24224"
       - "24224:24224/udp"
