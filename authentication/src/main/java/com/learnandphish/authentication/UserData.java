@@ -2,6 +2,7 @@ package com.learnandphish.authentication;
 
 import jakarta.persistence.*;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,6 +12,7 @@ import java.io.Serializable;
 @Entity
 public class UserData implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id

@@ -10,7 +10,8 @@ services:
     networks:
       - backend
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./databases/authentication/pgdata:/var/lib/postgresql/data
+      - ./databases/scripts/authentication_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
       interval: 10s
@@ -109,6 +110,3 @@ services:
 networks:
   backend:
     driver: bridge
-
-volumes:
-  pgdata:
