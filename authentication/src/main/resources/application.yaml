@@ -16,7 +16,3 @@ spring:
       ddl-auto: update # Adjust to 'validate', 'create', or 'none'
     show-sql: true
 
-# JWT secret configuration
-#jwt:
-#  secret: your_jwt_secret_key
-#  expirationMs: 3600000

@@ -43,3 +43,7 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+springBoot {
+    mainClass = 'com.learnandphish.gateway.GatewayApplication'
+}

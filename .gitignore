@@ -1,0 +1,7 @@
+/databases/
+.gradle
+.github
+.idea
+.vscode
+/build/
+

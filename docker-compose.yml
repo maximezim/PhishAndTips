@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:latest
@@ -7,17 +5,23 @@ services:
       POSTGRES_DB: authentication_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - "5432:5432"
     networks:
       - backend
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./databases/authentication:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
 
   authentication-service:
     image: authentication-service:latest
@@ -35,6 +39,12 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+
 
   api-gateway:
     image: api-gateway:latest
@@ -51,6 +61,51 @@ services:
       - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=auth-service
       - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://authentication-service:8082
       - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/authenticate
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    networks:
+      - backend
+
+  fluent-bit:
+    image: grafana/fluent-bit-plugin-loki:latest
+    environment:
+      LOG_LEVEL: warn
+      LOKI_URL: http://loki:3100/loki/api/v1/push
+    volumes:
+      - ./fluent-bit/conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - backend
+
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_RENDERING_SERVER_URL: http://renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
+      GF_LOG_FILTERS: rendering:debug
+    networks:
+      - backend
+  renderer:
+    image: grafana/grafana-image-renderer:latest
+    expose:
+      - "8081"
+    environment:
+      ENABLE_METRICS: "true"
+    networks:
+      - backend
 
 networks:
   backend:
