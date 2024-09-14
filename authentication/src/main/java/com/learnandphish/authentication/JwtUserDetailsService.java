@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author Robin Lafontaine
  */
 @Service
@@ -26,13 +26,20 @@ public class JwtUserDetailsService implements UserDetailsService {
     private UserDataRepository userDataRepository;
 
     @Override
-public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    UserData userData = userDataRepository.findByEmail(email)
-            .stream()
-            .findFirst()
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<UserData> optionalUserData = userDataRepository.findByEmail(email).stream().findFirst();
 
-    return new User(email, userData.getPasswordHash(),
-            Collections.singletonList(new SimpleGrantedAuthority(userData.getRole().name())));
-}
+        if (optionalUserData.isEmpty()) {
+            throw new UsernameNotFoundException("User not found with email: " + email);
+        }
+
+        UserData userData = optionalUserData.get();
+
+        if (userData.getPasswordHash() == null || userData.getRole() == null) {
+            throw new IllegalArgumentException("Invalid User Data");
+        }
+
+        return new User(email, userData.getPasswordHash(),
+                Collections.singletonList(new SimpleGrantedAuthority(userData.getRole().name())));
+    }
 }
