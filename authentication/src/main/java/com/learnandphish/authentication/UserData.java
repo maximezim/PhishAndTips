@@ -2,12 +2,16 @@ package com.learnandphish.authentication;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Robin Lafontaine
  */
 @Entity
-public class UserData {
+public class UserData implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +26,8 @@ public class UserData {
 
     private String passwordHash;
 
-    private Enum<Roles> role;
+    @Enumerated(EnumType.STRING)
+    private Roles role;
 
     public UserData() {
 
@@ -68,11 +73,11 @@ public class UserData {
         this.passwordHash = passwordHash;
     }
 
-    public Enum<Roles> getRole() {
+    public Roles getRole() {
         return role;
     }
 
-    public void setRole(Enum<Roles> role) {
+    public void setRole(Roles role) {
         this.role = role;
     }
 }
