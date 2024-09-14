@@ -20,7 +20,7 @@ services:
       driver: fluentd
       options:
         fluentd-async: "true"
-        fluentd-address: fluent-bit:24224
+        fluentd-address: host.docker.internal:24224
 
   authentication-service:
     image: authentication-service:latest
@@ -42,7 +42,8 @@ services:
       driver: fluentd
       options:
         fluentd-async: "true"
-        fluentd-address: fluent-bit:24224
+        fluentd-address: host.docker.internal:24224
+
 
   api-gateway:
     image: api-gateway:latest
@@ -63,7 +64,7 @@ services:
       driver: fluentd
       options:
         fluentd-async: "true"
-        fluentd-address: fluent-bit:24224
+        fluentd-address: host.docker.internal:24224
 
   loki:
     image: grafana/loki:latest
@@ -75,7 +76,7 @@ services:
   fluent-bit:
     image: grafana/fluent-bit-plugin-loki:latest
     environment:
-      LOG_LEVEL: debug
+      LOG_LEVEL: warn
       LOKI_URL: http://loki:3100/loki/api/v1/push
     volumes:
       - ./fluent-bit/conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
@@ -84,6 +85,7 @@ services:
       - "24224:24224/udp"
     networks:
       - backend
+
 
   grafana:
     image: grafana/grafana:latest
