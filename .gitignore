@@ -1,0 +1,7 @@
+.gradle/
+.github/
+.idea/
+.vscode/
+/build/
+/databases/*
+!/databases/scripts/
