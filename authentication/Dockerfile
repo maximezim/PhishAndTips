@@ -14,6 +14,8 @@ LABEL maintainer2="Robin Lafontaine"
 
 RUN addgroup -S app-group && adduser -S app-user -G app-group
 
+RUN mkdir /keys && chown app-user:app-group /keys && chmod 700 /keys
+
 WORKDIR /app
 
 COPY --from=build --chown=app-user:app-group /app/build/libs/authentication-0.0.1-SNAPSHOT.jar authentication.jar

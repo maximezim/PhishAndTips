@@ -28,7 +28,6 @@ public class AuthenticationController {
      *
      * @param authenticationRequest The request body containing username and password.
      * @return A ResponseEntity with the JWT token if authentication is successful.
-     * @throws Exception if the username/password is invalid.
      */
     @PostMapping("/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) {

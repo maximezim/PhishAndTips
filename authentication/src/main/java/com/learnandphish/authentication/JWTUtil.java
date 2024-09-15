@@ -2,11 +2,16 @@ package com.learnandphish.authentication;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.annotation.PostConstruct;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.JwtParser;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.security.*;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,20 +20,49 @@ import java.util.function.Function;
 @Component
 public class JWTUtil {
 
-    private final KeyPair keyPair;
+    private KeyPair keyPair;
 
-    public JWTUtil() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
-        keyGenerator.initialize(2048);
-        this.keyPair = keyGenerator.generateKeyPair();
+    @PostConstruct
+    public void initKeys() throws Exception {
+        String keysDir = "/keys"; // Use a directory that's writable
+        File keysDirectory = new File(keysDir);
+
+        // Create the directory if it doesn't exist
+        if (!keysDirectory.exists()) {
+            keysDirectory.mkdirs();
+        }
+
+        File privateKeyFile = new File(keysDirectory, "private_key.der");
+        File publicKeyFile = new File(keysDirectory, "public_key.der");
+
+        if (privateKeyFile.exists() && publicKeyFile.exists()) {
+            // Load existing keys
+            byte[] privateKeyBytes = Files.readAllBytes(privateKeyFile.toPath());
+            byte[] publicKeyBytes = Files.readAllBytes(publicKeyFile.toPath());
+
+            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+            PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
+
+            PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+            PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+            this.keyPair = new KeyPair(publicKey, privateKey);
+        } else {
+            // Generate new keys
+            KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
+            keyGenerator.initialize(2048);
+            this.keyPair = keyGenerator.generateKeyPair();
+
+            // Save keys
+            Files.write(privateKeyFile.toPath(), keyPair.getPrivate().getEncoded());
+            Files.write(publicKeyFile.toPath(), keyPair.getPublic().getEncoded());
+        }
     }
+
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
-    }
-
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

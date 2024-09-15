@@ -1,6 +1,7 @@
 package com.learnandphish.gateway;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -35,13 +36,13 @@ public class AuthFilter implements GatewayFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        
+
         if (request.getURI().getPath().equals("/authenticate")) {
             return chain.filter(exchange);
         }
 
         if (!authEnabled) {
-            System.out.println("Authentication is disabled. To enable it, make \"authentication.enabled\" property as true");
+            System.out.println("Authentication is disabled. To enable it, set \"authentication.enabled\" property to true");
             return chain.filter(exchange);
         }
 
@@ -52,14 +53,25 @@ public class AuthFilter implements GatewayFilter {
 
             String token = this.getAuthHeader(request);
 
-            if (jwtUtil.isInvalid(token)) {
-                return this.onError(exchange, "Auth header invalid", HttpStatus.UNAUTHORIZED);
+            if (token == null) {
+                return this.onError(exchange, "Missing Authorization header", HttpStatus.UNAUTHORIZED);
             }
 
-            this.populateRequestWithHeaders(exchange, token);
+            try {
+                if (jwtUtil.isInvalid(token)) {
+                    return this.onError(exchange, "Invalid or expired JWT token", HttpStatus.UNAUTHORIZED);
+                }
+
+                this.populateRequestWithHeaders(exchange, token);
+            } catch (JwtException e) {
+                return this.onError(exchange, "Invalid JWT token", HttpStatus.UNAUTHORIZED);
+            } catch (Exception e) {
+                return this.onError(exchange, "Authentication service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+            }
         }
         return chain.filter(exchange);
     }
+
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
