@@ -2,13 +2,13 @@ package com.learnandphish.gateway;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
-import javax.crypto.SecretKey;
-import java.security.SecureRandom;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 import java.util.Date;
 
 /**
@@ -19,27 +19,31 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    /**
-     * Secret key used for token generation.
-     */
-    private final SecretKey SECRET;
+    private PublicKey publicKey;
+    private final RestTemplate restTemplate;
 
     /**
-     * Constructor. Generates a random secret key.
+     * Constructor. Initializes the RestTemplate.
      */
-    public JWTUtil() {
-        this.SECRET = generateRandomSecretKey();
+    public JWTUtil(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     /**
-     * Generates a random secret key.
-     *
-     * @return generated secret key
+     * Fetches the public key from the authentication service.
      */
-    private SecretKey generateRandomSecretKey() {
-        byte[] keyBytes = new byte[32]; // 256 bits
-        new SecureRandom().nextBytes(keyBytes);
-        return Keys.hmacShaKeyFor(keyBytes);
+    public void fetchPublicKey() {
+        if (publicKey == null) {
+            try {
+                String publicKeyString = restTemplate.getForObject("http://authentication-service:8082/public-key", String.class);
+                byte[] publicKeyBytes = Base64.getDecoder().decode(publicKeyString);
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+                this.publicKey = keyFactory.generatePublic(keySpec);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to fetch public key", e);
+            }
+        }
     }
 
     /**
@@ -49,11 +53,22 @@ public class JWTUtil {
      * @return Claims object containing all JWT claims
      */
     public Claims getAllClaims(String token) {
+        fetchPublicKey();
         return Jwts.parser()
-                .verifyWith(SECRET)
-                .build()
+                .verifyWith(publicKey)
+                .build()  // Build the parser before parsing the token
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    /**
+     * Extracts the username from the JWT token.
+     *
+     * @param token JWT token string
+     * @return username extracted from the token
+     */
+    public String extractUsername(String token) {
+        return getAllClaims(token).getSubject();
     }
 
     /**
@@ -62,8 +77,8 @@ public class JWTUtil {
      * @param token JWT token string
      * @return true if the JWT is expired, false if not
      */
-    private boolean isTokenExpired(String token) {
-        return this.getAllClaims(token).getExpiration().before(new Date());
+    public boolean isTokenExpired(String token) {
+        return getAllClaims(token).getExpiration().before(new Date());
     }
 
     /**
@@ -73,16 +88,6 @@ public class JWTUtil {
      * @return true if the JWT is invalid, false if not
      */
     public boolean isInvalid(String token) {
-        return this.isTokenExpired(token);
+        return isTokenExpired(token);
     }
-
-    /**
-     * Get the secret key.
-     *
-     * @return the secret key
-     */
-    public SecretKey getSecret() {
-        return SECRET;
-    }
-
 }

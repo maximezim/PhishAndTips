@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  *
  * @author Maxime Zimmermann
@@ -26,9 +28,6 @@ public class AuthFilter implements GatewayFilter {
 
     @Autowired
     private JWTUtil jwtUtil;
-
-    @Autowired
-    private AuthUtil authUtil;
 
     @Value("${authentication.enabled}")
     private boolean authEnabled;
@@ -69,8 +68,19 @@ public class AuthFilter implements GatewayFilter {
     }
 
     private String getAuthHeader(ServerHttpRequest request) {
-        return  request.getHeaders().getOrEmpty("Authorization").get(0);
+        List<String> authHeaders = request.getHeaders().getOrEmpty("Authorization");
+        if (authHeaders.isEmpty()) {
+            return null; // Or throw an exception if appropriate
+        }
+
+        String authHeader = authHeaders.get(0);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7); // Extracts the token after "Bearer "
+        } else {
+            return null; // Or handle the case where the prefix is missing
+        }
     }
+
 
 
     private boolean isCredsMissing(ServerHttpRequest request) {

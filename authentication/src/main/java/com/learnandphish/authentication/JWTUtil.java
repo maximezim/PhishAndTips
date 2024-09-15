@@ -2,103 +2,54 @@ package com.learnandphish.authentication;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import io.jsonwebtoken.JwtParser;
 
-import javax.crypto.SecretKey;
-import java.security.SecureRandom;
+import java.security.*;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-/**
- * Utility class for JWT token operations
- *
- * @author Maxime Zimmermann
- */
 @Component
 public class JWTUtil {
 
-    /**
-     * Secret key used for token generation.
-     */
-    private final SecretKey SECRET;
+    private final KeyPair keyPair;
 
-    /**
-     * Constructor. Generates a random secret key.
-     */
-    public JWTUtil() {
-        this.SECRET = generateRandomSecretKey();
-    }
-
-    /**
-     * Generates a random secret key.
-     *
-     * @return generated secret key
-     */
-    private SecretKey generateRandomSecretKey() {
-        byte[] keyBytes = new byte[32]; // 256 bits
-        new SecureRandom().nextBytes(keyBytes);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    /**
-     * Parses the JWT token and returns all claims.
-     *
-     * @param token JWT token string
-     * @return Claims object containing all JWT claims
-     */
-    public Claims getAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(SECRET)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+    public JWTUtil() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance("RSA");
+        keyGenerator.initialize(2048);
+        this.keyPair = keyGenerator.generateKeyPair();
     }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String email = extractEmail(token);
-        return (email.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = getAllClaims(token);
+        final Claims claims = parseToken(token);
         return claimsResolver.apply(claims);
     }
 
-    /**
-     * Checks if the JWT is expired.
-     *
-     * @param token JWT token string
-     * @return true if the JWT is expired, false if not
-     */
-    private boolean isTokenExpired(String token) {
-        return this.getAllClaims(token).getExpiration().before(new Date());
+    private Claims parseToken(String token) {
+        return Jwts.parser()
+                .verifyWith(keyPair.getPublic())
+                .build()  // Build the parser before parsing the token
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    /**
-     * Checks if the JWT is invalid. Currently, this only checks for expiration.
-     *
-     * @param token JWT token string
-     * @return true if the JWT is invalid, false if not
-     */
+    private boolean isTokenExpired(String token) {
+        return parseToken(token).getExpiration().before(new Date());
+    }
+
     public boolean isInvalid(String token) {
         return this.isTokenExpired(token);
-    }
-
-    /**
-     * Get the secret key.
-     *
-     * @return the secret key
-     */
-    public SecretKey getSecret() {
-        return SECRET;
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -111,14 +62,20 @@ public class JWTUtil {
                 .claims(claims)
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10-hour validity
-                .signWith(SECRET)
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .signWith(keyPair.getPrivate())
                 .compact();
     }
-
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = extractUsername(token);
+        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
 
+    public PublicKey getPublicKey() {
+        return keyPair.getPublic();
+    }
 }
