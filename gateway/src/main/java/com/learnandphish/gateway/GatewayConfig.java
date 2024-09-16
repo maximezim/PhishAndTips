@@ -56,6 +56,8 @@ public class GatewayConfig {
         return builder.routes()
                 .route("auth-service", r -> r.path("/authenticate")
                         .uri("http://authentication-service:8082"))
+                .route("auth-swagger", r -> r.path("/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**")
+                        .uri("http://authentication-service:8082"))
                 .route("protected-routes", r -> r.path("/**")
                         .filters(f -> f.filter(authFilter))
                         .uri("http://authentication-service:8082"))

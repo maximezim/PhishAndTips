@@ -16,3 +16,8 @@ spring:
       ddl-auto: update # Adjust to 'validate', 'create', or 'none'
     show-sql: true
 
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
