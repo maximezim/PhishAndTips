@@ -28,8 +28,7 @@ services:
     build:
       context: ./authentication
       dockerfile: Dockerfile
-    ports:
-      - "8082:8082"
+    # Removed the ports section to prevent direct access
     networks:
       - backend
     depends_on:
@@ -44,7 +43,6 @@ services:
       options:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
-
 
   api-gateway:
     image: api-gateway:latest
@@ -87,7 +85,6 @@ services:
     networks:
       - backend
 
-
   grafana:
     image: grafana/grafana:latest
     ports:
@@ -98,6 +95,7 @@ services:
       GF_LOG_FILTERS: rendering:debug
     networks:
       - backend
+
   renderer:
     image: grafana/grafana-image-renderer:latest
     expose:
