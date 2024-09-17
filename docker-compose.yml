@@ -2,7 +2,6 @@ services:
   postgres:
     image: postgres:latest
     environment:
-      POSTGRES_DB: authentication_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
@@ -44,6 +43,26 @@ services:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
 
+  phishing-generator-service:
+    image: phishing-generator-service:latest
+    build:
+      context: ./phishing
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/phishing_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+
   api-gateway:
     image: api-gateway:latest
     build:
@@ -55,10 +74,14 @@ services:
       - backend
     depends_on:
       - authentication-service
+      - phishing-generator-service
     environment:
       - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=auth-service
       - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://authentication-service:8082
       - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/authenticate
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].ID=phishing-generator-service
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].URI=http://phishing-generator-service:8083
+      - SPRING_CLOUD_GATEWAY_ROUTES[1].PREDICATES[0]=Path=/phishing/**
     logging:
       driver: fluentd
       options:
