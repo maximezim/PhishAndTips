@@ -124,8 +124,7 @@ public class AuthenticationController {
         if (password.length() < 8) return false;
         if (!password.matches(".*[A-Z].*")) return false; // At least one uppercase letter
         if (!password.matches(".*\\d.*")) return false;   // At least one digit
-        if (!password.matches(".*[@#$%^&+=].*")) return false; // At least one special character
-        return true;
+        return password.matches(".*[@#$%^&+=].*"); // At least one special character
     }
 }
 

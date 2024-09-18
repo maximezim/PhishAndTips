@@ -1,15 +1,20 @@
 package com.learnandphish.authentication;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -35,8 +40,16 @@ public class AuthenticationControllerTest {
 	@InjectMocks
 	private AuthenticationController authenticationController;
 
-	public AuthenticationControllerTest() {
-		MockitoAnnotations.openMocks(this);
+	private AutoCloseable closeable;
+
+	@BeforeEach
+	public void setupMocks() {
+		closeable = MockitoAnnotations.openMocks(this);
+	}
+
+	@AfterEach
+	public void releaseMocks() throws Exception {
+		closeable.close();
 	}
 
 	@Test
