@@ -17,11 +17,9 @@ import java.util.Collections;
  */
 @Configuration
 public class GatewayConfig {
-//    private final RequestFilter requestFilter;
     private final AuthFilter authFilter;
 
-    public GatewayConfig(RequestFilter requestFilter, AuthFilter authFilter) {
-        // this.requestFilter = requestFilter;
+    public GatewayConfig(AuthFilter authFilter) {
         this.authFilter = authFilter;
     }
 
@@ -35,6 +33,11 @@ public class GatewayConfig {
                 .route("change-password", r -> r.path("/change-password")
                         .filters(f -> f.filter(authFilter))
                         .uri("http://authentication-service:8082"))
+                // Admin Routes example, view @RouteRoles
+                .route("admin-service", r -> r.path("/admin/**")
+                        .filters(f -> f.filter(authFilter))
+                        .uri("http://admin-service:8083"))
+
                 .route("protected-routes", r -> r.path("/**")
                         .filters(f -> f.filter(authFilter))
                         .uri("http://authentication-service:8082"))

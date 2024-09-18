@@ -3,6 +3,7 @@ package com.learnandphish.authentication;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.JwtParser;
@@ -60,7 +61,6 @@ public class JWTUtil {
         }
     }
 
-
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -88,6 +88,11 @@ public class JWTUtil {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        String role = userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("");
+        claims.put("role", role);
         return createToken(claims, userDetails.getUsername());
     }
 
@@ -100,6 +105,7 @@ public class JWTUtil {
                 .signWith(keyPair.getPrivate())
                 .compact();
     }
+
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
