@@ -123,8 +123,7 @@ public class AuthenticationController {
     private boolean isValidPassword(String password) {
         if (password.length() < 8) return false;
         if (!password.matches(".*[A-Z].*")) return false; // At least one uppercase letter
-        if (!password.matches(".*\\d.*")) return false;   // At least one digit
-        return password.matches(".*[@#$%^&+=].*"); // At least one special character
+        return password.matches(".*\\d.*");   // At least one digit
     }
 }
 
