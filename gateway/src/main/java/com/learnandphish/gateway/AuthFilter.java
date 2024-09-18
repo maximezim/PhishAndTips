@@ -58,20 +58,30 @@ public class AuthFilter implements GatewayFilter {
             }
 
             try {
+                jwtUtil.fetchPublicKey();
+                Claims claims = jwtUtil.getAllClaims(token);
+                String role = claims.get("role", String.class);
+
+                // Retrieve required roles for the path
+                List<String> requiredRoles = RouteRoles.requiredRolesForPath(request.getURI().getPath());
+
+                if (requiredRoles != null && !requiredRoles.contains(role)) {
+                    return this.onError(exchange, "Forbidden: You don't have the required role", HttpStatus.FORBIDDEN);
+                }
+
                 if (jwtUtil.isInvalid(token)) {
                     return this.onError(exchange, "Invalid or expired JWT token", HttpStatus.UNAUTHORIZED);
                 }
 
-                this.populateRequestWithHeaders(exchange, token);
-            } catch (JwtException e) {
-                return this.onError(exchange, "Invalid JWT token", HttpStatus.UNAUTHORIZED);
-            } catch (Exception e) {
-                return this.onError(exchange, "Authentication service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+            } catch (JwtException | IllegalArgumentException e) {
+                return this.onError(exchange, "Invalid Token", HttpStatus.UNAUTHORIZED);
             }
+
+            populateRequestWithHeaders(exchange, token);
         }
+
         return chain.filter(exchange);
     }
-
 
     private Mono<Void> onError(ServerWebExchange exchange, String err, HttpStatus httpStatus) {
         ServerHttpResponse response = exchange.getResponse();
@@ -103,7 +113,7 @@ public class AuthFilter implements GatewayFilter {
         Claims claims = jwtUtil.getAllClaims(token);
         exchange.getRequest()
                 .mutate()
-                .header("id",String.valueOf(claims.get("id")))
+                .header("id", String.valueOf(claims.get("id")))
                 .header("role", String.valueOf(claims.get("role")))
                 .build();
     }
