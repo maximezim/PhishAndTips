@@ -1,12 +1,16 @@
 package com.learnandphish.authentication;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.HttpStatus;
@@ -22,6 +26,12 @@ public class AuthenticationController {
 
     @Autowired
     private JWTUtil jwtUtil;
+
+    @Autowired
+    private UserDataRepository userDataRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Endpoint to authenticate users and provide JWT token.
@@ -72,6 +82,50 @@ public class AuthenticationController {
     @GetMapping("/welcome")
     public ResponseEntity<String> welcome() {
         return ResponseEntity.ok("Welcome! You are successfully authenticated.");
+    }
+
+    /**
+     * Endpoint to change the user's password.
+     *
+     * @param request The request body containing current and new passwords.
+     * @return A ResponseEntity indicating the result of the operation.
+     */
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        UserData user = userDataRepository.findByEmail(email)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect");
+        }
+
+        if (!isValidPassword(request.getNewPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("New password does not meet security requirements");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userDataRepository.save(user);
+
+        return ResponseEntity.ok("Password changed successfully");
+    }
+
+    /**
+     * Validates the strength of the new password.
+     *
+     * @param password The new password to validate.
+     * @return true if the password meets the criteria, false otherwise.
+     */
+    private boolean isValidPassword(String password) {
+        if (password.length() < 8) return false;
+        if (!password.matches(".*[A-Z].*")) return false; // At least one uppercase letter
+        if (!password.matches(".*\\d.*")) return false;   // At least one digit
+        if (!password.matches(".*[@#$%^&+=].*")) return false; // At least one special character
+        return true;
     }
 }
 
