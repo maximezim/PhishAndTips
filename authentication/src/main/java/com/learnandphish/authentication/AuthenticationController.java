@@ -3,6 +3,7 @@ package com.learnandphish.authentication;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,6 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.HttpStatus;
+
+import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 @RestController
 public class AuthenticationController {
@@ -32,6 +40,9 @@ public class AuthenticationController {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserExportService userExportService;
 
     /**
      * Endpoint to authenticate users and provide JWT token.
@@ -112,6 +123,25 @@ public class AuthenticationController {
         userDataRepository.save(user);
 
         return ResponseEntity.ok("Password changed successfully");
+    }
+
+    @GetMapping("/export-users")
+    @Async
+    public CompletableFuture<ResponseEntity<byte[]>> exportUsers() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                byte[] csvContent = userExportService.exportUsersToCsv();
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+                headers.setContentDispositionFormData("attachment", "users_export.csv");
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .body(csvContent);
+            } catch (IOException e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(("Error exporting users: " + e.getMessage()).getBytes());
+            }
+        });
     }
 
     /**

@@ -33,11 +33,13 @@ public class GatewayConfig {
                 .route("change-password", r -> r.path("/change-password")
                         .filters(f -> f.filter(authFilter))
                         .uri("http://authentication-service:8082"))
-                // Admin Routes example, view @RouteRoles
-                .route("admin-service", r -> r.path("/admin/**")
+                .route("export-users", r -> r.path("/export-users")
                         .filters(f -> f.filter(authFilter))
-                        .uri("http://admin-service:8083"))
-
+                        .uri("http://authentication-service:8082"))
+                // Admin Routes example, view @RouteRoles
+                // .route("admin-service", r -> r.path("/admin/**")
+                //         .filters(f -> f.filter(authFilter))
+                //         .uri("http://admin-service:8083"))
                 .route("protected-routes", r -> r.path("/**")
                         .filters(f -> f.filter(authFilter))
                         .uri("http://authentication-service:8082"))
