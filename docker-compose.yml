@@ -105,6 +105,22 @@ services:
     networks:
       - backend
 
+  gophish:
+    image: gophish/gophish
+    restart: always
+    volumes:
+      - ./gophish/config.json:/opt/gophish-v0.6.0-linux-64bit/config.json
+      - ./gophish/sqlite:/opt/gophish-v0.6.0-linux-64bit/sqlite
+      - ./gophish/crt:/opt/gophish-v0.6.0-linux-64bit/crt
+    ports:
+      - "3333:3333"
+      - "443:443"
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+
 networks:
   backend:
     driver: bridge
