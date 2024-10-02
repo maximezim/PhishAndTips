@@ -1,5 +1,6 @@
 package com.learnandphish.authentication;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,6 @@ import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -125,6 +124,7 @@ public class AuthenticationController {
         return ResponseEntity.ok("Password changed successfully");
     }
 
+    @RolesAllowed("ADMIN")
     @GetMapping("/export-users")
     @Async
     public CompletableFuture<ResponseEntity<byte[]>> exportUsers() {
@@ -142,6 +142,23 @@ public class AuthenticationController {
                         .body(("Error exporting users: " + e.getMessage()).getBytes());
             }
         });
+    }
+
+    @RolesAllowed({"USER", "ADMIN"})
+    @GetMapping("/test-user")
+    public ResponseEntity<?> testUser() {
+        return ResponseEntity.ok("This is an user endpoint");
+    }
+
+    @RolesAllowed("ADMIN")
+    @GetMapping("/test-admin")
+    public ResponseEntity<?> testAdmin() {
+        return ResponseEntity.ok("This is an admin endpoint");
+    }
+
+    @GetMapping("/test-both")
+    public ResponseEntity<?> testBoth() {
+        return ResponseEntity.ok("This is an user & admin endpoint");
     }
 
     /**
