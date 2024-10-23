@@ -62,22 +62,24 @@ public class AuthFilter implements GatewayFilter {
                 Claims claims = jwtUtil.getAllClaims(token);
                 String role = claims.get("role", String.class);
 
-                // Retrieve required roles for the path
+                // Get required roles for the path
                 List<String> requiredRoles = RouteRoles.requiredRolesForPath(request.getURI().getPath());
 
-                if (requiredRoles != null && !requiredRoles.contains(role)) {
-                    return this.onError(exchange, "Forbidden: You don't have the required role", HttpStatus.FORBIDDEN);
+                // Check if user has required role
+                if (!RouteRoles.hasRequiredRole(role, requiredRoles)) {
+                    return this.onError(exchange, 
+                        "Forbidden: You don't have the required role (" + role + ")", 
+                        HttpStatus.FORBIDDEN);
                 }
 
                 if (jwtUtil.isInvalid(token)) {
                     return this.onError(exchange, "Invalid or expired JWT token", HttpStatus.UNAUTHORIZED);
                 }
 
+                populateRequestWithHeaders(exchange, token);
             } catch (JwtException | IllegalArgumentException e) {
                 return this.onError(exchange, "Invalid Token", HttpStatus.UNAUTHORIZED);
             }
-
-            populateRequestWithHeaders(exchange, token);
         }
 
         return chain.filter(exchange);
