@@ -40,8 +40,8 @@
       <a href="##" class="text-muted-foreground hover:text-foreground transition-colors">
         Customers
       </a>
-      <a href="##" class="text-muted-foreground hover:text-foreground transition-colors">
-        Analytics
+      <a href="/test" class="text-muted-foreground hover:text-foreground transition-colors">
+        Test CLIQUE ICI
       </a>
     </nav>
     <Sheet.Root>
@@ -274,7 +274,6 @@
         <Card.Content class="grid gap-8">
           <div class="flex items-center gap-4">
             <Avatar.Root class="hidden h-9 w-9 sm:flex">
-              <Avatar.Image src="/avatars/01.png" alt="Avatar" />
               <Avatar.Fallback>OM</Avatar.Fallback>
             </Avatar.Root>
             <div class="grid gap-1">
@@ -285,7 +284,6 @@
           </div>
           <div class="flex items-center gap-4">
             <Avatar.Root class="hidden h-9 w-9 sm:flex">
-              <Avatar.Image src="/avatars/02.png" alt="Avatar" />
               <Avatar.Fallback>JL</Avatar.Fallback>
             </Avatar.Root>
             <div class="grid gap-1">
@@ -296,7 +294,6 @@
           </div>
           <div class="flex items-center gap-4">
             <Avatar.Root class="hidden h-9 w-9 sm:flex">
-              <Avatar.Image src="/avatars/03.png" alt="Avatar" />
               <Avatar.Fallback>IN</Avatar.Fallback>
             </Avatar.Root>
             <div class="grid gap-1">
@@ -307,7 +304,6 @@
           </div>
           <div class="flex items-center gap-4">
             <Avatar.Root class="hidden h-9 w-9 sm:flex">
-              <Avatar.Image src="/avatars/04.png" alt="Avatar" />
               <Avatar.Fallback>WK</Avatar.Fallback>
             </Avatar.Root>
             <div class="grid gap-1">
@@ -318,7 +314,6 @@
           </div>
           <div class="flex items-center gap-4">
             <Avatar.Root class="hidden h-9 w-9 sm:flex">
-              <Avatar.Image src="/avatars/05.png" alt="Avatar" />
               <Avatar.Fallback>SD</Avatar.Fallback>
             </Avatar.Root>
             <div class="grid gap-1">

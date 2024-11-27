@@ -1,6 +1,13 @@
 <script lang="ts">
+	import Header from '$lib/components/custom/header.svelte';
 	import '../app.css';
-	let { children } = $props();
+	import { page } from '$app/stores';
 </script>
 
-{@render children()}
+<div class="app">
+	<Header title={$page.data?.title || 'Phish&Tips'} />
+	<main>
+		<slot></slot>
+	</main>
+</div>
+
