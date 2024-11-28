@@ -3,6 +3,7 @@
 	import '../app.css';
 	import { page } from '$app/stores';
 	import Sidebar from '$lib/components/custom/Sidebar.svelte';
+	import DotPage from '$lib/components/custom/DotPage.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
@@ -29,9 +30,12 @@
 		phishing_text= {$page.data?.phishing_text}
 		phishing_bg= {$page.data?.phishing_bg}
 	/>
-	<main class="flex-grow h-full overflow-scroll">
-		<Header title={$page.data?.title || 'Phish&Tips'} />
-		<slot></slot>
+	<main class="relative w-full h-full overflow-scroll flex flex-col">
+		<Header title={$page.data?.title || 'Phish&Tips'} nom={'Robite'}/>
+		<div class="relative flex-grow w-full overflow-scroll">
+			<DotPage />
+			<slot></slot>
+		</div>
 	</main>
 </div>
 

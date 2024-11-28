@@ -55,7 +55,7 @@
 
             <a href="/phishing" class={`bg-${phishing_bg} ${style_link}`}>
                 <li class={`flex items-center gap-4 ${style_li}`}>
-                    <img src={fish_svg} alt="fish" class="w-6 h-6 fish" style={`filter: invert(${phishing_text === 'white' ? 1 : 0});`}  />
+                    <img src={fish_svg} alt="fish" class="w-5 h-5 ms-1 fish" style={`filter: invert(${phishing_text === 'white' ? 1 : 0});`}  />
                     {#if sidebar}
                         <span class={`text-${phishing_text} text-base font-semibold`}>Phishing</span>
                     {/if}
