@@ -82,7 +82,7 @@
             placeholder="Tapez votre mot de passe..."
             on:input={checkPassword}
         />
-        <div class="tags flex gap-3 mt-3 items-center gap-3">
+        <div class="tags flex gap-3 mt-3 items-center">
             <div class="level py-2 px-4 {result_style}">
                 <p class="text-white">{level}</p>
             </div>
