@@ -6,7 +6,7 @@
 
 	onMount(() => {
 		if (window.location.pathname === '/') {
-			goto('/dashboard');
+			goto('/login');
 		}
 	});
 
