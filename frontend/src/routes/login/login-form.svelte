@@ -8,6 +8,9 @@
     superForm,
   } from "sveltekit-superforms";
   import { zodClient } from "sveltekit-superforms/adapters";
+  import { Checkbox } from "$lib/components/ui/checkbox";
+  import { Label } from "$lib/components/ui/label";
+	import { goto } from "$app/navigation";
   
   export let data: SuperValidated<Infer<FormSchema>>;
   
@@ -24,6 +27,7 @@
       $formData.password = (e.target as HTMLInputElement).value;
     }
   }
+
 </script>
 
 <!-- Form component using validation schema from schema.ts -->
@@ -40,10 +44,16 @@
     <Form.Control let:attrs>
       <Form.Label class={"text-lg"}>Mot de passe</Form.Label>
       <Input { type } {...attrs} on:input={ onInput } bind:value={$formData.password} />
-      <input type="checkbox" on:change="{ () => show_password = !show_password }" />  Afficher le mot de passe
+      <Checkbox id="password-toggle" bind:checked={show_password} aria-labelledby="password-toggle-label" />
+      <Label
+        id="password-label"
+        for="password-toggle"
+      >
+        Afficher le mot de passe.
+      </Label>
     </Form.Control>
     <Form.Description />
     <Form.FieldErrors />
   </Form.Field>
-  <Form.Button>Submit</Form.Button>
+  <Form.Button>Se connecter</Form.Button>
 </form>

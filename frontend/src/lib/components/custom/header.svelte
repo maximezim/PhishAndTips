@@ -2,8 +2,13 @@
 	import Button from "../ui/button/button.svelte";
     import 'iconify-icon';
     import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+	import { goto } from "$app/navigation";
     export let title: string;
     export let nom: string;
+
+  function handleLogout() {
+    goto('/login');
+  }
 
 </script>
 
@@ -17,7 +22,7 @@
         </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content class="w-38">
-          <DropdownMenu.CheckboxItem class="cursor-pointer" >
+          <DropdownMenu.CheckboxItem class="cursor-pointer" on:click={handleLogout}>
             Se déconnecter
           </DropdownMenu.CheckboxItem>
         </DropdownMenu.Content>
