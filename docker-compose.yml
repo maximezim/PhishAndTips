@@ -105,6 +105,17 @@ services:
     networks:
       - backend
 
+  spiderfoot:
+    # build it from local folder spiderfoot
+    build:
+      context: ./spiderfoot
+      dockerfile: Dockerfile
+    image: spiderfoot:latest
+    ports:
+      - "5001:5001"
+    networks:
+      - backend
+
 networks:
   backend:
     driver: bridge
