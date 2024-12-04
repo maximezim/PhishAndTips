@@ -58,7 +58,19 @@ const config: Config = {
 				sans: ['DM sans', 'serif']
 			}
 		}
-	}
+	},
+	plugins: [
+        function ({ addUtilities }) {
+            addUtilities({
+                '.mask-offset': {
+                    '--mask-offset': '100px',
+                },
+				'.mask-linear': {
+					'mask-image': 'linear-gradient(to bottom, transparent, white var(--mask-offset), white calc(100% - var(--mask-offset)), transparent)',
+				},
+            });
+        },
+    ],
 };
 
 export default config;
