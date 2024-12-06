@@ -12,8 +12,8 @@
 <div class={"flex h-screen w-full items-center justify-center"}>
   <Particles className="absolute inset-0 -z-10" />
   <Card.Root class="min-w-96">
-    <Card.Header class={"flex items-center pt-5 pb-5"}>
-      <Card.Title class={"text-center text-3xl text-primary flex flex-col items-center"}>
+    <Card.Header class={"flex items-center pt-5 pb-3"}>
+      <Card.Title class={"text-center text-2xl text-primary flex flex-col items-center"}>
         <img src={logo_svg} class={style_logo} alt="Logo de Phish&Tips" />
         <span>Connexion</span>
       </Card.Title>

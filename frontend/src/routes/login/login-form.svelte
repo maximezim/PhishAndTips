@@ -34,7 +34,7 @@
 <form method="POST" use:enhance class={"flex flex-col gap-2"}>
   <Form.Field {form} name="email">
     <Form.Control let:attrs>
-      <Form.Label class={"text-lg"}>Adresse mail</Form.Label>
+      <Form.Label class={"text-base"}>Adresse mail</Form.Label>
       <Input {...attrs} bind:value={$formData.email} />
     </Form.Control>
     <Form.Description />
@@ -42,18 +42,21 @@
   </Form.Field>
   <Form.Field {form} name="password">
     <Form.Control let:attrs>
-      <Form.Label class={"text-lg"}>Mot de passe</Form.Label>
+      <Form.Label class={"text-base"}>Mot de passe</Form.Label>
       <Input { type } {...attrs} on:input={ onInput } bind:value={$formData.password} />
-      <Checkbox id="password-toggle" bind:checked={show_password} aria-labelledby="password-toggle-label" />
-      <Label
-        id="password-label"
-        for="password-toggle"
-      >
-        Afficher le mot de passe.
-      </Label>
+      <div class="flex items-center gap-2 my-3">
+        <Checkbox id="password-toggle" bind:checked={show_password} aria-labelledby="password-toggle-label" />
+        <Label
+          class="text-sm text-gray-500"
+          id="password-label"
+          for="password-toggle"
+        >
+          Afficher le mot de passe.
+        </Label>
+      </div>
     </Form.Control>
     <Form.Description />
     <Form.FieldErrors />
   </Form.Field>
-  <Form.Button>Se connecter</Form.Button>
+  <Form.Button class="mt-3">Se connecter</Form.Button>
 </form>
