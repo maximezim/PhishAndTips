@@ -36,6 +36,10 @@ public class GatewayConfig {
                 .route("export-users", r -> r.path("/export-users")
                         .filters(f -> f.filter(authFilter))
                         .uri("http://authentication-service:8082"))
+                .route("gophish", r -> r.path("/gophish/**")
+                    .filters(f -> f.filter(authFilter)
+                                   .rewritePath("/gophish(?<segment>/?.*)", "${segment}"))
+                    .uri("http://gophish:3333"))
                 // Admin Routes example, view @RouteRoles
                 // .route("admin-service", r -> r.path("/admin/**")
                 //         .filters(f -> f.filter(authFilter))
