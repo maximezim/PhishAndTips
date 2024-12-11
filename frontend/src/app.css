@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--background: 0 0% 100%;
+		--foreground: 250 20% 18%;
+
+		--muted: 250 26% 96.1%;
+		--muted-foreground: 250 26% 80%;
+
+		--popover: 0 0% 100%;
+		--popover-foreground: 250 20% 18%;
+
+		--card: 0 0% 100%;
+		--card-foreground: 250 20% 18%;
+
+		--border: 272 19% 85%;
+		--input: 250 20% 18%;
+
+		--primary: 250 26% 27%;
+		--primary-foreground: 273 38% 94%;
+
+		--secondary: 250 27% 17%;
+		--secondary-foreground: 273 38% 94%;
+
+		--accent: 248 74% 72%;
+		--accent-foreground: 0 0% 100%;
+
+		--destructive: 0 72.2% 50.6%;
+		--destructive-foreground: 0 0% 98%;
+
+		--ring: 250 20% 18%;
+
+		--radius: 0.5rem;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+}
