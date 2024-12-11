@@ -1,9 +1,6 @@
 package com.learnandphish.gateway;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -11,14 +8,16 @@ public class RouteRoles {
 
     private static final Logger logger = LoggerFactory.getLogger(RouteRoles.class);
 
-    private static final Map<String, List<String>> routeRoleMap = Map.of(
-            "/admin/**", List.of("ADMIN"),
-            "/user/**", List.of("USER", "ADMIN"),
-            "/export-users", List.of("ADMIN"),
-            "/change-password", List.of("USER", "ADMIN"),
-            "/test-admin", List.of("ADMIN"),
-            "/test-user", List.of("USER", "ADMIN"),
-            "/test-both", List.of("USER", "ADMIN")
+    private static final Map<String, List<String>> routeRoleMap = Map.ofEntries(
+        Map.entry("/admin/**", List.of("ADMIN")),
+        Map.entry("/user/**", List.of("USER", "ADMIN")),
+        Map.entry("/export-users", List.of("ADMIN")),
+        Map.entry("/change-password", List.of("USER", "ADMIN")),
+        Map.entry("/register", List.of("ADMIN")),
+        Map.entry("/test-admin", List.of("ADMIN")),
+        Map.entry("/test-user", List.of("USER", "ADMIN")),
+        Map.entry("/test-both", List.of("USER", "ADMIN")),
+        Map.entry("/gophish/**", List.of("ADMIN"))
     );
 
     public static List<String> requiredRolesForPath(String path) {
