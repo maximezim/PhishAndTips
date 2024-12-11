@@ -184,7 +184,8 @@ public class AuthenticationController {
 
         return ResponseEntity.ok("User registered successfully");
     }
-    
+
+    @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/get-user")
     public ResponseEntity<UserDTO> getUser(@RequestHeader("Authorization") String token) {
         String email = jwtUtil.extractUsername(token);

@@ -13,6 +13,7 @@ public class RouteRoles {
         Map.entry("/user/**", List.of("USER", "ADMIN")),
         Map.entry("/export-users", List.of("ADMIN")),
         Map.entry("/change-password", List.of("USER", "ADMIN")),
+        Map.entry("/get-user", List.of("USER", "ADMIN")),
         Map.entry("/register", List.of("ADMIN")),
         Map.entry("/test-admin", List.of("ADMIN")),
         Map.entry("/test-user", List.of("USER", "ADMIN")),
