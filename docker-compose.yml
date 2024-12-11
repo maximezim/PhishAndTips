@@ -121,12 +121,12 @@ services:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
 
-  # spiderfoot:
-  #   image: spiderfoot:latest
-  #   ports:
-  #     - "5001:5001"
-  #   networks:
-  #     - backend
+  spiderfoot:
+    image: spiderfoot:latest
+    ports:
+      - "5001:5001"
+    networks:
+      - backend
   
   spiderfoot-api:
     build:
@@ -139,7 +139,7 @@ services:
       - backend
     depends_on:
       - postgres
-      # - spiderfoot
+      - spiderfoot
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
