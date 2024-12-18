@@ -105,21 +105,59 @@ services:
     networks:
       - backend
 
-  gophish:
-    image: gophish/gophish
-    restart: always
+  mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail
+    domainname: example.com
+    env_file: mailserver.env
+    environment:
+      - PERMIT_RELOAD=1
     volumes:
-      - ./gophish/config.json:/opt/gophish-v0.6.0-linux-64bit/config.json
-      - ./gophish/sqlite:/opt/gophish-v0.6.0-linux-64bit/sqlite
-      - ./gophish/crt:/opt/gophish-v0.6.0-linux-64bit/crt
+      - maildata:/var/mail
+      - mailstate:/var/mail-state
+      - maillogs:/var/log/mail
+      - ./config/:/tmp/docker-mailserver/
+    ports:
+      - "25:25"     # SMTP
+      - "143:143"   # IMAP
+      - "587:587"   # Submission
+      - "993:993"   # IMAPS
+    restart: unless-stopped
+
+  webmail:
+    image: roundcube/roundcubemail:latest
+    container_name: webmail
+    environment:
+      - ROUNDCUBEMAIL_DEFAULT_HOST=mailserver
+      - ROUNDCUBEMAIL_DEFAULT_PORT=143
+      - ROUNDCUBEMAIL_SMTP_SERVER=mailserver
+      - ROUNDCUBEMAIL_SMTP_PORT=587
+      - ROUNDCUBEMAIL_DEFAULT_USE_TLS=false
+      - ROUNDCUBEMAIL_DEFAULT_USE_SSL=false
+      - ROUNDCUBEMAIL_SMTP_USER=%u
+      - ROUNDCUBEMAIL_SMTP_PASS=%p
+    ports:
+      - "8070:80"
+    depends_on:
+      - mailserver
+    restart: unless-stopped
+    volumes:
+      - webmail_data:/var/www/html
+      - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
+
+  gophish:
+    image: gophish/gophish:latest
+    container_name: gophish
+    volumes:
+      - gophish-data:/opt/gophish
+      - ./gophish/config.json:/opt/gophish/config.json
     ports:
       - "3333:3333"
-      - "443:443"
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+      - "80:80"
+    depends_on:
+      - mailserver
+    restart: unless-stopped
 
   spiderfoot:
     image: spiderfoot:latest
@@ -154,3 +192,10 @@ services:
 networks:
   backend:
     driver: bridge
+
+volumes:
+  maildata:
+  mailstate:
+  maillogs:
+  webmail_data:
+  gophish-data:
