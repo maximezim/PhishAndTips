@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -161,6 +162,46 @@ public class AuthenticationController {
         return ResponseEntity.ok("This is an user & admin endpoint");
     }
 
+    @RolesAllowed("ADMIN")
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+        if (!userDataRepository.findByEmail(request.getEmail()).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+        }
+
+        String password = generatePassword();
+
+        UserData user = new UserData();
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setEmail(request.getEmail());
+        user.setRole(request.getRole());
+        user.setPosition(request.getPosition());
+        user.setPasswordHash(passwordEncoder.encode(password));
+        userDataRepository.save(user);
+
+        //TODO: Send email with password
+
+        return ResponseEntity.ok("User registered successfully");
+    }
+
+    @RolesAllowed({"USER", "ADMIN"})
+    @GetMapping("/get-user")
+    public ResponseEntity<UserDTO> getUser(@RequestHeader("Authorization") String token) {
+        String email = jwtUtil.extractUsername(token);
+        UserData user = userDataRepository.findByEmail(email)
+            .stream()
+            .findFirst()
+            .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        UserDTO userDTO = new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPosition(), user.getRole());
+        return ResponseEntity.ok(userDTO);
+    }
+
     /**
      * Validates the strength of the new password.
      *
@@ -171,6 +212,17 @@ public class AuthenticationController {
         if (password.length() < 8) return false;
         if (!password.matches(".*[A-Z].*")) return false; // At least one uppercase letter
         return password.matches(".*\\d.*");   // At least one digit
+    }
+
+    private String generatePassword() {
+        final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        final SecureRandom random = new SecureRandom();
+        final int passwordLength = random.nextInt(12,18);
+
+        return random.ints(passwordLength, 0, chars.length())
+                .mapToObj(i -> String.valueOf(chars.charAt(i)))
+                .reduce(new StringBuilder(), StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 }
 
