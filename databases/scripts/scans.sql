@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS spiderfoot_scans (
     modules TEXT,
     status TEXT NOT NULL DEFAULT 'queued',
     result JSONB,
+    spiderfoot_scan_id TEXT, -- New column for storing SpiderFoot scan ID
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
