@@ -105,17 +105,97 @@ services:
     networks:
       - backend
 
+  mailserver:
+    image: docker.io/mailserver/docker-mailserver:latest
+    container_name: mailserver
+    hostname: mail
+    domainname: example.com
+    env_file: mailserver.env
+    environment:
+      - PERMIT_RELOAD=1
+    volumes:
+      - maildata:/var/mail
+      - mailstate:/var/mail-state
+      - maillogs:/var/log/mail
+      - ./config/:/tmp/docker-mailserver/
+    ports:
+      - "25:25"     # SMTP
+      - "143:143"   # IMAP
+      - "587:587"   # Submission
+      - "993:993"   # IMAPS
+    restart: unless-stopped
+
+  webmail:
+    image: roundcube/roundcubemail:latest
+    container_name: webmail
+    environment:
+      - ROUNDCUBEMAIL_DEFAULT_HOST=mailserver
+      - ROUNDCUBEMAIL_DEFAULT_PORT=143
+      - ROUNDCUBEMAIL_SMTP_SERVER=mailserver
+      - ROUNDCUBEMAIL_SMTP_PORT=587
+      - ROUNDCUBEMAIL_DEFAULT_USE_TLS=false
+      - ROUNDCUBEMAIL_DEFAULT_USE_SSL=false
+      - ROUNDCUBEMAIL_SMTP_USER=%u
+      - ROUNDCUBEMAIL_SMTP_PASS=%p
+    ports:
+      - "8070:80"
+    depends_on:
+      - mailserver
+    restart: unless-stopped
+    volumes:
+      - webmail_data:/var/www/html
+      - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
+
+  gophish:
+    image: gophish/gophish:latest
+    container_name: gophish
+    volumes:
+      - gophish-data:/opt/gophish
+      - ./gophish/config.json:/opt/gophish/config.json
+    ports:
+      - "3333:3333"
+      - "80:80"
+    depends_on:
+      - mailserver
+    restart: unless-stopped
+
   spiderfoot:
-    # build it from local folder spiderfoot
-    build:
-      context: ./spiderfoot
-      dockerfile: Dockerfile
     image: spiderfoot:latest
     ports:
       - "5001:5001"
     networks:
       - backend
+  
+  spiderfoot-api:
+    build:
+      context: ./spiderfoot-api
+      dockerfile: Dockerfile
+    image: spiderfoot-api:latest
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    depends_on:
+      - postgres
+      - spiderfoot
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: authentication_db
+      POSTGRES_HOST: postgres
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
 
 networks:
   backend:
     driver: bridge
+
+volumes:
+  maildata:
+  mailstate:
+  maillogs:
+  webmail_data:
+  gophish-data:
