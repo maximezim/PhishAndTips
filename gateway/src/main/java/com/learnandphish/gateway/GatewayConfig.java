@@ -32,6 +32,7 @@ public class GatewayConfig {
                         .uri("http://authentication-service:8082"))
                 .route("gophish", r -> r.path("/gophish/**")
                         .filters(f -> f.filter(authFilter)
+                                .setRequestHeader("Authorization", System.getenv("GOPHISH_API_KEY"))
                                 .rewritePath("/gophish(?<segment>/?.*)", "${segment}"))
                         .uri("http://gophish:3333"))
                 .route("protected-routes", r -> r.path("/**")

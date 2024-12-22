@@ -59,6 +59,9 @@ services:
       - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=auth-service
       - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://authentication-service:8082
       - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/authenticate
+      - GOPHISH_API_KEY=${GOPHISH_API_KEY}
+    env_file:
+      - .env
     logging:
       driver: fluentd
       options:
