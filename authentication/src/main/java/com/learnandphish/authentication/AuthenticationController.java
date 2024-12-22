@@ -185,6 +185,23 @@ public class AuthenticationController {
         return ResponseEntity.ok("User registered successfully");
     }
 
+    @RolesAllowed({"USER", "ADMIN"})
+    @GetMapping("/get-user")
+    public ResponseEntity<UserDTO> getUser(@RequestHeader("Authorization") String token) {
+        String email = jwtUtil.extractUsername(token);
+        UserData user = userDataRepository.findByEmail(email)
+            .stream()
+            .findFirst()
+            .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        UserDTO userDTO = new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPosition(), user.getRole());
+        return ResponseEntity.ok(userDTO);
+    }
+
     /**
      * Validates the strength of the new password.
      *
