@@ -73,7 +73,7 @@
             <iconify-icon class="me-2 text-3xl" icon="mingcute:safe-lock-fill"></iconify-icon>
             <h1 class="text-xl font-semibold">Test de mot de passe</h1>
         </div>
-        <Separator color='accent' width='w-2/5'/>
+        <Separator color='bg-accent' width='w-2/5'/>
         <input
             class="mt-3 py-3 px-6 bg-gray-100 rounded-full w-full text-base outline-none"
             type="password"
@@ -107,7 +107,7 @@
             <iconify-icon class="me-2 text-3xl" icon="mingcute:light-fill"></iconify-icon>
             <h1 class="text-xl font-semibold">Conseils</h1>
         </div>
-        <Separator color='accent' width='w-2/5'/>
+        <Separator color='bg-accent' width='w-2/5'/>
         <div class="tips mt-3">
             <ul>
                 <li>Utilisez des majuscules et des minuscules</li>

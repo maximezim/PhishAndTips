@@ -71,7 +71,7 @@
         <div class="flex-grow overflow-y-auto">
           <div class="grid grid-cols-3 gap-5 my-4">
             {#each orbites as orbite, index}
-              <div class="transition flex flex-col items-center gap-4 bg-muted/[.07] p-8 shadow hover:text-foreground hover:bg-muted hover:text-white">
+              <div class="transition flex flex-col items-center gap-4 bg-muted/[.07] p-8 shadow hover:text-foreground hover:bg-muted hover:text-foreground">
                 <img src={orbite.svg} alt={orbite.name} class="w-20 h-20" />
                 <span>{orbite.name}</span>
               </div>
