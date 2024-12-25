@@ -174,10 +174,10 @@
                 </div>
             </div>
         </div>
-        <AlertDialog.Footer class="flex justify-between w-full">
+        <AlertDialog.Footer class="flex flex-row justify-end w-full">
             <ConfirmPopup style="mr-auto" type="destructive" description="Suppression du groupe" name="Supprimer" functionToCall={deleteGroup}/>
             <div class="flex space-x-2">
-                <AlertDialog.Cancel on:click={closeAlertDialog}>Annuler</AlertDialog.Cancel>
+                <AlertDialog.Cancel class="mt-0" on:click={closeAlertDialog}>Annuler</AlertDialog.Cancel>
                 <ConfirmPopup name="Sauvegarder" description="Modification du groupe" style="bg-accent" functionToCall={saveAndClose}/>
             </div>
         </AlertDialog.Footer>

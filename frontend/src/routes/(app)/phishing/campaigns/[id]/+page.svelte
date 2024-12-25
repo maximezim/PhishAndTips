@@ -235,30 +235,30 @@
   </script>
   
   {#if !loading_data}
-  <div class="relative z-10 flex flex-col w-full py-6 px-8">
+  <div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
     <div class="header flex items-center gap-4">
       <h1 class="text-2xl font-semibold">Informations sur la campagne</h1>
     </div>
-    <div class="infos grid grid-cols-3 gap-6 my-6">
-      <div class="info flex flex-col gap-2 bg-muted rounded p-5 shadow">
+    <div class="grid grid-cols-3 gap-6 my-6">
+      <div class="col-span-3 lg:col-span-1 flex flex-col gap-2 bg-muted rounded p-5 shadow">
         <span >Nom de la campagne</span>
         <span class="font-semibold text-lg py-4 px-6 bg-violet-100 rounded">{campaignSummary.name}</span>
       </div>
-      <div class="info flex flex-col gap-2 bg-muted rounded p-5 shadow">
+      <div class="col-span-3 lg:col-span-1  flex flex-col gap-2 bg-muted rounded p-5 shadow">
         <span>Date de création</span>
         <span class="font-semibold text-lg py-4 px-6 bg-violet-100 rounded">{formatDate(campaignSummary.created_date)}</span>
       </div>
-      <div class="info flex flex-col gap-2 bg-muted rounded p-5 shadow">
+      <div class="col-span-3 lg:col-span-1  flex flex-col gap-2 bg-muted rounded p-5 shadow">
         <span>Status</span>
         <span class="font-semibold text-lg py-4 px-6 {status_text} {status_bg} rounded">{formatStatus(campaignSummary.status)}</span>
       </div>
     </div>
 
 
-    <div class="infos grid grid-cols-4 gap-6 mb-6">
-      <div class="info flex flex-col items-center gap-8 bg-muted rounded p-5 shadow">
+    <div class="grid grid-cols-4 gap-6 mb-6">
+      <div class="col-span-4 lg:col-span-2 xl:col-span-1 flex flex-col items-center gap-8 bg-muted rounded p-5 shadow">
         <div class="info_header w-full flex justify-between items-center">
-          <span >Nombre de mails</span>
+          <span >Mails envoyés</span>
           <span class="font-semibold text-xl px-4 py-1 bg-violet-200 rounded">{campaignSummary.stats.sent}</span>
         </div>
         {#key $valueSent}
@@ -273,9 +273,9 @@
         {/key}
       </div>
 
-      <div class="info flex flex-col items-center gap-8 bg-muted rounded p-6 shadow">
+      <div class="col-span-4 lg:col-span-2 xl:col-span-1 flex flex-col items-center gap-8 bg-muted rounded p-6 shadow">
         <div class="info_header w-full flex justify-between items-center">
-          <span >Nombre de mails ouverts</span>
+          <span >Mails ouverts</span>
           <span class="font-semibold text-xl px-4 py-1 bg-violet-200 rounded">{campaignSummary.stats.opened}</span>
         </div>
         {#key $valueOpened}
@@ -290,9 +290,9 @@
         {/key}
       </div>
 
-      <div class="info flex flex-col items-center gap-8 bg-muted rounded p-6 shadow">
+      <div class="col-span-4 lg:col-span-2 xl:col-span-1 flex flex-col items-center gap-8 bg-muted rounded p-6 shadow">
         <div class="info_header w-full flex justify-between items-center">
-          <span >Nombre de clicks</span>
+          <span >Redirections</span>
           <span class="font-semibold text-xl px-4 py-1 bg-violet-200 rounded">{campaignSummary.stats.clicked}</span>
         </div>
         {#key $valueClicked}
@@ -307,9 +307,9 @@
         {/key}
       </div>
 
-      <div class="info flex flex-col items-center gap-8 bg-muted rounded p-6 shadow">
+      <div class=" col-span-4 lg:col-span-2 xl:col-span-1 flex flex-col items-center gap-8 bg-muted rounded p-6 shadow">
         <div class="info_header w-full flex justify-between items-center">
-          <span >Nombre de données envoyées</span>
+          <span >Données envoyées</span>
           <span class="font-semibold text-xl px-4 py-1 bg-violet-200 rounded">{campaignSummary.stats.submitted_data}</span>
         </div>
         {#key $valueSubmittedData}
@@ -326,11 +326,11 @@
     </div>
 
     <div class="models grid grid-cols-11 gap-6">
-      <div class="model col-span-6 h-96 flex flex-col gap-4 bg-muted rounded p-6 shadow overflow-y-auto">
+      <div class="model col-span-11 lg:col-span-6 h-96 flex flex-col gap-4 bg-muted rounded p-6 shadow overflow-y-auto">
         <span >Modèle de redirection</span>
         <iframe srcdoc={campaign.page.html} class="w-full h-full bg-white shadow rounded p-3" title="Redirection Model"></iframe>
       </div>
-      <div class="model col-span-5 h-96 flex flex-col gap-4 bg-muted rounded p-6 shadow">
+      <div class="model col-span-11 lg:col-span-5 h-96 flex flex-col gap-4 bg-muted rounded p-6 shadow">
         <span >Modèle de mail</span>
         <iframe srcdoc={campaign.template.html} class="w-full h-full bg-white shadow rounded p-3" title="Redirection Model"></iframe>
       </div>
@@ -396,7 +396,7 @@
             <div class="relative w-1/3">
                 <Button class="bg-accent" on:click={() => changePageUser(currentPageUser - 1)} disabled={currentPageUser === 1}>Précédent</Button>
             </div>
-            <div class="relative w-1/3 flex justify-center">
+            <div class="relative w-1/3 hidden sm:flex flex justify-center">
                 <span class="mx-2 text-sm italic">Page {currentPageUser} sur {totalPagesUser}</span>
             </div>
             <div class="relative w-1/3 flex justify-end">

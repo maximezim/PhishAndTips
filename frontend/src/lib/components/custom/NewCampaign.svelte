@@ -123,7 +123,7 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class="bg-accent" builders={[builder]}>Créer une campagne</Button>
+    <Button class="bg-accent sm:w-auto w-full" builders={[builder]}>Créer une campagne</Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-4xl flex flex-col max-h-[90vh] overflow-y-auto">
     <AlertDialog.Header>

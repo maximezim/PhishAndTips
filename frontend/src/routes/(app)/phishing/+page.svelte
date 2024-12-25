@@ -82,10 +82,10 @@
 
 </script>
 
-<main class="relative z-10 flex flex-1 flex-col flex-grow gap-4 p-4 md:gap-8 md:p-8">
+<main class="relative z-10 flex flex-1 flex-col flex-grow gap-4 py-5 px-5 sm:py-6 sm:px-8">
 
-    <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-10">
-      <Card.Root class="col-span-5 row-span-2">
+    <div class="grid gap-6 grid-cols-10">
+      <Card.Root class="col-span-10 lg:col-span-6 row-span-2">
         <Card.Header class="flex flex-col gap-3 space-y-0">
           <Card.Title class="text-lg font-semibold flex items-center gap-3">
             <img src={fish_svg} alt="fish" class="w-6 h-6"/>
@@ -111,8 +111,8 @@
                 <p class="text-muted">Aucune campagne</p>
             {/if}
         </Card.Content>
-        <Card.Footer class="flex justify-end items-center gap-3">
-            <Button variant="outline" href={`/phishing/campaigns?${queryParamsCampaign}`}>Voir toutes les campagnes</Button>
+        <Card.Footer class="flex flex-wrap justify-end items-center gap-3">
+            <Button class="sm:w-auto w-full" variant="outline" href={`/phishing/campaigns?${queryParamsCampaign}`}>Voir toutes les campagnes</Button>
             <NewCampaign 
                 groups={groups}
                 pages={pages}
@@ -121,7 +121,7 @@
         </Card.Footer>
       </Card.Root>
 
-      <Card.Root class="col-span-5 row-span-2">
+      <Card.Root class="col-span-10 lg:col-span-4 row-span-2">
         <Card.Header class="flex flex-row items-center justify-between space-y-0 ">
             <Card.Title class="text-lg font-semibold flex items-center gap-3">
                 <iconify-icon class="text-3xl" icon="mingcute:web-fill"></iconify-icon>
@@ -156,7 +156,7 @@
             </div>
         </Card.Content>
         <Card.Footer class="flex justify-end items-center gap-3">
-            <Button variant="outline" href={`phishing/model?${queryParamsModel}`}>Voir touts les modèles</Button>
+            <Button class="sm:w-auto w-full" variant="outline" href={`phishing/model?${queryParamsModel}`}>Voir touts les modèles</Button>
         </Card.Footer>
       </Card.Root>
 
@@ -193,7 +193,7 @@
                         <span class="font-medium">{group.name}</span>
                         <span class="text-muted-foreground hidden text-sm md:inline">{group.date}</span>
                       </Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell class="hidden sm:table-cell">
                         <span>{formatDate(group.modified_date)}</span>
                       </Table.Cell>
                       <Table.Cell class="hidden sm:table-cell">
@@ -212,7 +212,7 @@
                     <div class="relative w-1/3">
                         <Button class="bg-accent" on:click={() => changePageGroup(currentPageGroup - 1)} disabled={currentPageGroup === 1}>Précédent</Button>
                     </div>
-                    <div class="relative w-1/3 flex justify-center">
+                    <div class="hidden sm:flex relative w-1/3 flex justify-center">
                         <span class="mx-2 text-sm italic">Page {currentPageGroup} sur {totalPagesGroup}</span>
                     </div>
                     <div class="relative w-1/3 flex justify-end">

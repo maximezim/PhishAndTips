@@ -4,7 +4,7 @@
     import 'iconify-icon';
 </script>
 
-<div class="relative z-10 flex flex-col w-full py-6 px-8">
+<div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
 
     <div class="flex items-center gap-1">
         <iconify-icon class="me-2 text-2xl" icon="mingcute:video-camera-fill" style="color: #9082EC"></iconify-icon>

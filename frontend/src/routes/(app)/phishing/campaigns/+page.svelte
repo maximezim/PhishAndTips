@@ -41,16 +41,16 @@
 
     function handleStyle(){
         if(campaigns.length > 1) {
-            campaignStyle = "grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-8";
+            campaignStyle = "grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-8";
         }else{
-            campaignStyle = "grid grid-cols-6 gap-5 my-8";
-            campagneStyleItem = "col-span-6 lg:col-span-3 xl:col-span-2";
+            campaignStyle = "grid grid-cols-1 sm:grid-cols-6 gap-5 my-8";
+            campagneStyleItem = "col-span-1 sm:col-span-6 lg:col-span-3 xl:col-span-2";
         }
     }
 
 </script>
 
-<div class="relative z-10 flex flex-col w-full py-6 px-8">
+<div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
     <div class="header flex items-center gap-4">
         <img src={fish_svg} alt="fish" class="w-5 h-5"/>
         <h1 class="text-2xl font-semibold">Mes campagnes</h1>

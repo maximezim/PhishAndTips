@@ -20,13 +20,13 @@
 
     function handleStyle(){
         if(pages.length > 1) {
-            stylePage = "grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-8";
+            stylePage = "grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-6";
         }else{
             stylePage = "grid grid-cols-6 gap-5 my-8";
             stylePageItem = "col-span-6 lg:col-span-3 xl:col-span-2";
         }
         if(templates.length > 1) {
-            styleTemplate = "grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-8";
+            styleTemplate = "grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-6";
         }else{
             styleTemplate = "grid grid-cols-6 gap-5 my-8";
             styleTemplateItem = "col-span-6 lg:col-span-3 xl:col-span-2";
@@ -47,9 +47,9 @@
 
 </script>
 
-<div class="relative z-10 flex flex-col w-full py-6 px-8">
+<div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
     <div class="flex items-center gap-4">
-        <iconify-icon class="text-3xl" icon="mingcute:pic-ai-fill"></iconify-icon>
+        <iconify-icon class="text-2xl" icon="mingcute:pic-ai-fill"></iconify-icon>
         <h1 class="text-xl font-semibold">Mes modèles</h1>
     </div>
 
@@ -89,7 +89,7 @@
     </div>
 
     <div class="flex items-center gap-4 mt-4">
-        <iconify-icon class="text-3xl" icon="mingcute:mail-ai-fill"></iconify-icon>
+        <iconify-icon class="text-2xl" icon="mingcute:mail-ai-fill"></iconify-icon>
         <h1 class="text-xl font-semibold">Mes mails</h1>
     </div>
 

@@ -67,10 +67,10 @@
     }
 </script>
 
-<div class="relative z-10 container w-full p-9 flex flex-col gap-12">
+<div class="relative z-10 container w-full flex flex-col gap-8 py-5 px-5 sm:py-6 sm:px-8">
     <div class="test_bloc w-full flex flex-col gap-3">
-        <div class="title w-full flex items-center gap-2">
-            <iconify-icon class="me-2 text-3xl" icon="mingcute:safe-lock-fill"></iconify-icon>
+        <div class="title w-full flex items-center gap-1">
+            <iconify-icon class="me-2 text-3xl" icon="mingcute:safe-lock-fill" style="color: #9082EC"></iconify-icon>
             <h1 class="text-xl font-semibold">Test de mot de passe</h1>
         </div>
         <Separator color='bg-accent' width='w-2/5'/>
@@ -82,29 +82,29 @@
             placeholder="Tapez votre mot de passe..."
             on:input={checkPassword}
         />
-        <div class="tags flex gap-3 mt-3 items-center">
-            <div class="level py-2 px-4 {result_style}">
+        <div class="tags grid grid-cols-6 sm:flex sm:flex-nowrap gap-3 mt-3 items-center">
+            <div class="col-span-3 sm:flex sm:flex-grow level py-2 px-4 {result_style}">
                 <p class="text-white">{level}</p>
             </div>
-            <div class="upper py-2 px-4 bg-gray-100">
+            <div class="col-span-3 sm:flex sm:flex-grow upper py-2 px-4 bg-gray-100">
                 <p class="{uppercase ? 'text-green-400' : 'text-red-400'}">Majuscule</p>
             </div>
-            <div class="number py-2 px-4 bg-gray-100">
+            <div class="col-span-2 sm:flex sm:flex-grow number py-2 px-4 bg-gray-100">
                 <p class="{number ? 'text-green-400' : 'text-red-400'}">Chiffre</p>
             </div>
-            <div class="special py-2 px-4 bg-gray-100">
+            <div class="col-span-4 sm:flex sm:flex-grow special py-2 px-4 bg-gray-100">
                 <p class="{special ? 'text-green-400' : 'text-red-400'}">Caractère spécial</p>
             </div>
         </div>
-        <div class="time_crack flex gap-3 items-center px-4 py-2 bg-gray-100">
+        <div class="time_crack flex flex-col sm:flex-row gap-3 sm:items-center px-4 py-2 bg-gray-100">
             <p class="font-semibold">Temps pour cracker le mot de passe : </p>
             <p class="py-2 px-4 {result_style} text-white">{time}</p>
         </div>
     </div>
 
     <div class="tips_bloc w-full flex flex-col gap-3">
-        <div class="title w-full flex items-center gap-2">
-            <iconify-icon class="me-2 text-3xl" icon="mingcute:light-fill"></iconify-icon>
+        <div class="title w-full flex items-center gap-1">
+            <iconify-icon class="me-2 text-3xl" icon="mingcute:light-fill" style="color: #9082EC"></iconify-icon>
             <h1 class="text-xl font-semibold">Conseils</h1>
         </div>
         <Separator color='bg-accent' width='w-2/5'/>
