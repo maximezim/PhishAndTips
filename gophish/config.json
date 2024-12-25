@@ -25,5 +25,6 @@
     "from_name": "Gophish",
     "ignore_cert_errors": true,
     "use_tls": false
-  }
+  },
+  "admin_api_key": "f0549ceb19ac599143006773469a823b6a289b6fd9ca0720b7f9d6b9ad91201b"
 }
