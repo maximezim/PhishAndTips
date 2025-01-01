@@ -4,6 +4,8 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -180,7 +182,20 @@ public class AuthenticationController {
         user.setPasswordHash(passwordEncoder.encode(password));
         userDataRepository.save(user);
 
-        //TODO: Send email with password
+        JavaMailSender mailSender = new JavaMailSenderImpl();
+        EmailSender emailSender = new EmailSender(mailSender);
+
+        String subject = "Votre compte Phish&Tips";
+        String emailContent = "Votre compte Phish&Tips a été créé.\nVotre mot de passe est : " + password
+                + "\nVous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe."
+                + "\nVeuillez changer votre mot de passe dès votre première connexion."
+                + "\n\nCordialement,\nL'équipe Phish&Tips";
+
+        try {
+            emailSender.sendEmail(request.getEmail(), subject, emailContent);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
+        }
 
         return ResponseEntity.ok("User registered successfully");
     }
