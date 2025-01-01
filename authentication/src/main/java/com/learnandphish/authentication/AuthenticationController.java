@@ -122,6 +122,7 @@ public class AuthenticationController {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setChangePassword(false);
         userDataRepository.save(user);
 
         return ResponseEntity.ok("Password changed successfully");
@@ -180,6 +181,7 @@ public class AuthenticationController {
         user.setRole(request.getRole());
         user.setPosition(request.getPosition());
         user.setPasswordHash(passwordEncoder.encode(password));
+        user.setChangePassword(true);
         userDataRepository.save(user);
 
         JavaMailSender mailSender = new JavaMailSenderImpl();
