@@ -150,18 +150,18 @@ public class AuthenticationController {
 
     @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/test-user")
-    public ResponseEntity<?> testUser() {
+    public ResponseEntity<String> testUser() {
         return ResponseEntity.ok("This is an user endpoint");
     }
 
     @RolesAllowed("ADMIN")
     @GetMapping("/test-admin")
-    public ResponseEntity<?> testAdmin() {
+    public ResponseEntity<String> testAdmin() {
         return ResponseEntity.ok("This is an admin endpoint");
     }
 
     @GetMapping("/test-both")
-    public ResponseEntity<?> testBoth() {
+    public ResponseEntity<String> testBoth() {
         return ResponseEntity.ok("This is an user & admin endpoint");
     }
 
