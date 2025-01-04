@@ -128,6 +128,49 @@ public class AuthenticationController {
         return ResponseEntity.ok("Password changed successfully");
     }
 
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody String email) {
+        UserData user = userDataRepository.findByEmail(email)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        String password = generatePassword();
+        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setChangePassword(true);
+        userDataRepository.save(user);
+
+        JavaMailSender mailSender = new JavaMailSenderImpl();
+        EmailSender emailSender = new EmailSender(mailSender);
+
+        String subject = "Réinitialisation de votre mot de passe Phish&Tips";
+        String emailContent = "Votre mot de passe Phish&Tips a été réinitialisé.\nVotre nouveau mot de passe est : " + password
+                + "\nVous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe."
+                + "\nVeuillez changer votre mot de passe dès votre première connexion."
+                + "\n\nCordialement,\nL'équipe Phish&Tips";
+
+        try {
+            emailSender.sendEmail(email, subject, emailContent);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
+        }
+
+        return ResponseEntity.ok("Password reset successfully");
+    }
+
+    @RolesAllowed("ADMIN")
+    @PostMapping("/delete-user")
+    public ResponseEntity<?> deleteUser(@RequestBody String email) {
+        UserData user = userDataRepository.findByEmail(email)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        userDataRepository.delete(user);
+
+        return ResponseEntity.ok("User deleted successfully");
+    }
+
     @RolesAllowed("ADMIN")
     @GetMapping("/export-users")
     @Async
