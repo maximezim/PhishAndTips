@@ -22,6 +22,7 @@
       <LoginForm data={data.form} />
     </Card.Content>
   </Card.Root>
+
 </div>
 
 <style>

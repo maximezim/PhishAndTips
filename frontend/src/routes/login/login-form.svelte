@@ -10,7 +10,6 @@
   import { zodClient } from "sveltekit-superforms/adapters";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Label } from "$lib/components/ui/label";
-	import { goto } from "$app/navigation";
   
   export let data: SuperValidated<Infer<FormSchema>>;
   
@@ -26,6 +25,11 @@
     if (show_password) {
       $formData.password = (e.target as HTMLInputElement).value;
     }
+  }
+
+  // handle forget password
+  const forgetPassword = () => {
+    console.log('forget password');
   }
 
 </script>
@@ -59,4 +63,6 @@
     <Form.FieldErrors />
   </Form.Field>
   <Form.Button class="mt-3">Se connecter</Form.Button>
+  <button type="button" on:click={forgetPassword} class={"text-center"}> Mot de passe oublié</button>
 </form>
+
