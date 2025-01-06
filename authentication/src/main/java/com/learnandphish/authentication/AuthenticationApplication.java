@@ -38,6 +38,8 @@ public class AuthenticationApplication {
 				defaultUser.setEmail("admin@example.com");
 				defaultUser.setPasswordHash(passwordEncoder.encode("password"));
 				defaultUser.setRole(Roles.ADMIN);
+				defaultUser.setPosition("Administrator");
+				defaultUser.setChangePassword(false);
 				userDataRepository.save(defaultUser);
 				System.out.println("Test admin user created.");
 			} else {
@@ -56,6 +58,8 @@ public class AuthenticationApplication {
 				defaultUser.setEmail("user@example.com");
 				defaultUser.setPasswordHash(passwordEncoder.encode("password"));
 				defaultUser.setRole(Roles.USER);
+				defaultUser.setPosition("User");
+				defaultUser.setChangePassword(false);
 				userDataRepository.save(defaultUser);
 				System.out.println("Test user user created.");
 			} else {

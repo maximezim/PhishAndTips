@@ -28,16 +28,25 @@ services:
     build:
       context: ./authentication
       dockerfile: Dockerfile
-    # Removed the ports section to prevent direct access
     networks:
       - backend
     depends_on:
-      postgres:
+      mailserver:
         condition: service_healthy
+      postgres:
+        condition: service_started
+
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_MAIL_HOST=mailserver
+      - SPRING_MAIL_PORT=587
+      - SPRING_MAIL_USERNAME=%u
+      - SPRING_MAIL_PASSWORD=%p
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true
+      - MAIL_FROM=mail@example.com
     logging:
       driver: fluentd
       options:
@@ -59,9 +68,6 @@ services:
       - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=auth-service
       - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://authentication-service:8082
       - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/authenticate
-      - GOPHISH_API_KEY=${GOPHISH_API_KEY}
-    env_file:
-      - .env
     logging:
       driver: fluentd
       options:

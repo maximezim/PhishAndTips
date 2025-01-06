@@ -33,6 +33,8 @@ public class UserData implements Serializable {
 
     private String position;
 
+    private Boolean changePassword;
+
     public UserData() {
 
     }
@@ -41,9 +43,7 @@ public class UserData implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setId(int id) { this.id = id; }
 
     public String getFirstName() {
         return firstName;
@@ -92,4 +92,8 @@ public class UserData implements Serializable {
     public void setPosition(String position) {
         this.position = position;
     }
+
+    public Boolean getChangePassword() { return changePassword; }
+
+    public void setChangePassword(Boolean resetPassword) { this.changePassword = resetPassword; }
 }

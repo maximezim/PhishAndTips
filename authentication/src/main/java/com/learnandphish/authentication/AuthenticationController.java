@@ -4,6 +4,8 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -120,9 +122,53 @@ public class AuthenticationController {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setChangePassword(false);
         userDataRepository.save(user);
 
         return ResponseEntity.ok("Password changed successfully");
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody String email) {
+        UserData user = userDataRepository.findByEmail(email)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        String password = generatePassword();
+        user.setPasswordHash(passwordEncoder.encode(password));
+        user.setChangePassword(true);
+        userDataRepository.save(user);
+
+        JavaMailSender mailSender = new JavaMailSenderImpl();
+        EmailSender emailSender = new EmailSender(mailSender);
+
+        String subject = "Réinitialisation de votre mot de passe Phish&Tips";
+        String emailContent = "Votre mot de passe Phish&Tips a été réinitialisé.\nVotre nouveau mot de passe est : " + password
+                + "\nVous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe."
+                + "\nVeuillez changer votre mot de passe dès votre première connexion."
+                + "\n\nCordialement,\nL'équipe Phish&Tips";
+
+        try {
+            emailSender.sendEmail(email, subject, emailContent);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
+        }
+
+        return ResponseEntity.ok("Password reset successfully");
+    }
+
+    @RolesAllowed("ADMIN")
+    @PostMapping("/delete-user")
+    public ResponseEntity<?> deleteUser(@RequestBody String email) {
+        UserData user = userDataRepository.findByEmail(email)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        userDataRepository.delete(user);
+
+        return ResponseEntity.ok("User deleted successfully");
     }
 
     @RolesAllowed("ADMIN")
@@ -147,18 +193,18 @@ public class AuthenticationController {
 
     @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/test-user")
-    public ResponseEntity<?> testUser() {
+    public ResponseEntity<String> testUser() {
         return ResponseEntity.ok("This is an user endpoint");
     }
 
     @RolesAllowed("ADMIN")
     @GetMapping("/test-admin")
-    public ResponseEntity<?> testAdmin() {
+    public ResponseEntity<String> testAdmin() {
         return ResponseEntity.ok("This is an admin endpoint");
     }
 
     @GetMapping("/test-both")
-    public ResponseEntity<?> testBoth() {
+    public ResponseEntity<String> testBoth() {
         return ResponseEntity.ok("This is an user & admin endpoint");
     }
 
@@ -178,9 +224,23 @@ public class AuthenticationController {
         user.setRole(request.getRole());
         user.setPosition(request.getPosition());
         user.setPasswordHash(passwordEncoder.encode(password));
+        user.setChangePassword(true);
         userDataRepository.save(user);
 
-        //TODO: Send email with password
+        JavaMailSender mailSender = new JavaMailSenderImpl();
+        EmailSender emailSender = new EmailSender(mailSender);
+
+        String subject = "Votre compte Phish&Tips";
+        String emailContent = "Votre compte Phish&Tips a été créé.\nVotre mot de passe est : " + password
+                + "\nVous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe."
+                + "\nVeuillez changer votre mot de passe dès votre première connexion."
+                + "\n\nCordialement,\nL'équipe Phish&Tips";
+
+        try {
+            emailSender.sendEmail(request.getEmail(), subject, emailContent);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
+        }
 
         return ResponseEntity.ok("User registered successfully");
     }
