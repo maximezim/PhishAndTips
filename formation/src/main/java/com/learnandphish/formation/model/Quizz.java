@@ -1,4 +1,4 @@
-package com.learnandphish.formation;
+package com.learnandphish.formation.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,13 +7,14 @@ import lombok.*;
 @Data
 @Getter
 @Setter
-@Table(name = "quizz")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Quizz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
-    private String formationId;
+    private Long formationId;
 
     private String json;
 }

@@ -151,6 +151,27 @@ services:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
 
+  postgres-formation:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: formation_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5433"
+    networks:
+      - backend
+    volumes:
+      - ./databases/formation/pgdata:/var/lib/postgresql/data
+      - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
+    command: [ "postgres", "-p", "5433" ]
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
 networks:
   backend:
     driver: bridge

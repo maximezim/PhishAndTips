@@ -1,21 +1,19 @@
-package com.learnandphish.formation;
+package com.learnandphish.formation.model;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
 @Getter
 @Setter
 @Builder
-@Table(name = "formation")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Formation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     private String name;
 
