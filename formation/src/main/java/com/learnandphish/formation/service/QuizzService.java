@@ -14,13 +14,6 @@ import org.springframework.stereotype.Service;
 public class QuizzService {
     private final QuizzRepository quizzRepository;
 
-    public Quizz createQuizz(QuizzRequest quizzRequest) {
-        Quizz quizz = new Quizz(quizzRequest.id(),
-                quizzRequest.json());
-        log.info("Quizz {} created successfully", quizz);
-        return quizzRepository.save(quizz);
-    }
-
     public Quizz getQuizzById(Integer id) {
         return quizzRepository.findById(id).orElseThrow(() -> new RuntimeException("Quizz not found"));
     }

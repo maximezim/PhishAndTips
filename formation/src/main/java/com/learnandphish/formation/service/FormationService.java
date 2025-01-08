@@ -15,17 +15,6 @@ import java.util.List;
 public class FormationService {
     private final FormationRepository formationRepository;
 
-    public Formation createFormation(FormationRequest formationRequest) {
-        Formation formation = Formation.builder()
-                .id(formationRequest.id())
-                .name(formationRequest.name())
-                .description(formationRequest.description())
-                .build();
-        log.info("Formation {} created successfully", formation);
-        return formationRepository.save(formation);
-    }
-
-
     public Formation getFormationById(Integer id) {
         return formationRepository.findById(id).orElseThrow(() -> new RuntimeException("Formation not found"));
     }

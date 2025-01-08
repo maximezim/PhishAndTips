@@ -16,13 +16,6 @@ import java.util.List;
 public class FormationController {
     private final FormationService formationService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Formation> createFormation(@RequestBody FormationRequest formationRequest) {
-        Formation createdFormation = formationService.createFormation(formationRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdFormation);
-
-    }
 
     @GetMapping
     public ResponseEntity<List<Formation>> getAllFormations() {

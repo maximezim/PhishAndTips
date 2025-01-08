@@ -16,13 +16,6 @@ import java.util.List;
 public class QuizzController {
     private final QuizzService quizzService;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Quizz> createQuizz(@RequestBody QuizzRequest  quizzRequest) {
-        Quizz createdQuizz = quizzService.createQuizz(quizzRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdQuizz);
-    }
-
     @GetMapping
     public ResponseEntity<List<Quizz>> getAllQuizzs() {
         Iterable<Quizz> quizzs = quizzService.getAllQuizzs();
