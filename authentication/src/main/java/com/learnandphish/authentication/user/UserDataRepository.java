@@ -11,12 +11,6 @@ import java.util.List;
 @Repository
 public interface UserDataRepository extends JpaRepository<UserData, Long> {
 
-    public List<UserData> findByFirstName(String firstName);
-
-    public List<UserData> findByLastName(String lastName);
-
-    public List<UserData> findByEmail(String email);
-
-    public List<UserData> findByRole(Enum<Roles> role);
+    List<UserData> findByEmail(String email);
 
 }

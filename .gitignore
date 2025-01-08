@@ -1,7 +1,7 @@
-.gradle/
-.github/
-.idea/
-.vscode/
+.gradle
+.github
+.idea
+.vscode
 /build/
 /databases/*
 !/databases/scripts/
