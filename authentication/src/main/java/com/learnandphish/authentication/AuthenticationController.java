@@ -1,5 +1,10 @@
 package com.learnandphish.authentication;
 
+import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.jwt.JwtRequest;
+import com.learnandphish.authentication.jwt.JwtResponse;
+import com.learnandphish.authentication.jwt.JwtUserDetailsService;
+import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.http.HttpStatus;
-
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.concurrent.CompletableFuture;
