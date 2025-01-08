@@ -1,4 +1,4 @@
-package com.learnandphish.authentication;
+package com.learnandphish.authentication.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -6,7 +6,6 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.JwtParser;
 
 import java.io.File;
 import java.nio.file.Files;

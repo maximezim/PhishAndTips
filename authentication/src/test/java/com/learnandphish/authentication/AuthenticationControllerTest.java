@@ -1,5 +1,11 @@
 package com.learnandphish.authentication;
 
+import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.jwt.JwtUserDetailsService;
+import com.learnandphish.authentication.user.ChangePasswordRequest;
+import com.learnandphish.authentication.user.Roles;
+import com.learnandphish.authentication.user.UserData;
+import com.learnandphish.authentication.user.UserDataRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +23,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class AuthenticationControllerTest {

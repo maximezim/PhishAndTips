@@ -1,11 +1,16 @@
 package com.learnandphish.authentication;
 
+import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.jwt.JwtRequest;
+import com.learnandphish.authentication.jwt.JwtResponse;
+import com.learnandphish.authentication.jwt.JwtUserDetailsService;
+import com.learnandphish.authentication.mail.EmailSender;
+import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;

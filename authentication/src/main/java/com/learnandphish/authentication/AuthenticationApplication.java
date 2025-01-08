@@ -1,5 +1,8 @@
 package com.learnandphish.authentication;
 
+import com.learnandphish.authentication.user.Roles;
+import com.learnandphish.authentication.user.UserData;
+import com.learnandphish.authentication.user.UserDataRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
