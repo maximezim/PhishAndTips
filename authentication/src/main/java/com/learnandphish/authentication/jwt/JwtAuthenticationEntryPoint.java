@@ -1,4 +1,4 @@
-package com.learnandphish.authentication;
+package com.learnandphish.authentication.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

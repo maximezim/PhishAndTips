@@ -1,11 +1,15 @@
 package com.learnandphish.authentication;
 
+import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.jwt.JwtRequest;
+import com.learnandphish.authentication.jwt.JwtResponse;
+import com.learnandphish.authentication.jwt.JwtUserDetailsService;
+import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,9 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
 import org.springframework.http.HttpStatus;
-
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.concurrent.CompletableFuture;
@@ -45,6 +47,9 @@ public class AuthenticationController {
 
     @Autowired
     private UserExportService userExportService;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     /**
      * Endpoint to authenticate users and provide JWT token.
@@ -140,9 +145,9 @@ public class AuthenticationController {
         user.setChangePassword(true);
         userDataRepository.save(user);
 
-        JavaMailSender mailSender = new JavaMailSenderImpl();
         EmailSender emailSender = new EmailSender(mailSender);
 
+        //TODO: Fix content, use emailTemplate
         String subject = "Réinitialisation de votre mot de passe Phish&Tips";
         String emailContent = "Votre mot de passe Phish&Tips a été réinitialisé.\nVotre nouveau mot de passe est : " + password
                 + "\nVous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe."
@@ -152,6 +157,7 @@ public class AuthenticationController {
         try {
             emailSender.sendEmail(email, subject, emailContent);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
         }
 
@@ -227,7 +233,6 @@ public class AuthenticationController {
         user.setChangePassword(true);
         userDataRepository.save(user);
 
-        JavaMailSender mailSender = new JavaMailSenderImpl();
         EmailSender emailSender = new EmailSender(mailSender);
 
         String subject = "Votre compte Phish&Tips";
@@ -258,7 +263,13 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        UserDTO userDTO = new UserDTO(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPosition(), user.getRole());
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setPosition(user.getPosition());
+        userDTO.setRole(user.getRole());
         return ResponseEntity.ok(userDTO);
     }
 

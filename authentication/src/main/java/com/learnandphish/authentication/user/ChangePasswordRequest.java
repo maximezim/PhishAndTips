@@ -1,4 +1,4 @@
-package com.learnandphish.authentication;
+package com.learnandphish.authentication.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
