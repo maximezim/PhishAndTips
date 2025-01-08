@@ -148,11 +148,17 @@ public class AuthenticationController {
         EmailSender emailSender = new EmailSender(mailSender);
 
         //TODO: Fix content, use emailTemplate
-        String subject = "Réinitialisation de votre mot de passe Phish&Tips";
-        String emailContent = "Votre mot de passe Phish&Tips a été réinitialisé.\nVotre nouveau mot de passe est : " + password
-                + "\nVous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe."
-                + "\nVeuillez changer votre mot de passe dès votre première connexion."
-                + "\n\nCordialement,\nL'équipe Phish&Tips";
+        String subject = "Votre mot de passe Phish&Tips";
+        String emailContent = "<html>" +
+                "<body>" +
+                "<p>Votre mot de passe <strong>Phish&amp;Tips</strong> a été réinitialisé.</p>" +
+                "<p>Votre nouveau mot de passe est : <strong>" + password + "</strong></p>" +
+                "<p>Vous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe.</p>" +
+                "<p>Veuillez changer votre mot de passe dès votre première connexion.</p>" +
+                "<p>Cordialement,</p>" +
+                "<p>L'équipe <strong>Phish&amp;Tips</strong></p>" +
+                "</body>" +
+                "</html>";
 
         try {
             emailSender.sendEmail(email, subject, emailContent);
@@ -236,10 +242,16 @@ public class AuthenticationController {
         EmailSender emailSender = new EmailSender(mailSender);
 
         String subject = "Votre compte Phish&Tips";
-        String emailContent = "Votre compte Phish&Tips a été créé.\nVotre mot de passe est : " + password
-                + "\nVous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe."
-                + "\nVeuillez changer votre mot de passe dès votre première connexion."
-                + "\n\nCordialement,\nL'équipe Phish&Tips";
+        String emailContent = "<html>" +
+                "<body>" +
+                "<p>Votre compte <strong>Phish&amp;Tips</strong> a été créé.</p>" +
+                "<p>Votre mot de passe est : <strong>" + password + "</strong></p>" +
+                "<p>Vous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe.</p>" +
+                "<p>Veuillez changer votre mot de passe dès votre première connexion.</p>" +
+                "<p>Cordialement,</p>" +
+                "<p>L'équipe <strong>Phish&amp;Tips</strong></p>" +
+                "</body>" +
+                "</html>";
 
         try {
             emailSender.sendEmail(request.getEmail(), subject, emailContent);
