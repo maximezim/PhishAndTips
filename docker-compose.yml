@@ -28,6 +28,7 @@ services:
     build:
       context: ./authentication
       dockerfile: Dockerfile
+    # Removed the ports section to prevent direct access
     networks:
       - backend
     depends_on:
