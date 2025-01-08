@@ -46,6 +46,9 @@ public class AuthenticationController {
     @Autowired
     private UserExportService userExportService;
 
+    @Autowired
+    private JavaMailSender mailSender;
+
     /**
      * Endpoint to authenticate users and provide JWT token.
      *
@@ -140,9 +143,9 @@ public class AuthenticationController {
         user.setChangePassword(true);
         userDataRepository.save(user);
 
-        JavaMailSender mailSender = new JavaMailSenderImpl();
         EmailSender emailSender = new EmailSender(mailSender);
 
+        //TODO: Fix content, use emailTemplate
         String subject = "Réinitialisation de votre mot de passe Phish&Tips";
         String emailContent = "Votre mot de passe Phish&Tips a été réinitialisé.\nVotre nouveau mot de passe est : " + password
                 + "\nVous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe."
@@ -228,7 +231,6 @@ public class AuthenticationController {
         user.setChangePassword(true);
         userDataRepository.save(user);
 
-        JavaMailSender mailSender = new JavaMailSenderImpl();
         EmailSender emailSender = new EmailSender(mailSender);
 
         String subject = "Votre compte Phish&Tips";

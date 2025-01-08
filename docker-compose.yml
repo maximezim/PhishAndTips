@@ -133,6 +133,8 @@ services:
       - "587:587"   # Submission
       - "993:993"   # IMAPS
     restart: unless-stopped
+    networks:
+      - backend
 
   webmail:
     image: roundcube/roundcubemail:latest
@@ -154,6 +156,8 @@ services:
     volumes:
       - webmail_data:/var/www/html
       - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
+    networks:
+      - backend
 
   gophish:
     image: gophish/gophish:latest
