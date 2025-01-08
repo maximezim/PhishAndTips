@@ -1,7 +1,6 @@
 package com.learnandphish.formation.service;
 
 
-import com.learnandphish.formation.dto.QuizzRequest;
 import com.learnandphish.formation.model.Quizz;
 import com.learnandphish.formation.repository.QuizzRepository;
 import lombok.RequiredArgsConstructor;

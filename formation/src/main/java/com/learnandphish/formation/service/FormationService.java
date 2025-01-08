@@ -1,6 +1,5 @@
 package com.learnandphish.formation.service;
 
-import com.learnandphish.formation.dto.FormationRequest;
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.repository.FormationRepository;
 import lombok.RequiredArgsConstructor;

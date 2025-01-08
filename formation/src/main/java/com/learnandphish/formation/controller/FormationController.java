@@ -1,10 +1,8 @@
 package com.learnandphish.formation.controller;
 
-import com.learnandphish.formation.dto.FormationRequest;
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.service.FormationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
