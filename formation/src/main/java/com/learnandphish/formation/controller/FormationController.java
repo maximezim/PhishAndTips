@@ -31,21 +31,9 @@ public class FormationController {
     }
 
     @GetMapping("/{formationId}")
-    public ResponseEntity<Formation> getFormationById(@PathVariable Long formationId) {
+    public ResponseEntity<Formation> getFormationById(@PathVariable Integer formationId) {
         Formation formation = formationService.getFormationById(formationId);
         return formation != null ? ResponseEntity.ok(formation) : ResponseEntity.notFound().build();
-    }
-
-    @DeleteMapping("/{formationId}")
-    public ResponseEntity<Void> deleteFormation(@PathVariable Long formationId) {
-        formationService.deleteFormation(formationId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping
-    public ResponseEntity<Formation> updateFormation(@RequestBody FormationRequest formationRequest) {
-        Formation updatedFormation = formationService.updateFormation(formationRequest);
-        return ResponseEntity.ok(updatedFormation);
     }
 
 

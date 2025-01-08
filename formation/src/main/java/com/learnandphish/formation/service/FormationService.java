@@ -2,7 +2,6 @@ package com.learnandphish.formation.service;
 
 import com.learnandphish.formation.dto.FormationRequest;
 import com.learnandphish.formation.model.Formation;
-import com.learnandphish.formation.model.Quizz;
 import com.learnandphish.formation.repository.FormationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,20 +26,8 @@ public class FormationService {
     }
 
 
-    public Formation getFormationById(Long id) {
+    public Formation getFormationById(Integer id) {
         return formationRepository.findById(id).orElseThrow(() -> new RuntimeException("Formation not found"));
-    }
-
-    public void deleteFormation(Long id) {
-        formationRepository.deleteById(id);
-    }
-
-    public Formation updateFormation(FormationRequest formationRequest) {
-        Formation formation = formationRepository.findById(formationRequest.id())
-                .orElseThrow(() -> new RuntimeException("Formation not found"));
-        formation.setName(formationRequest.name());
-        formation.setDescription(formationRequest.description());
-        return formationRepository.save(formation);
     }
 
     public List<Formation> getAllFormations() {

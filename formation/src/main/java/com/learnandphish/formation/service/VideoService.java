@@ -15,12 +15,11 @@ public class VideoService {
 
     public Video createVideo(VideoRequest videoRequest) {
         Video video = new Video(videoRequest.id(),
-                videoRequest.formationId(),
                 videoRequest.title(),
                 videoRequest.description(),
                 videoRequest.url(),
                 videoRequest.duration(),
-                videoRequest.quizId());
+                videoRequest.difficulty());
         log.info("Video {} created successfully", video);
         return videoRepository.save(video);
     }
@@ -36,12 +35,10 @@ public class VideoService {
     public Video updateVideo(VideoRequest videoRequest) {
         Video video = videoRepository.findById(videoRequest.id())
                 .orElseThrow(() -> new RuntimeException("Video not found"));
-        video.setFormationId(videoRequest.formationId());
         video.setTitle(videoRequest.title());
         video.setDescription(videoRequest.description());
         video.setUrl(videoRequest.url());
         video.setDuration(videoRequest.duration());
-        video.setQuizId(videoRequest.quizId());
         return videoRepository.save(video);
     }
 
@@ -49,7 +46,7 @@ public class VideoService {
         return videoRepository.findAll();
     }
 
-    public Iterable<Video> getVideosByFormationId(String formationId) {
+    /*public Iterable<Video> getVideosByFormationId(String formationId) {
         return videoRepository.findByFormationId(formationId);
-    }
+    }*/
 }

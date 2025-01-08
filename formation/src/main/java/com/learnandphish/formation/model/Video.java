@@ -12,8 +12,6 @@ public class Video {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String formationId;
-
     private String title;
 
     private String description;
@@ -22,15 +20,14 @@ public class Video {
 
     private Integer duration;
 
-    private String quizId;
+    private Integer difficulty;
 
-    public Video(Long id, String formationId, String title, String description, String url, Integer duration, String quizId) {
+    public Video(Long id, String title, String description, String url, Integer duration, Integer difficulty) {
         this.id = id;
-        this.formationId = formationId;
         this.title = title;
         this.description = description;
         this.url = url;
         this.duration = duration;
-        this.quizId = quizId;
+        this.difficulty = difficulty;
     }
 }

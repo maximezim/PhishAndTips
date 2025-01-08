@@ -1,4 +1,4 @@
 package com.learnandphish.formation.dto;
 
-public record QuizzRequest(Long id, Long formationId, String json) {
+public record QuizzRequest(Integer id, String json) {
 }

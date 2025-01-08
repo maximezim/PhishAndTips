@@ -11,10 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Quizz {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    private Long formationId;
+    private Integer id;
 
     private String json;
 }
