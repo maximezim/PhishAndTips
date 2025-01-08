@@ -67,4 +67,24 @@ public class AuthenticationApplication {
 			}
 		};
 	}
+
+	@Bean
+	public CommandLineRunner initializeKarineUser() {
+		return args -> {
+			if (userDataRepository.findByEmail("karine@example.com").isEmpty()) {
+				UserData karineUser = new UserData();
+				karineUser.setFirstName("Karine");
+				karineUser.setLastName("Lafontaine");
+				karineUser.setEmail("karine@example.com");
+				karineUser.setPasswordHash(passwordEncoder.encode("password"));
+				karineUser.setRole(Roles.USER);
+				karineUser.setPosition("G.O.A.T.");
+				karineUser.setChangePassword(false);
+				userDataRepository.save(karineUser);
+				System.out.println("Karine user user created.");
+			} else {
+				System.out.println("Karine user already exists.");
+			}
+		};
+	}
 }

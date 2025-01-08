@@ -31,22 +31,22 @@ services:
     networks:
       - backend
     depends_on:
-      mailserver:
-        condition: service_healthy
       postgres:
         condition: service_started
-
+    env_file:
+      - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
       - SPRING_MAIL_HOST=mailserver
-      - SPRING_MAIL_PORT=587
-      - SPRING_MAIL_USERNAME=%u
-      - SPRING_MAIL_PASSWORD=%p
+      - SPRING_MAIL_PORT=25
+      - SPRING_MAIL_USERNAME=${AUTH_MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${AUTH_MAIL_PASSWORD}
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
-      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true
-      - MAIL_FROM=mail@example.com
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false
+      - MAIL_FROM=sender@example.com
     logging:
       driver: fluentd
       options:
