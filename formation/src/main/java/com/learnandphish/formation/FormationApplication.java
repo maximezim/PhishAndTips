@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Bean;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.Properties;
 
 @Slf4j
 @SpringBootApplication
@@ -75,7 +74,6 @@ public class FormationApplication {
             if (folder.exists() && folder.isDirectory()) {
                 File[] listOfFiles = folder.listFiles();
                 if (listOfFiles != null && listOfFiles.length > 0) {
-                    Gson gson = new Gson();
                     for (File file : listOfFiles) {
                         String formationId = file.getName();
                         // Make sure the file's name is a number
@@ -83,8 +81,7 @@ public class FormationApplication {
                             log.error("File name is not a number");
                         }else {
                             String content = Files.readString(file.toPath());
-                            JsonParser parser = new JsonParser();
-                            JsonObject obj = parser.parse(content).getAsJsonObject();
+                            JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
                             String formationName = obj.get("name").getAsString();
                             String formationDescription = obj.get("description").getAsString();
                             Formation formation = new Formation();
