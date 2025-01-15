@@ -71,9 +71,10 @@ class AuthService {
 
 	// Delete token from server
 	public static async deleteTokenFromServer(cookies: any): Promise<void> {
-		cookies.remove('authToken');
+		cookies.delete('authToken');
 	}
 
+	// Check if user need to change password from server
 	public static async needChangePasswordFromServer(cookies: any): Promise<boolean> {
 		const token = await AuthService.getTokenFromServer(cookies);
 		if (token) {
@@ -91,6 +92,7 @@ class AuthService {
 		return false;
 	}
 
+	// Change password from server
 	public static async changePasswordFromServer(
 		cookies: any,
 		currentPassword: string,
@@ -109,6 +111,7 @@ class AuthService {
 			});
 			console.log('Réponse changement de mot de passe:', response);
 			if (response.ok) {
+				AuthService.deleteTokenFromServer(cookies);
 				return true;
 			}
 		} catch (error: any) {

@@ -21,6 +21,11 @@
 
   let show_password = false;
   $: type = show_password ? 'text' : 'password'  
+  $: onInputCurrentPassword = (e: InputEvent) => {
+    if (show_password) {
+      $formData.current_password = (e.target as HTMLInputElement).value;
+    }
+  }
   $: onInputNewPassword = (e: InputEvent) => {
     if (show_password) {
       $formData.new_password = (e.target as HTMLInputElement).value;
@@ -31,15 +36,14 @@
       $formData.confirm_password = (e.target as HTMLInputElement).value;
     }
   }
-
 </script>
 
 <!-- Form component using validation schema from schema.ts -->
 <form method="POST" use:enhance class={"flex flex-col gap-2"}>
   <Form.Field {form} name="current_password">
     <Form.Control let:attrs>
-      <Form.Label class={"text-base"}>Nouveau mot de passe</Form.Label>
-      <Input { type } {...attrs} on:input={ onInputNewPassword } bind:value={$formData.new_password} />
+      <Form.Label class={"text-base"}>Mot de passe actuel</Form.Label>
+      <Input { type } {...attrs} on:input={ onInputCurrentPassword } bind:value={$formData.current_password} />
     </Form.Control>
     <Form.Description />
     <Form.FieldErrors class="w-96" />
