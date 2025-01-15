@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -271,6 +272,13 @@ public class AuthenticationController {
         userDTO.setPosition(user.getPosition());
         userDTO.setRole(user.getRole());
         return ResponseEntity.ok(userDTO);
+    }
+
+    @RolesAllowed({"ADMIN"})
+    @GetMapping("/get-all-users")
+    public ResponseEntity<List<GophishUserDTO>> getAllUsers() {
+        List<UserData> users = userDataRepository.findAll();
+        return ResponseEntity.ok(userExportService.convertToGophishUsersDTO(users));
     }
 
     /**

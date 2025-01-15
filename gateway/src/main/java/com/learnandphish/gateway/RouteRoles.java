@@ -20,7 +20,8 @@ public class RouteRoles {
         Map.entry("/test-admin", List.of("ADMIN")),
         Map.entry("/test-user", List.of("USER", "ADMIN")),
         Map.entry("/test-both", List.of("USER", "ADMIN")),
-        Map.entry("/api/**", List.of("ADMIN"))
+        Map.entry("/api/**", List.of("ADMIN")),
+        Map.entry("/get-all-users", List.of("ADMIN"))
     );
 
     public static List<String> requiredRolesForPath(String path) {
