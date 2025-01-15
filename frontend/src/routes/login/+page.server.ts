@@ -13,6 +13,9 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	default: async (event) => {
+		const { cookies } = event;
+
+		// Validate form data
 		const form = await superValidate(event, zod(formSchema));
 		if (!form.valid) {
 			// Form validation failed
@@ -37,7 +40,18 @@ export const actions: Actions = {
 			// Successful authentication
 			const body = await response.json();
 			const token = body.jwtToken;
-			return redirect(303, '/dashboard');
+
+			// Store token in a cookie
+			cookies.set('authToken', token, {
+				path: '/',
+				httpOnly: true,
+				secure: true,
+				sameSite: 'strict',
+				maxAge: 60 * 60 * 24 * 7
+			});
+
+			// Redirect to a protected route or dashboard
+			throw redirect(303, '/dashboard');
 		} else {
 			// Authentication failed
 			return fail(400, {
