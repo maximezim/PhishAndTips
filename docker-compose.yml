@@ -166,7 +166,36 @@ services:
       - mailserver
     restart: unless-stopped
   
-
+  spiderfoot:
+    image: spiderfoot:latest
+    ports:
+      - "5001:5001"
+    networks:
+      - backend
+  
+  spiderfoot-api:
+    build:
+      context: ./spiderfoot-api
+      dockerfile: Dockerfile
+    image: spiderfoot-api:latest
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    depends_on:
+      - postgres
+      # - spiderfoot
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: authentication_db
+      POSTGRES_HOST: postgres
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+        
 networks:
   backend:
     driver: bridge
