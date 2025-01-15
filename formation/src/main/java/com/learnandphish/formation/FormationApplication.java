@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.learnandphish.formation.model.Formation;
-import com.learnandphish.formation.model.Quizz;
+import com.learnandphish.formation.model.Quiz;
 import com.learnandphish.formation.repository.FormationRepository;
-import com.learnandphish.formation.repository.QuizzRepository;
+import com.learnandphish.formation.repository.QuizRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -27,42 +27,42 @@ public class FormationApplication {
     }
 
     @Autowired
-    private QuizzRepository quizzRepository;
+    private QuizRepository quizRepository;
 
     @Autowired
     private FormationRepository formationRepository;
 
-    // For each file in data/quizz folder, create a quizz if name of file (quizz id) does not exist in database
+    // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database
     @Bean
-    public CommandLineRunner initializeQuizz() {
+    public CommandLineRunner initializeQuiz() {
         return args -> {
-            File folder = new File("/var/formation/data/quizz");
+            File folder = new File("/var/formation/data/quiz");
             if (folder.exists() && folder.isDirectory()) {
                 File[] listOfFiles = folder.listFiles();
                 if (listOfFiles != null && listOfFiles.length > 0) {
                     Gson gson = new Gson();
                     for (File file : listOfFiles) {
-                        String quizzId = file.getName();
+                        String quizId = file.getName();
                         // Make sure the file's name is a number
-                        if (!quizzId.matches("\\d+")) {
+                        if (!quizId.matches("\\d+")) {
                             log.error("File name is not a number");
                         }else {
-                            Quizz quizz = quizzRepository.findById(Integer.parseInt(quizzId)).orElse(null);
-                            if (quizz == null) {
+                            Quiz quiz = quizRepository.findById(Integer.parseInt(quizId)).orElse(null);
+                            if (quiz == null) {
                                 String content = Files.readString(file.toPath());
                                 String json = gson.toJson(new GsonJsonParser().parseMap(content));
-                                Quizz newQuizz = new Quizz();
-                                newQuizz.setId(Integer.parseInt(quizzId));
-                                newQuizz.setJson(json);
-                                quizzRepository.save(newQuizz);
+                                Quiz newquiz = new Quiz();
+                                newquiz.setId(Integer.parseInt(quizId));
+                                newquiz.setJson(json);
+                                quizRepository.save(newquiz);
                             }
                         }
                     }
                 } else {
-                    log.error("No quizz found in data/quizz folder");
+                    log.error("No quiz found in data/quiz folder");
                 }
             } else {
-                log.error("Folder data/quizz does not exist or is not a directory");
+                log.error("Folder data/quiz does not exist or is not a directory");
             }
         };
     }
@@ -92,7 +92,7 @@ public class FormationApplication {
                         }
                     }
                 } else {
-                    log.error("No quizz found in data/formation folder");
+                    log.error("No quiz found in data/formation folder");
                 }
             } else {
                 log.error("Folder data/formation does not exist or is not a directory");

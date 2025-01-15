@@ -9,7 +9,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Quizz {
+public class Quiz {
     @Id
     private Integer id;
 
