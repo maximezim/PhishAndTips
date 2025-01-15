@@ -39,4 +39,15 @@ public class UserExportService {
         }
         return escapedData;
     }
+
+    public List<GophishUserDTO> convertToGophishUsersDTO(List<UserData> userData) {
+        return userData.stream().map(user -> {
+            GophishUserDTO gophishUserDTO = new GophishUserDTO();
+            gophishUserDTO.setFirstName(user.getFirstName());
+            gophishUserDTO.setLastName(user.getLastName());
+            gophishUserDTO.setEmail(user.getEmail());
+            gophishUserDTO.setPosition(user.getPosition());
+            return gophishUserDTO;
+        }).toList();
+    }
 }
