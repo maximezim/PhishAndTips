@@ -1,5 +1,9 @@
 package com.learnandphish.authentication;
 
+import com.learnandphish.authentication.user.ChangePasswordRequest;
+import com.learnandphish.authentication.user.Roles;
+import com.learnandphish.authentication.user.UserData;
+import com.learnandphish.authentication.user.UserDataRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,19 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class AuthenticationControllerTest {
-
-	@Mock
-	private AuthenticationManager authenticationManager;
-
-	@Mock
-	private JwtUserDetailsService userDetailsService;
-
-	@Mock
-	private JWTUtil jwtUtil;
 
 	@Mock
 	private UserDataRepository userDataRepository;
