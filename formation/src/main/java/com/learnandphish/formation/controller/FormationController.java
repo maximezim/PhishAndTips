@@ -15,7 +15,7 @@ public class FormationController {
     private final FormationService formationService;
 
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<Formation>> getAllFormations() {
         List<Formation> formations = formationService.getAllFormations();
         return ResponseEntity.ok(formations);

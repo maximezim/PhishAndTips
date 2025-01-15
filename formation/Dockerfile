@@ -7,10 +7,9 @@ COPY src/main ./src/main
 
 RUN gradle clean build
 
-FROM openjdk:17
+FROM amazoncorretto:17-alpine-jdk AS run
 
 LABEL maintainer1="Liam Boudadi"
-
 
 RUN addgroup -S app-group && adduser -S app-user -G app-group
 
