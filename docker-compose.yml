@@ -210,6 +210,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-formation:5432/formation_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+    volumes:
+      - ./formation/data:/var/formation/data
     logging:
       driver: fluentd
       options:

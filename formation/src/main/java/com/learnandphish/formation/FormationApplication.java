@@ -36,7 +36,7 @@ public class FormationApplication {
     @Bean
     public CommandLineRunner initializeQuizz() {
         return args -> {
-            File folder = new File("formation/data/quizz");
+            File folder = new File("/var/formation/data/quizz");
             if (folder.exists() && folder.isDirectory()) {
                 File[] listOfFiles = folder.listFiles();
                 if (listOfFiles != null && listOfFiles.length > 0) {
@@ -70,7 +70,7 @@ public class FormationApplication {
     @Bean
     public CommandLineRunner initializeFormation(){
         return args -> {
-            File folder = new File("formation/data/formations");
+            File folder = new File("/var/formation/data/formations");
             if (folder.exists() && folder.isDirectory()) {
                 File[] listOfFiles = folder.listFiles();
                 if (listOfFiles != null && listOfFiles.length > 0) {
@@ -92,10 +92,10 @@ public class FormationApplication {
                         }
                     }
                 } else {
-                    log.error("No quizz found in data/quizz folder");
+                    log.error("No quizz found in data/formation folder");
                 }
             } else {
-                log.error("Folder data/quizz does not exist or is not a directory");
+                log.error("Folder data/formation does not exist or is not a directory");
             }
         };
     }
