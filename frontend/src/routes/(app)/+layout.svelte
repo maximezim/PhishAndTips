@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Header from '$lib/components/custom/header.svelte';
-	import '../../app.css';
+	import '$lib/../app.css';
 	import { page } from '$app/stores';
 	import Sidebar from '$lib/components/custom/Sidebar.svelte';
 	import DotPage from '$lib/components/custom/DotPage.svelte';
