@@ -1,13 +1,18 @@
 <script lang="ts">
 	import Header from '$lib/components/custom/header.svelte';
-	import '../../app.css';
+	import '$lib/../app.css';
 	import { page } from '$app/stores';
 	import Sidebar from '$lib/components/custom/Sidebar.svelte';
 	import DotPage from '$lib/components/custom/DotPage.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import AuthService from '$lib/services/AuthService';
 
-	onMount(() => {
+	onMount(async() => {
+		const isLogged = await AuthService.isLogged();
+		if (!isLogged) {
+			goto('/login');
+		}
 		if (window.location.pathname === '/') {
 			goto('/dashboard');
 		}

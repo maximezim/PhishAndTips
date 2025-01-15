@@ -10,7 +10,6 @@
   import { zodClient } from "sveltekit-superforms/adapters";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Label } from "$lib/components/ui/label";
-	import { goto } from "$app/navigation";
   
   export let data: SuperValidated<Infer<FormSchema>>;
   
@@ -22,33 +21,33 @@
 
   let show_password = false;
   $: type = show_password ? 'text' : 'password'  
-  $: onInput = (e: InputEvent) => {
+  $: onInputNewPassword = (e: InputEvent) => {
     if (show_password) {
-      $formData.password = (e.target as HTMLInputElement).value;
+      $formData.new_password = (e.target as HTMLInputElement).value;
     }
   }
-
-  // handle forget password
-  const forgetPassword = () => {
-    console.log('forget password');
+  $: onInputConfirmPassword = (e: InputEvent) => {
+    if (show_password) {
+      $formData.confirm_password = (e.target as HTMLInputElement).value;
+    }
   }
 
 </script>
 
 <!-- Form component using validation schema from schema.ts -->
 <form method="POST" use:enhance class={"flex flex-col gap-2"}>
-  <Form.Field {form} name="email">
+  <Form.Field {form} name="new_password">
     <Form.Control let:attrs>
-      <Form.Label class={"text-base"}>Adresse mail</Form.Label>
-      <Input {...attrs} bind:value={$formData.email} />
+      <Form.Label class={"text-base"}>Nouveau mot de passe</Form.Label>
+      <Input { type } {...attrs} on:input={ onInputNewPassword } bind:value={$formData.new_password} />
     </Form.Control>
     <Form.Description />
-    <Form.FieldErrors />
+    <Form.FieldErrors class="w-96" />
   </Form.Field>
-  <Form.Field {form} name="password">
+  <Form.Field {form} name="confirm_password">
     <Form.Control let:attrs>
-      <Form.Label class={"text-base"}>Mot de passe</Form.Label>
-      <Input { type } {...attrs} on:input={ onInput } bind:value={$formData.password} />
+      <Form.Label class={"text-base"}>Confirmer le mot de passe</Form.Label>
+      <Input { type } {...attrs} on:input={ onInputConfirmPassword } bind:value={$formData.confirm_password} />
       <div class="flex items-center gap-2 my-3">
         <Checkbox id="password-toggle" bind:checked={show_password} aria-labelledby="password-toggle-label" />
         <Label
@@ -61,9 +60,7 @@
       </div>
     </Form.Control>
     <Form.Description />
-    <Form.FieldErrors />
+    <Form.FieldErrors class="w-full" />
   </Form.Field>
-  <Form.Button class="mt-3">Se connecter</Form.Button>
-  <button type="button" on:click={forgetPassword} class={"text-center"}> Mot de passe oublié</button>
+  <Form.Button class="mt-3">Valider</Form.Button>
 </form>
-
