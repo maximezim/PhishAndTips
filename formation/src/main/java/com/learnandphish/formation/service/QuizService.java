@@ -17,12 +17,7 @@ public class QuizService {
         return quizRepository.findById(id).orElseThrow(() -> new RuntimeException("Quiz not found"));
     }
 
-    /*public Iterable<quiz> getQuizByFormationId(Long formationId) {
-        return QuizRepository.findByFormationId(formationId);
-    }*/
-
-
-    public Iterable<Quiz> getAllQuizs() {
+    public Iterable<Quiz> getAllQuiz() {
         return quizRepository.findAll();
     }
 }

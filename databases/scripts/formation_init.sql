@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS formation(
     description VARCHAR NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS quizz(
+CREATE TABLE IF NOT EXISTS quiz(
     id INTEGER PRIMARY KEY,
     json TEXT NOT NULL
 );
@@ -18,10 +18,10 @@ CREATE TABLE IF NOT EXISTS video(
     difficulty INTEGER NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS user_quizz(
+CREATE TABLE IF NOT EXISTS user_quiz(
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL,
-    quizz_id INTEGER NOT NULL,
+    quiz_id INTEGER NOT NULL,
     score INTEGER NOT NULL,
-    FOREIGN KEY (quizz_id) REFERENCES quizz(id)
+    FOREIGN KEY (quiz_id) REFERENCES quiz(id)
 );
