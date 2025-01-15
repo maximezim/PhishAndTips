@@ -27,8 +27,9 @@ export const actions: Actions = {
 		const email = form.data.email;
 		const password = form.data.password;
 
+		// TODO: Migrate this to a service
 		// Attempt to authenticate with the API
-		const response = await fetch(import.meta.env.VITE_API_URL + '/authenticate', {
+		const response = await fetch(import.meta.env.VITE_GATEWAY_URL + '/authenticate', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -44,7 +45,7 @@ export const actions: Actions = {
 			// Store token in a cookie
 			cookies.set('authToken', token, {
 				path: '/',
-				httpOnly: true,
+				httpOnly: false,
 				secure: true,
 				sameSite: 'strict',
 				maxAge: 60 * 60 * 24 * 7

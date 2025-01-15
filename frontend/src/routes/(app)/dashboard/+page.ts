@@ -1,9 +1,6 @@
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ data }) => {
-	// Access the token from the server-side load function
-	const { token } = data;
-
 	// Add other client-side properties
 	return {
 		title: 'Tableau de bord',
@@ -18,7 +15,6 @@ export const load: PageLoad = async ({ data }) => {
 		pwd_text: 'white',
 		pwd_bg: 'secondary',
 		phishing_text: 'white',
-		phishing_bg: 'secondary',
-		token // Include the token from the server
+		phishing_bg: 'secondary'
 	};
 };

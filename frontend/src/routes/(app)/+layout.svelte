@@ -6,8 +6,13 @@
 	import DotPage from '$lib/components/custom/DotPage.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import AuthService from '$lib/services/AuthService';
 
-	onMount(() => {
+	onMount(async() => {
+		const isLogged = await AuthService.isLogged();
+		if (!isLogged) {
+			goto('/login');
+		}
 		if (window.location.pathname === '/') {
 			goto('/dashboard');
 		}
