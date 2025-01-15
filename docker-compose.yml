@@ -5,8 +5,6 @@ services:
       POSTGRES_DB: authentication_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
     networks:
       - backend
     volumes:
@@ -28,16 +26,25 @@ services:
     build:
       context: ./authentication
       dockerfile: Dockerfile
-    # Removed the ports section to prevent direct access
     networks:
       - backend
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_MAIL_HOST=mailserver
+      - SPRING_MAIL_PORT=25
+      - SPRING_MAIL_USERNAME=${AUTH_MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${AUTH_MAIL_PASSWORD}
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false
+      - MAIL_FROM=sender@example.com
     logging:
       driver: fluentd
       options:
@@ -55,13 +62,6 @@ services:
       - backend
     depends_on:
       - authentication-service
-    environment:
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=auth-service
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://authentication-service:8082
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/authenticate
-      - GOPHISH_API_KEY=${GOPHISH_API_KEY}
-    env_file:
-      - .env
     logging:
       driver: fluentd
       options:
@@ -127,6 +127,8 @@ services:
       - "587:587"   # Submission
       - "993:993"   # IMAPS
     restart: unless-stopped
+    networks:
+      - backend
 
   webmail:
     image: roundcube/roundcubemail:latest
@@ -148,6 +150,8 @@ services:
     volumes:
       - webmail_data:/var/www/html
       - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
+    networks:
+      - backend
 
   gophish:
     image: gophish/gophish:latest

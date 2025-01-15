@@ -1,4 +1,4 @@
-package com.learnandphish.authentication;
+package com.learnandphish.authentication.user;
 
 /**
  *

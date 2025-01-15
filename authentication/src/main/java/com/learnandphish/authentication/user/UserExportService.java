@@ -1,4 +1,4 @@
-package com.learnandphish.authentication;
+package com.learnandphish.authentication.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,5 +38,16 @@ public class UserExportService {
             escapedData = "\"" + data + "\"";
         }
         return escapedData;
+    }
+
+    public List<GophishUserDTO> convertToGophishUsersDTO(List<UserData> userData) {
+        return userData.stream().map(user -> {
+            GophishUserDTO gophishUserDTO = new GophishUserDTO();
+            gophishUserDTO.setFirstName(user.getFirstName());
+            gophishUserDTO.setLastName(user.getLastName());
+            gophishUserDTO.setEmail(user.getEmail());
+            gophishUserDTO.setPosition(user.getPosition());
+            return gophishUserDTO;
+        }).toList();
     }
 }
