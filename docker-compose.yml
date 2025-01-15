@@ -26,12 +26,11 @@ services:
     build:
       context: ./authentication
       dockerfile: Dockerfile
-    # Removed the ports section to prevent direct access
     networks:
       - backend
     depends_on:
       postgres:
-        condition: service_started
+        condition: service_healthy
     env_file:
       - .env
     environment:
@@ -63,10 +62,6 @@ services:
       - backend
     depends_on:
       - authentication-service
-    environment:
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=auth-service
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://authentication-service:8082
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/authenticate
     logging:
       driver: fluentd
       options:
