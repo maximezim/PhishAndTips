@@ -36,6 +36,14 @@
 
 <!-- Form component using validation schema from schema.ts -->
 <form method="POST" use:enhance class={"flex flex-col gap-2"}>
+  <Form.Field {form} name="current_password">
+    <Form.Control let:attrs>
+      <Form.Label class={"text-base"}>Nouveau mot de passe</Form.Label>
+      <Input { type } {...attrs} on:input={ onInputNewPassword } bind:value={$formData.new_password} />
+    </Form.Control>
+    <Form.Description />
+    <Form.FieldErrors class="w-96" />
+  </Form.Field>
   <Form.Field {form} name="new_password">
     <Form.Control let:attrs>
       <Form.Label class={"text-base"}>Nouveau mot de passe</Form.Label>

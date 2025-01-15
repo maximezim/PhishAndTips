@@ -12,6 +12,10 @@
     goto('/login');
   }
 
+  function handleResetPassword() {
+    goto('/osint');
+  }
+
 </script>
 
 <header class={"w-full py-3 px-4 sticky top-0 bg-primary flex items-center justify-between z-10"}>
@@ -26,6 +30,9 @@
         <DropdownMenu.Content class="w-38">
           <DropdownMenu.CheckboxItem class="cursor-pointer" on:click={handleLogout}>
             Se déconnecter
+          </DropdownMenu.CheckboxItem>
+          <DropdownMenu.CheckboxItem class="cursor-pointer" on:click={handleResetPassword}>
+            Réinitialiser le mot de passe
           </DropdownMenu.CheckboxItem>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
