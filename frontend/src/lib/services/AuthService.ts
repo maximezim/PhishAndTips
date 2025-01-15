@@ -1,22 +1,28 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-const API_BASE_URL = 'http://localhost:8080';
+const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL;
 const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 class AuthService {
-	private static async authenticateAndStoreToken(): Promise<string> {
+	public static async authenticate(email: string, password: string): Promise<string> {
 		try {
-			const response = await axios.post(`${API_BASE_URL}/authenticate`, {
-				email: 'admin@example.com',
-				password: 'password'
+			const response = await fetch(GATEWAY_URL + '/authenticate', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ email, password })
 			});
 
-			const token = response.data.jwtToken;
-			console.log("Token récupéré de l'authentification:", token);
+			if (response.ok) {
+				const body = await response.json();
+				const token = body.jwtToken;
 
-			return token;
+				return token;
+			}
+			return 'error';
 		} catch (error: any) {
 			console.error("Erreur lors de l'authentification:", error.message);
 			throw error;
@@ -27,9 +33,7 @@ class AuthService {
 		if (Cookies.get('authToken')) {
 			return Cookies.get('authToken') || '';
 		}
-		let token = await this.authenticateAndStoreToken();
-		console.log('Token récupéré:', token);
-		return token;
+		return '';
 	}
 
 	public static async isLogged(): Promise<boolean> {

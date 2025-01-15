@@ -10,6 +10,7 @@
   import { zodClient } from "sveltekit-superforms/adapters";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Label } from "$lib/components/ui/label";
+	import { goto } from "$app/navigation";
   
   export let data: SuperValidated<Infer<FormSchema>>;
   
