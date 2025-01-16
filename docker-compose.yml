@@ -211,6 +211,26 @@ services:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
 
+  scoring-service:
+    image: scoring-service:latest
+    build:
+      context: ./scoring
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    networks:
+      - backend
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+
   spiderfoot:
     image: spiderfoot:latest
     ports:
