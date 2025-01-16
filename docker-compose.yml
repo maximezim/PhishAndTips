@@ -165,7 +165,52 @@ services:
     depends_on:
       - mailserver
     restart: unless-stopped
-  
+
+  postgres-formation:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: formation_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    networks:
+      - backend
+    volumes:
+      - ./databases/formation/pgdata:/var/lib/postgresql/data
+      - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+
+
+  formation-service:
+    image: formation-service:latest
+    build:
+      context: ./formation
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    depends_on:
+      postgres-formation:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-formation:5432/formation_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=password
+    volumes:
+      - ./formation/data:/var/formation/data
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+
   spiderfoot:
     image: spiderfoot:latest
     ports:
@@ -195,6 +240,7 @@ services:
       options:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
+
         
 networks:
   backend:
