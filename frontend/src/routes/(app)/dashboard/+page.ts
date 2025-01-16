@@ -1,4 +1,7 @@
-export function load() {
+import type { PageLoad } from './$types';
+
+export const load: PageLoad = async ({ data }) => {
+	// Add other client-side properties
 	return {
 		title: 'Tableau de bord',
 		dash_text: 'primary',
@@ -12,6 +15,6 @@ export function load() {
 		pwd_text: 'white',
 		pwd_bg: 'secondary',
 		phishing_text: 'white',
-		phishing_bg: 'secondary',
+		phishing_bg: 'secondary'
 	};
-}
+};

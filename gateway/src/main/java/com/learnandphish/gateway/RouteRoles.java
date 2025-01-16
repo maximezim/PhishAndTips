@@ -9,20 +9,21 @@ public class RouteRoles {
     private static final Logger logger = LoggerFactory.getLogger(RouteRoles.class);
 
     private static final Map<String, List<String>> routeRoleMap = Map.ofEntries(
-            Map.entry("/admin/**", List.of("ADMIN")),
-            Map.entry("/user/**", List.of("USER", "ADMIN")),
-            Map.entry("/export-users", List.of("ADMIN")),
-            Map.entry("/change-password", List.of("USER", "ADMIN")),
-            Map.entry("/reset-password", List.of("USER","ADMIN")),
-            Map.entry("/delete-user", List.of("ADMIN")),
-            Map.entry("/get-user", List.of("USER", "ADMIN")),
-            Map.entry("/register", List.of("ADMIN")),
-            Map.entry("/test-admin", List.of("ADMIN")),
-            Map.entry("/test-user", List.of("USER", "ADMIN")),
-            Map.entry("/test-both", List.of("USER", "ADMIN")),
-            Map.entry("/api/**", List.of("ADMIN")),
-            Map.entry("/get-all-users", List.of("ADMIN")),
-            Map.entry("/formation/**", List.of("USER", "ADMIN"))
+        Map.entry("/admin/**", List.of("ADMIN")),
+        Map.entry("/user/**", List.of("USER", "ADMIN")),
+        Map.entry("/export-users", List.of("ADMIN")),
+        Map.entry("/change-password", List.of("USER", "ADMIN")),
+        Map.entry("/need-change-password", List.of("USER", "ADMIN")),
+        Map.entry("/reset-password", List.of("USER","ADMIN")),
+        Map.entry("/delete-user", List.of("ADMIN")),
+        Map.entry("/get-user", List.of("USER", "ADMIN")),
+        Map.entry("/register", List.of("ADMIN")),
+        Map.entry("/test-admin", List.of("ADMIN")),
+        Map.entry("/test-user", List.of("USER", "ADMIN")),
+        Map.entry("/test-both", List.of("USER", "ADMIN")),
+        Map.entry("/api/**", List.of("ADMIN")),
+        Map.entry("/get-all-users", List.of("ADMIN")),
+        Map.entry("/formation/**", List.of("USER", "ADMIN"))
     );
 
     public static List<String> requiredRolesForPath(String path) {

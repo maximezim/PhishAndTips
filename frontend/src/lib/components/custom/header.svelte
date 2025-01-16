@@ -1,12 +1,14 @@
 <script lang="ts">
 	import Button from "../ui/button/button.svelte";
-    import 'iconify-icon';
-    import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
+  import 'iconify-icon';
+  import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import { goto } from "$app/navigation";
-    export let title: string;
-    export let nom: string;
+  export let title: string;
+  export let nom: string;
+  import AuthService from "$lib/services/AuthService";
 
   function handleLogout() {
+    AuthService.deleteToken();
     goto('/login');
   }
 

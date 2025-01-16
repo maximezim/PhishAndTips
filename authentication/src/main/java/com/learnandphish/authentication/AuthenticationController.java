@@ -171,6 +171,20 @@ public class AuthenticationController {
         return ResponseEntity.ok("Password reset successfully");
     }
 
+    @RolesAllowed({"USER", "ADMIN"})
+    @GetMapping("/need-change-password")
+    public ResponseEntity<Boolean> needChangePassword() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        UserData user = userDataRepository.findByEmail(email)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        return ResponseEntity.ok(user.getChangePassword());
+    }
+
     @RolesAllowed("ADMIN")
     @PostMapping("/delete-user")
     public ResponseEntity<?> deleteUser(@RequestBody String email) {
