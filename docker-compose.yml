@@ -213,6 +213,7 @@ services:
 
   spiderfoot:
     image: spiderfoot:latest
+    build: https://github.com/smicallef/spiderfoot.git
     ports:
       - "5001:5001"
     networks:
@@ -228,8 +229,8 @@ services:
     networks:
       - backend
     depends_on:
-      - postgres
-      # - spiderfoot
+      postgres:
+        condition: service_healthy
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
