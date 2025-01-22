@@ -22,7 +22,7 @@ class AuthService {
 
 				return token;
 			}
-			return 'error';
+			return '';
 		} catch (error: any) {
 			console.error("Erreur lors de l'authentification:", error.message);
 			throw error;
@@ -50,7 +50,23 @@ class AuthService {
 	public static async isLogged(): Promise<boolean> {
 		const token = await AuthService.getToken();
 		if (token) {
-			return true;
+			try {
+				const response = await fetch(GATEWAY_URL + '/test-user', {
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				});
+
+				if (response.ok) {
+					return true;
+				}
+				AuthService.deleteToken();
+				return false;
+			} catch (error: any) {
+				console.error("Erreur lors de l'authentification:", error.message);
+				throw error;
+			}
 		}
 		return false;
 	}
@@ -59,19 +75,40 @@ class AuthService {
 	public static async isLoggedFromServer(cookies: any): Promise<boolean> {
 		const token = await AuthService.getTokenFromServer(cookies);
 		if (token) {
-			return true;
+			try {
+				const response = await fetch(GATEWAY_URL + '/test-user', {
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				});
+
+				if (response.ok) {
+					return true;
+				}
+				await AuthService.deleteTokenFromServer(cookies);
+				return false;
+			} catch (error: any) {
+				console.error("Erreur lors de l'authentification:", error.message);
+				throw error;
+			}
 		}
 		return false;
 	}
 
 	// Delete token from client
 	public static async deleteToken(): Promise<void> {
-		Cookies.remove('authToken');
+		// delete the tokenspecifying thepath
+		if (Cookies.get('authToken')) {
+			Cookies.remove('authToken', { path: '/' });
+		}
 	}
 
 	// Delete token from server
 	public static async deleteTokenFromServer(cookies: any): Promise<void> {
-		cookies.delete('authToken');
+		if (cookies.get('authToken')) {
+			cookies.delete('authToken', { path: '/' });
+		}
 	}
 
 	// Check if user need to change password from server
