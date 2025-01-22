@@ -83,13 +83,13 @@ public class AuthenticationController {
      *
      * @param username The username of the user.
      * @param password The password of the user.
-     * @throws Exception if authentication fails.
+     * @throws BadCredentialsException if authentication fails.
      */
-    private void authenticate(String username, String password) throws Exception {
+    private void authenticate(String username, String password) throws BadCredentialsException {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (BadCredentialsException e) {
-            throw new Exception("INVALID_CREDENTIALS", e);
+            throw new BadCredentialsException("INVALID_CREDENTIALS", e);
         }
     }
 
@@ -280,7 +280,8 @@ public class AuthenticationController {
     @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/get-user")
     public ResponseEntity<UserDTO> getUser(@RequestHeader("Authorization") String token) {
-        String email = jwtUtil.extractUsername(token);
+        String extractedToken = token.substring(7);
+        String email = jwtUtil.extractUsername(extractedToken);
         UserData user = userDataRepository.findByEmail(email)
             .stream()
             .findFirst()
