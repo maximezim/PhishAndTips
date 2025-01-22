@@ -5,34 +5,27 @@ import { formSchema } from './schema.js';
 import { zod } from 'sveltekit-superforms/adapters';
 import AuthService from '$lib/services/AuthService';
 
-// Load validation schema
-export const load: PageServerLoad = async () => {
-	return {
-		form: await superValidate(zod(formSchema))
-	};
+export const load: PageServerLoad = async ({ cookies }) => {
+	const isLogged = await AuthService.isLoggedFromServer(cookies);
+	if (isLogged) {
+		throw redirect(303, '/dashboard');
+	}
+	const form = await superValidate(zod(formSchema));
+	return { form };
 };
 
 export const actions: Actions = {
 	default: async (event) => {
 		const { cookies } = event;
-		// Validate form data
 		const form = await superValidate(event, zod(formSchema));
+
 		if (!form.valid) {
-			// Form validation failed
-			return fail(400, {
-				form
-			});
+			return fail(400, { form });
 		}
 
-		const email = form.data.email;
-		const password = form.data.password;
+		const token = await AuthService.authenticate(form.data.email, form.data.password);
 
-		// Attempt to authenticate with the API
-		const response = await AuthService.authenticate(email, password);
-		console.log('Response:', response);
-		if (response != 'error') {
-			// Authentication
-			const token = response;
+		if (token) {
 			cookies.set('authToken', token, {
 				path: '/',
 				httpOnly: false,
@@ -41,17 +34,10 @@ export const actions: Actions = {
 				maxAge: 60 * 60 * 24 * 7
 			});
 
-			console.log('Authentification réussie');
 			throw redirect(303, '/dashboard');
-		} else {
-			// Authentication failed
-			return fail(401, {
-				form: {
-					errors: {
-						email: 'Identifiants incorrects'
-					}
-				}
-			});
 		}
+
+		form.errors['email'] = ['Identifiants incorrects'];
+		return fail(401, { form });
 	}
 };

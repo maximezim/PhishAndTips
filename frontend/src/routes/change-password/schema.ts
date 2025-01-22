@@ -3,6 +3,10 @@ import { z } from 'zod';
 // Validation schema
 export const formSchema = z
 	.object({
+		current_password: z
+			.string()
+			.min(1, { message: 'Veuillez entrer un mot de passe.' })
+			.max(100, { message: 'Mot de passe trop long.' }),
 		new_password: z
 			.string()
 			.min(1, { message: 'Veuillez entrer un mot de passe.' })
