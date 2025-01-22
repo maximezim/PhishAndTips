@@ -169,6 +169,8 @@ services:
     depends_on:
       - mailserver
     restart: unless-stopped
+    networks:
+      - backend
 
   postgres-formation:
     image: postgres:latest
