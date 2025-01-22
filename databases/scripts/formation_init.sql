@@ -13,5 +13,5 @@ CREATE TABLE IF NOT EXISTS video(
     id SERIAL PRIMARY KEY,
     title VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
-    url VARCHAR NOT NULL,
+    url VARCHAR NOT NULL
 );
