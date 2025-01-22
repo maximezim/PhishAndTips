@@ -244,10 +244,10 @@ services:
       context: ./spiderfoot-api
       dockerfile: Dockerfile
     image: spiderfoot-api:latest
-    ports:
-      - "8000:8000"
     networks:
       - backend
+    ports:
+      - "8000:8000"
     depends_on:
       - postgres
       # - spiderfoot
@@ -268,7 +268,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      - VITE_GATEWAY_URL=http://localhost:8080/
+      - VITE_GATEWAY_URL=http://api-gateway:8080/
     ports:
       - "8001:3000"
     networks:
