@@ -1,5 +1,12 @@
+x-logging:
+  &fluentd-logging
+  driver: fluentd
+  options:
+    fluentd-address: host.docker.internal:24224
+
 services:
   postgres:
+    container_name: postgres
     image: postgres:latest
     environment:
       POSTGRES_DB: authentication_db
@@ -15,13 +22,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+    logging: *fluentd-logging
 
   authentication-service:
+    container_name: authentication-service
     image: authentication-service:latest
     build:
       context: ./authentication
@@ -45,13 +49,11 @@ services:
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false
       - MAIL_FROM=sender@example.com
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+    logging: *fluentd-logging
+
 
   api-gateway:
+    container_name: api-gateway
     image: api-gateway:latest
     build:
       context: ./gateway
@@ -62,13 +64,10 @@ services:
       - backend
     depends_on:
       - authentication-service
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+    logging: *fluentd-logging
 
   loki:
+    container_name: loki
     image: grafana/loki:latest
     ports:
       - "3100:3100"
@@ -76,12 +75,13 @@ services:
       - backend
 
   fluent-bit:
+    container_name: fluent-bit
     image: grafana/fluent-bit-plugin-loki:latest
     environment:
-      LOG_LEVEL: warn
+      LOG_LEVEL: info
       LOKI_URL: http://loki:3100/loki/api/v1/push
     volumes:
-      - ./fluent-bit/conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./logging/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
     ports:
       - "24224:24224"
       - "24224:24224/udp"
@@ -89,21 +89,22 @@ services:
       - backend
 
   grafana:
+    container_name: grafana
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
     environment:
-      GF_AUTH_DISABLE_LOGIN_FORM: true
-      GF_AUTH_ANONYMOUS_ENABLED: true #remove in prod
+      GF_PATHS_PROVISIONING: /var/lib/grafana/provisioning
       GF_RENDERING_SERVER_URL: http://renderer:8081/render
       GF_RENDERING_CALLBACK_URL: http://grafana:3000/
       GF_LOG_FILTERS: rendering:debug
     volumes:
-      - ./grafana-data:/var/lib/grafana
+      - ./logging/grafana:/var/lib/grafana
     networks:
       - backend
 
   renderer:
+    container_name: renderer
     image: grafana/grafana-image-renderer:latest
     expose:
       - "8081"
@@ -173,6 +174,7 @@ services:
       - backend
 
   postgres-formation:
+    container_name: postgres-formation
     image: postgres:latest
     environment:
       POSTGRES_DB: formation_db
@@ -188,14 +190,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
-
+    logging: *fluentd-logging
 
   formation-service:
+    container_name: formation-service
     image: formation-service:latest
     build:
       context: ./formation
@@ -211,13 +209,10 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
     volumes:
       - ./formation/data:/var/formation/data
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+    logging: *fluentd-logging
 
 #  scoring-service:
+#    container_name: scoring-service
 #    image: scoring-service:latest
 #    build:
 #      context: ./scoring
@@ -231,19 +226,18 @@ services:
 #      - SPRING_DATASOURCE_PASSWORD=password
 #    networks:
 #      - backend
-#    logging:
-#      driver: fluentd
-#      options:
-#        fluentd-async: "true"
-#        fluentd-address: host.docker.internal:24224
+#    logging: *fluentd-logging
+
 
   spiderfoot:
+    container_name: spiderfoot
     image: spiderfoot:latest
     build: https://github.com/smicallef/spiderfoot.git
     networks:
       - backend
   
   spiderfoot-api:
+    container_name: spiderfoot-api
     build:
       context: ./spiderfoot-api
       dockerfile: Dockerfile
@@ -260,13 +254,10 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: authentication_db
       POSTGRES_HOST: postgres
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+    logging: *fluentd-logging
 
   frontend:
+    container_name: frontend
     image: frontend:latest
     build:
       context: ./frontend
@@ -279,12 +270,7 @@ services:
       - backend
     depends_on:
       - api-gateway
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
-
+    logging: *fluentd-logging
         
 networks:
   backend:
