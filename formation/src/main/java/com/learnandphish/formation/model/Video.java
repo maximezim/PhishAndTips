@@ -9,25 +9,11 @@ import lombok.*;
 @NoArgsConstructor
 public class Video {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     private String title;
 
     private String description;
 
     private String url;
-
-    private Integer duration;
-
-    private Integer difficulty;
-
-    public Video(Long id, String title, String description, String url, Integer duration, Integer difficulty) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.url = url;
-        this.duration = duration;
-        this.difficulty = difficulty;
-    }
 }
