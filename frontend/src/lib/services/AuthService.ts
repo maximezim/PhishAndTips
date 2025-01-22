@@ -98,7 +98,6 @@ class AuthService {
 
 	// Delete token from client
 	public static async deleteToken(): Promise<void> {
-		// delete the tokenspecifying thepath
 		if (Cookies.get('authToken')) {
 			Cookies.remove('authToken', { path: '/' });
 		}
