@@ -1,209 +1,106 @@
 {
-  "title": "Questionnaire test",
-  "description": "La bonne description",
-  "logo Position": "right",
+  "title": "Quiz de connaissance sur le phishing",
   "pages": [
     {
       "name": "page1",
-      "title": "Page 1 ",
-      "description": "Miam la description",
       "elements": [
-        {
-          "type": "boolean",
-          "name": "question1",
-          "title": "YES or NO ?"
-        }
-      ]
-    },
-    {
-      "name": "page2",
-      "elements": [
-        {
-          "type": "dropdown",
-          "name": "question2",
-          "title": "Lucky?",
-          "choices": [
-            {
-              "value": "Item 1",
-              "text": "Yes"
-            },
-            {
-              "value": "Item 2",
-              "text": "No"
-            },
-            {
-              "value": "Item 3",
-              "text": "Osef"
-            }
-          ]
-        },
-        {
-          "type": "imagepicker",
-          "name": "question3",
-          "title": "Ou est le perroquet ?",
-          "isRequired": true,
-          "choices": [
-            {
-              "value": "Image 1",
-              "imageLink": "https://surveyjs.io/Content/Images/examples/image-picker/lion.jpg"
-            },
-            {
-              "value": "Image 2",
-              "imageLink": "https://surveyjs.io/Content/Images/examples/image-picker/giraffe.jpg"
-            },
-            {
-              "value": "Image 3",
-              "imageLink": "https://surveyjs.io/Content/Images/examples/image-picker/panda.jpg"
-            },
-            {
-              "value": "Image 4",
-              "imageLink": "https://surveyjs.io/Content/Images/examples/image-picker/camel.jpg"
-            }
-          ],
-          "imageFit": "cover"
-        },
         {
           "type": "radiogroup",
-          "name": "question4",
-          "title": "Un gros chibrax ?",
-          "isRequired": true,
+          "name": "question2",
+          "title": "Qu'est-ce que le phishing ?",
+          "correctAnswer": "Item 1",
           "choices": [
             {
-              "value": "Item 1",
-              "text": "- de 5 cm (au dessus de la moyenne)"
+              "value": "Item 2",
+              "text": "Une méthode de marketing en ligne pour attirer de nouveaux clients."
             },
             {
-              "value": "Item 2",
-              "text": "entre 5 et 10 cm (beau brakmar)"
+              "value": "Item 1",
+              "text": "Une technique de piratage informatique visant à arnaquer une potentielle victime."
             },
             {
               "value": "Item 3",
-              "text": "plus de 10 cm (c'est une troisième jambe à ce point là)"
+              "text": "Une nouvelle forme de monnaie virtuelle."
             }
           ]
         },
         {
           "type": "checkbox",
-          "name": "question6",
-          "title": "J'ai plus d'inspi",
-          "choices": [
+          "name": "question1",
+          "title": "Quels sont les objectifs principaux d'un mail de phishing ?",
+          "correctAnswer": [
             "Item 1",
-            "Item 2",
-            "Item 3"
+            "Item 4",
+            "Item 2"
           ],
-          "showSelectAllItem": true
-        },
-        {
-          "type": "file",
-          "name": "question5",
-          "title": "Drop le recto et le verso de ta cb "
-        },
-        {
-          "type": "ranking",
-          "name": "question7",
-          "title": "Tu préfères moi ou ta mère ? ",
           "choices": [
             {
               "value": "Item 1",
-              "text": "Ta mère"
+              "text": "Vol d'argent"
             },
             {
               "value": "Item 2",
-              "text": "TOIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
+              "text": "Téléchargement d'un virus"
+            },
+            {
+              "value": "Item 3",
+              "text": "Dégradation d'un site web"
+            },
+            {
+              "value": "Item 4",
+              "text": "Vol de données"
             }
           ]
         },
         {
-          "type": "panel",
-          "name": "question8",
-          "elements": [
+          "type": "radiogroup",
+          "name": "question3",
+          "title": "Quels part des cyberattaques représente les attaques d'hameçonnage ?",
+          "correctAnswer": "Item 2",
+          "choices": [
             {
-              "type": "panel",
-              "name": "question9",
-              "elements": [
-                {
-                  "type": "text",
-                  "name": "question11",
-                  "title": "HUH ?"
-                },
-                {
-                  "type": "text",
-                  "name": "question12",
-                  "title": "Oui"
-                }
-              ]
+              "value": "Item 1",
+              "text": "Environ 10%"
             },
             {
-              "type": "text",
-              "name": "question10",
-              "title": "je comprend pas cette merde"
+              "value": "Item 2",
+              "text": "Environ 33%"
             },
             {
-              "type": "text",
-              "name": "question13",
-              "title": "NON"
+              "value": "Item 3",
+              "text": "Environ 50%"
+            },
+            {
+              "value": "Item 4",
+              "text": "Environ 75%"
             }
           ]
         },
         {
-          "type": "paneldynamic",
-          "name": "question14",
-          "templateElements": [
+          "type": "radiogroup",
+          "name": "question4",
+          "title": "Dans la situation de la vidéo, quel était l'organisme dont l'identité a été usurpée ?",
+          "correctAnswer": "Item 3",
+          "choices": [
             {
-              "type": "text",
-              "name": "question15",
-              "title": "C'est quoi la diff ?"
+              "value": "Item 1",
+              "text": "Crédit Agricole"
             },
             {
-              "type": "text",
-              "name": "question16",
-              "title": "Comprend r"
+              "value": "Item 2",
+              "text": "Carrefour"
+            },
+            {
+              "value": "Item 3",
+              "text": "SNCF"
+            },
+            {
+              "value": "Item 4",
+              "text": "Louis Vuitton"
             }
           ]
-        },
-        {
-          "type": "html",
-          "name": "question17"
-        },
-        {
-          "type": "signaturepad",
-          "name": "question18"
-        },
-        {
-          "type": "rating",
-          "name": "question19",
-          "title": "Note sur ce questionnaire ?",
-          "isRequired": true,
-          "rateType": "stars"
-        },
-        {
-          "type": "text",
-          "name": "question20",
-          "title": "Un avis ?"
         }
       ]
-    },
-    {
-      "name": "page3",
-      "elements": [
-        {
-          "type": "comment",
-          "name": "question21",
-          "title": "Plus détaillé l'avis enculé",
-          "isRequired": true
-        }
-      ]
-    }
-  ],
-  "triggers": [
-    {
-      "type": "runexpression",
-      "expression": "{question2} = 'Item 2'",
-      "runExpression": "YEEAHHHH bien joué !!!"
-    },
-    {
-      "type": "complete",
-      "expression": "{question1} = false"
     }
   ]
 }
