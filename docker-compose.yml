@@ -242,6 +242,25 @@ services:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
 
+  frontend:
+    image: frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - VITE_GATEWAY_URL=http://localhost:8080/
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+    depends_on:
+      - api-gateway
+    logging:
+      driver: fluentd
+      options:
+        fluentd-async: "true"
+        fluentd-address: host.docker.internal:24224
+
         
 networks:
   backend:
