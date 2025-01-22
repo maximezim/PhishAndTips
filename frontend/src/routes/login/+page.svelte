@@ -4,5 +4,5 @@
   import ConnectionCard from "$lib/components/custom/ConnectionCard.svelte";
   export let data: PageData;
 </script>
-
+  
 <ConnectionCard data={data} FormComponent={LoginForm} title="Connexion" />

@@ -10,11 +10,21 @@
   import { zodClient } from "sveltekit-superforms/adapters";
   import { Checkbox } from "$lib/components/ui/checkbox";
   import { Label } from "$lib/components/ui/label";
+  import { onMount } from 'svelte';
   
   export let data: SuperValidated<Infer<FormSchema>>;
   
   const form = superForm(data, {
     validators: zodClient(formSchema),
+  });
+
+  let error = '';
+
+  onMount(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('error')) {
+      error = params.get('error') || 'Une erreur est survenue.';
+    }
   });
   
   const { form: formData, enhance } = form;
@@ -28,6 +38,18 @@
   }
 
 </script>
+
+{#if error}
+  <div class="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded shadow-lg z-50">
+    {error}
+    <button
+      class="ml-4 text-white font-bold"
+      on:click={() => (error = '')}
+    >
+      ✕
+    </button>
+  </div>
+{/if}
 
 <!-- Form component using validation schema from schema.ts -->
 <form method="POST" use:enhance class={"flex flex-col gap-2"}>
