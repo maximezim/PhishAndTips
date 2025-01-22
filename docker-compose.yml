@@ -233,6 +233,7 @@ services:
 
   spiderfoot:
     image: spiderfoot:latest
+    build: https://github.com/smicallef/spiderfoot.git
     ports:
       - "5001:5001"
     networks:
@@ -243,6 +244,8 @@ services:
       context: ./spiderfoot-api
       dockerfile: Dockerfile
     image: spiderfoot-api:latest
+    ports:
+      - "8000:8000"
     networks:
       - backend
     depends_on:
@@ -267,7 +270,7 @@ services:
     environment:
       - VITE_GATEWAY_URL=http://localhost:8080/
     ports:
-      - "8000:3000"
+      - "8001:3000"
     networks:
       - backend
     depends_on:
