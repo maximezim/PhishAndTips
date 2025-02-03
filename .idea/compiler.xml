@@ -6,6 +6,9 @@
       <module name="gateway" target="17" />
       <module name="gateway.main" target="17" />
       <module name="gateway.test" target="17" />
+      <module name="LearnAndPhish.scoring" target="17" />
+      <module name="LearnAndPhish.scoring.main" target="17" />
+      <module name="LearnAndPhish.scoring.test" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

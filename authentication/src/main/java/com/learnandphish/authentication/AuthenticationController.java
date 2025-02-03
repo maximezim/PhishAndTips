@@ -1,6 +1,7 @@
 package com.learnandphish.authentication;
 
 import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.user.ScanResult;
 import com.learnandphish.authentication.jwt.JwtRequest;
 import com.learnandphish.authentication.jwt.JwtResponse;
 import com.learnandphish.authentication.jwt.JwtUserDetailsService;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import java.util.Map;
 
 @RestController
 public class AuthenticationController {
@@ -51,6 +53,9 @@ public class AuthenticationController {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    private UserScanRepository userScanRepository;
 
     /**
      * Endpoint to authenticate users and provide JWT token.
@@ -305,6 +310,33 @@ public class AuthenticationController {
     public ResponseEntity<List<GophishUserDTO>> getAllUsers() {
         List<UserData> users = userDataRepository.findAll();
         return ResponseEntity.ok(userExportService.convertToGophishUsersDTO(users));
+    }
+
+    // Endpoint for users to retrieve their own scan result using JWT extracted email
+    @RolesAllowed({"USER", "ADMIN"})
+    @GetMapping("/my-scan")
+    public ResponseEntity<?> getMyScan() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        ScanResult scan = userScanRepository.findScanByEmail(email);
+        if (scan == null) {
+            return ResponseEntity.status(404).body("No scan result found for " + email);
+        }
+        return ResponseEntity.ok(scan);
+    }
+
+    // Endpoint for admin to retrieve a scan result for any provided email
+    @RolesAllowed("ADMIN")
+    @PostMapping("/admin/scan")
+    public ResponseEntity<?> getScanByEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body("Email must be provided");
+        }
+        ScanResult scan = userScanRepository.findScanByEmail(email);
+        if (scan == null) {
+            return ResponseEntity.status(404).body("No scan result found for " + email);
+        }
+        return ResponseEntity.ok(scan);
     }
 
     /**
