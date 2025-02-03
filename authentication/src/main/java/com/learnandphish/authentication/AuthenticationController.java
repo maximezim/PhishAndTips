@@ -64,7 +64,7 @@ public class AuthenticationController {
     private RestTemplate restTemplate;
 
     // Updated base URL with proper API prefix
-    private final String spiderfootApiUrl = "http://spiderfoot-api:8000/internal/spiderfoot";
+    private final String spiderfootApiUrl = "http://spiderfoot-api:8001/internal/spiderfoot";
 
     /**
      * Endpoint to authenticate users and provide JWT token.
