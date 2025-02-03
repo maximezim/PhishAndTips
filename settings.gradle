@@ -1,2 +1,4 @@
 rootProject.name = 'LearnAndPhish'
 include 'api-gateway'
+include 'scoring'
+

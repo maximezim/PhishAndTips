@@ -46,6 +46,7 @@
 		"zod": "^3.23.8"
 	},
 	"dependencies": {
+		"@sveltejs/adapter-node": "^5.2.12",
 		"axios": "^1.7.9",
 		"cobe": "^0.6.3",
 		"iconify-icon": "^2.1.0",

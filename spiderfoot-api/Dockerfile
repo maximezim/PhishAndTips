@@ -30,7 +30,7 @@ RUN chmod 0644 /etc/cron.d/weekly_scan_cron && crontab /etc/cron.d/weekly_scan_c
 RUN dos2unix /etc/cron.d/weekly_scan_cron
 RUN touch /var/log/cron.log
 
-EXPOSE 8000
+EXPOSE 8001
 
 # Start cron and uvicorn
 CMD ["sh", "-c", "cron -f & uvicorn app.main:app --host 0.0.0.0 --port 8000"]
