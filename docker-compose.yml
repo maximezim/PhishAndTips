@@ -16,6 +16,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles:
+      - prod
+      - dev
 
   authentication-service:
     container_name: authentication-service
@@ -42,6 +45,9 @@ services:
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false
       - MAIL_FROM=sender@example.com
+    profiles:
+      - prod
+      - dev
 
   api-gateway:
     container_name: api-gateway
@@ -55,6 +61,9 @@ services:
       - backend
     depends_on:
       - authentication-service
+    profiles:
+      - prod
+      - dev
 
   dozzle:
     container_name: dozzle
@@ -69,6 +78,9 @@ services:
         - DOZZLE_ENABLE_ACTIONS=true
     networks:
         - backend
+    profiles:
+      - prod
+      - dev
 
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
@@ -91,6 +103,9 @@ services:
     restart: unless-stopped
     networks:
       - backend
+    profiles:
+      - prod
+      - dev
 
   webmail:
     image: roundcube/roundcubemail:latest
@@ -114,6 +129,8 @@ services:
       - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
     networks:
       - backend
+    profiles:
+      - dev
 
   gophish:
     image: gophish/gophish:latest
@@ -129,6 +146,9 @@ services:
     restart: unless-stopped
     networks:
       - backend
+    profiles:
+      - prod
+      - dev
 
   postgres-formation:
     container_name: postgres-formation
@@ -147,6 +167,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles:
+      - prod
+      - dev
 
   formation-service:
     container_name: formation-service
@@ -165,6 +188,9 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
     volumes:
       - ./formation/data:/var/formation/data
+    profiles:
+      - prod
+      - dev
 
 #  scoring-service:
 #    container_name: scoring-service
@@ -181,6 +207,9 @@ services:
 #      - SPRING_DATASOURCE_PASSWORD=password
 #    networks:
 #      - backend
+#    profiles:
+#      - prod
+#      - dev
 
 
   spiderfoot:
@@ -189,6 +218,9 @@ services:
     build: https://github.com/smicallef/spiderfoot.git
     networks:
       - backend
+    profiles:
+      - prod
+      - dev
   
   spiderfoot-api:
     container_name: spiderfoot-api
@@ -198,8 +230,6 @@ services:
     image: spiderfoot-api:latest
     networks:
       - backend
-    ports:
-      - "8001:8001" # remove in prod
     depends_on:
       postgres:
         condition: service_healthy
@@ -208,6 +238,9 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: authentication_db
       POSTGRES_HOST: postgres
+    profiles:
+      - prod
+      - dev
 
   frontend:
     container_name: frontend
@@ -223,6 +256,9 @@ services:
       - backend
     depends_on:
       - api-gateway
+    profiles:
+      - prod
+      - dev
 
 networks:
   backend:
