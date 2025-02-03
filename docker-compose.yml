@@ -1,10 +1,3 @@
-x-logging:
-  &fluentd-logging
-  driver: fluentd
-  options:
-    fluentd-async: "true"
-    fluentd-address: fluent-bit:24224
-
 services:
   postgres:
     container_name: postgres
@@ -23,7 +16,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    logging: *fluentd-logging
 
   authentication-service:
     container_name: authentication-service
@@ -50,8 +42,6 @@ services:
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false
       - MAIL_FROM=sender@example.com
-    logging: *fluentd-logging
-
 
   api-gateway:
     container_name: api-gateway
@@ -65,70 +55,19 @@ services:
       - backend
     depends_on:
       - authentication-service
-    logging: *fluentd-logging
 
-  loki:
-    container_name: loki
-    image: grafana/loki:latest
-    ports:
-      - "3100:3100"
+  dozzle:
+    container_name: dozzle
+    image: ghcr.io/amir20/dozzle:latest
     volumes:
-      - ./logging/loki-config.yml:/etc/loki/loki-config.yml
-    command: -config.file=/etc/loki/loki-config.yml
-    networks:
-      - backend
-
-  fluent-bit:
-    container_name: fluent-bit
-    image: grafana/fluent-bit-plugin-loki:latest
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      LOG_LEVEL: info
-      LOKI_URL: http://loki:3100/loki/api/v1/push
-    volumes:
-      - ./logging/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
-    ports:
-      - "24224:24224"
-      - "24224:24224/udp"
+        - DOZZLE_ADDR=:3001
+        - DOZZLE_NO_ANALYTICS=true
+        - DOZZLE_BASE=/monitor
+        - DOZZLE_HOSTNAME=Phish&Tips
     networks:
-      - backend
-    depends_on:
-      - loki
-
-  grafana:
-    container_name: grafana
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
-    environment:
-      GF_PATHS_PROVISIONING: /var/lib/grafana/provisioning
-      GF_RENDERING_SERVER_URL: http://renderer:8081/render
-      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
-      GF_LOG_FILTERS: rendering:debug
-    volumes:
-      - ./logging/grafana:/var/lib/grafana
-    networks:
-      - backend
-
-  renderer:
-    container_name: renderer
-    image: grafana/grafana-image-renderer:latest
-    expose:
-      - "8081"
-    environment:
-      ENABLE_METRICS: "true"
-    networks:
-      - backend
-
-  test-logs:
-    container_name: test
-    image: thakkaryash94/express-example:latest
-    ports:
-      - "4000:3000"
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: fluent-bit:24224
+        - backend
 
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
@@ -207,7 +146,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    logging: *fluentd-logging
 
   formation-service:
     container_name: formation-service
@@ -226,7 +164,6 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
     volumes:
       - ./formation/data:/var/formation/data
-    logging: *fluentd-logging
 
 #  scoring-service:
 #    container_name: scoring-service
@@ -243,7 +180,6 @@ services:
 #      - SPRING_DATASOURCE_PASSWORD=password
 #    networks:
 #      - backend
-#    logging: *fluentd-logging
 
 
   spiderfoot:
@@ -271,7 +207,6 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: authentication_db
       POSTGRES_HOST: postgres
-    logging: *fluentd-logging
 
   frontend:
     container_name: frontend
@@ -282,13 +217,12 @@ services:
     environment:
       - VITE_GATEWAY_URL=http://api-gateway:8080
     ports:
-      - "3001:3000"
+      - "3000:3000"
     networks:
       - backend
     depends_on:
       - api-gateway
-    logging: *fluentd-logging
-        
+
 networks:
   backend:
     driver: bridge
