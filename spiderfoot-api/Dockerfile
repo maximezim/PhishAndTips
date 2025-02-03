@@ -2,8 +2,9 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install system dependencies for psycopg2 and git
-RUN apt-get update && apt-get install -y libpq-dev gcc git && rm -rf /var/lib/apt/lists/*
+ENV TZ=Europe/Paris
+# Install system dependencies for psycopg2, git, and cron
+RUN apt-get update && apt-get install -y dos2unix tzdata libpq-dev gcc git cron && rm -rf /var/lib/apt/lists/*
 
 # Clone SpiderFoot
 RUN git clone https://github.com/smicallef/spiderfoot.git /opt/spiderfoot
@@ -22,5 +23,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the app code
 COPY . .
 
+# Copy cronjob files
+COPY app/weekly_scan.py /app/weekly_scan.py
+COPY cronjob/weekly_scan_cron /etc/cron.d/weekly_scan_cron
+RUN chmod 0644 /etc/cron.d/weekly_scan_cron && crontab /etc/cron.d/weekly_scan_cron
+RUN dos2unix /etc/cron.d/weekly_scan_cron
+RUN touch /var/log/cron.log
+
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# Start cron and uvicorn
+CMD ["sh", "-c", "cron -f & uvicorn app.main:app --host 0.0.0.0 --port 8000"]

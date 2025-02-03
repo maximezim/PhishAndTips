@@ -5,6 +5,7 @@ from app.database import SessionLocal
 from app.models import SpiderfootScan
 from app.schemas import ScanRequest, ScanResponse, ScanResult
 from app.queue_worker import scan_queue
+from datetime import datetime
 
 router = APIRouter()
 
@@ -25,6 +26,7 @@ def start_scan(scan_request: ScanRequest):
         existing_scan.status = "queued"
         existing_scan.result = None
         existing_scan.spiderfoot_scan_id = None
+        existing_scan.updated_at = datetime.utcnow()  # update updated_at on rescan
         db.commit()
     else:
         # If no existing row, insert a new one
@@ -32,7 +34,8 @@ def start_scan(scan_request: ScanRequest):
             target=scan_request.target,
             id=scan_id,
             modules=scan_request.modules,
-            status="queued"
+            status="queued",
+            updated_at=datetime.utcnow()  # set updated_at on creation
         )
         db.add(new_scan)
         db.commit()
