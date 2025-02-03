@@ -83,7 +83,7 @@
     return isValid;
   }
 
-  function createCampaign() {
+  async function createCampaign() {
     if (!validateForm()){
       console.log(errors);
       return;
@@ -101,7 +101,19 @@
     };
 
     console.log(groupJson);
-    AuthService.createCampaign(groupJson);
+    
+    const response = await fetch('/api/campaigns/create', {
+			method: 'POST',
+			body: JSON.stringify({ groupJson }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const response_json = await response.json();
+
+    console.log(response_json);
+
     closeAlertDialog();
   }
 

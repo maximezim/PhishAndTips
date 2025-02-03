@@ -126,13 +126,20 @@ class PhishingService {
 
 	public static async createCampaign(cookies: any, campaign: any) {
 		try {
-			const response = await axios.post(`${API_URL}/api/campaigns/`, campaign, {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await fetch(`${API_URL}/api/campaigns?api_key=${API_KEY}`, {
+				method: 'POST',
 				headers: {
-					Authorization: `${API_KEY}`
-				}
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${jwt}`
+				},
+				body: JSON.stringify({ Payload: campaign })
 			});
-			console.log('Campagne créée:', response.data);
-			return response.data;
+			console.log('Campagne créée:', response);
+			if (response.ok) {
+				const body = await response.json();
+				return body;
+			}
 		} catch (error: any) {
 			console.error('Erreur lors de la création de la campagne Gophish:', error.message);
 		}
