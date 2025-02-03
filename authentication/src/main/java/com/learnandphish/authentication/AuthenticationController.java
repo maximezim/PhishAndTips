@@ -1,8 +1,10 @@
 package com.learnandphish.authentication;
 
 import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.user.ScanResult;
 import com.learnandphish.authentication.jwt.JwtRequest;
 import com.learnandphish.authentication.jwt.JwtResponse;
+import com.learnandphish.authentication.config.RestTemplateConfig;
 import com.learnandphish.authentication.jwt.JwtUserDetailsService;
 import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
@@ -27,6 +29,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import java.util.Map;
+import org.springframework.web.client.RestTemplate;
+import java.util.HashMap;
 
 @RestController
 public class AuthenticationController {
@@ -51,6 +56,15 @@ public class AuthenticationController {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    private UserScanRepository userScanRepository;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    // Updated base URL with proper API prefix
+    private final String spiderfootApiUrl = "http://spiderfoot-api:8000/internal/spiderfoot";
 
     /**
      * Endpoint to authenticate users and provide JWT token.
@@ -306,6 +320,62 @@ public class AuthenticationController {
     public ResponseEntity<List<GophishUserDTO>> getAllUsers() {
         List<UserData> users = userDataRepository.findAll();
         return ResponseEntity.ok(userExportService.convertToGophishUsersDTO(users));
+    }
+
+    // Endpoint for users to retrieve their own scan result using JWT extracted email
+    @RolesAllowed({"USER", "ADMIN"})
+    @GetMapping("/my-scan")
+    public ResponseEntity<?> getMyScan() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        ScanResult scan = userScanRepository.findScanByEmail(email);
+        if (scan == null) {
+            return ResponseEntity.status(404).body("No scan result found for " + email);
+        }
+        return ResponseEntity.ok(scan);
+    }
+
+    // Endpoint for admin to retrieve a scan result for any provided email
+    @RolesAllowed("ADMIN")
+    @PostMapping("/admin/scan")
+    public ResponseEntity<?> getScanByEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body("Email must be provided");
+        }
+        ScanResult scan = userScanRepository.findScanByEmail(email);
+        if (scan == null) {
+            return ResponseEntity.status(404).body("No scan result found for " + email);
+        }
+        return ResponseEntity.ok(scan);
+    }
+
+    // Endpoint for users to initiate a new scan (email extracted from JWT)
+    @RolesAllowed({"USER", "ADMIN"})
+    @PostMapping("/my-scan/new")
+    public ResponseEntity<?> startMyScan() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("target", email);
+        payload.put("modules", ""); // set default modules if needed
+
+        ResponseEntity<?> response = restTemplate.postForEntity(spiderfootApiUrl + "/scan", payload, Object.class);
+        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
+    }
+
+    // Endpoint for admin to initiate a new scan for any provided email
+    @RolesAllowed("ADMIN")
+    @PostMapping("/admin/scan/new")
+    public ResponseEntity<?> startScanForEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        if (email == null || email.isBlank()) {
+            return ResponseEntity.badRequest().body("Email must be provided");
+        }
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("target", email);
+        payload.put("modules", ""); // set default modules if needed
+
+        ResponseEntity<?> response = restTemplate.postForEntity(spiderfootApiUrl + "/scan", payload, Object.class);
+        return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
     }
 
     /**

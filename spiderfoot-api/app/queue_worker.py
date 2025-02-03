@@ -6,6 +6,7 @@ import json
 import subprocess
 import os
 import re
+from datetime import datetime
 
 from app.database import SessionLocal
 from app.models import SpiderfootScan
@@ -108,6 +109,7 @@ def run_spiderfoot_scan(scan_id: uuid.UUID, target: str, modules: str):
             scan.result = result_data
             if spiderfoot_scan_id:
                 scan.spiderfoot_scan_id = spiderfoot_scan_id
+            scan.updated_at = datetime.utcnow()  # update updated_at on starting scan
             db.commit()
         db.close()
 
@@ -156,6 +158,7 @@ def run_spiderfoot_scan(scan_id: uuid.UUID, target: str, modules: str):
         if scan:
             scan.status = "completed"
             scan.result = export_result
+            scan.updated_at = datetime.utcnow()  # update updated_at on completion
             db.commit()
         db.close()
 
@@ -169,6 +172,7 @@ def run_spiderfoot_scan(scan_id: uuid.UUID, target: str, modules: str):
                 scan.result["parsed_data"] = data_result
             else:
                 scan.result = {"export_result": export_result, "parsed_data": data_result}
+            scan.updated_at = datetime.utcnow()  # update updated_at after parsing data
             db.commit()
         db.close()
 
@@ -178,6 +182,7 @@ def run_spiderfoot_scan(scan_id: uuid.UUID, target: str, modules: str):
         if scan:
             scan.status = "error"
             scan.result = {"error": str(e)}
+            scan.updated_at = datetime.utcnow()  # update updated_at on error
             db.commit()
         db.close()
 
@@ -194,6 +199,7 @@ def queue_worker():
             scan = db.query(SpiderfootScan).filter(SpiderfootScan.target == target).first()
             if scan:
                 scan.status = "running"
+                scan.updated_at = datetime.utcnow()  # update updated_at before scan processing
                 db.commit()
             db.close()
 

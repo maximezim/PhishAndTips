@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
   export let className: string = "";
   export let quantity: number = 200;
@@ -17,6 +17,9 @@
   let mouse = { x: 0, y: 0 };
   let canvasSize = { w: 0, h: 0 };
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1;
+
+  // Dispatcher pour émettre des événements
+  const dispatch = createEventDispatcher();
 
   function hexToRgb(hex: string): number[] {
     hex = hex.replace("#", "");
@@ -81,7 +84,7 @@
     }
   }
 
-  function drawCircle(circle: { x: any; y: any; translateX: any; translateY: any; size: any; alpha: any; targetAlpha?: number; dx?: number; dy?: number; magnetism?: number; }, update = false) {
+  function drawCircle(circle: any, update = false) {
     if (context) {
       const { x, y, translateX, translateY, size, alpha } = circle;
       context.translate(translateX, translateY);
@@ -173,7 +176,12 @@
     if (canvasRef) {
       context = canvasRef.getContext("2d");
       resizeCanvas();
+      drawParticles();
       animate();
+
+      // Une fois prêt, émet l'événement `loaded`
+      dispatch("loaded");
+
       window.addEventListener("resize", resizeCanvas);
       window.addEventListener("mousemove", onMouseMove);
     }
@@ -183,14 +191,6 @@
       window.removeEventListener("mousemove", onMouseMove);
     };
   });
-
-  $: {
-    if (canvasRef) {
-      drawParticles();
-      //   animate();
-    }
-  }
-  //   Building Stage
 </script>
 
 <div class={className} bind:this={canvasContainerRef} aria-hidden="true">

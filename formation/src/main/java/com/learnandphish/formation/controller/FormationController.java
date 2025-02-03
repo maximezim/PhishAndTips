@@ -2,8 +2,10 @@ package com.learnandphish.formation.controller;
 
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.model.Quiz;
+import com.learnandphish.formation.model.Video;
 import com.learnandphish.formation.service.FormationService;
 import com.learnandphish.formation.service.QuizService;
+import com.learnandphish.formation.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 public class FormationController {
     private final FormationService formationService;
     private final QuizService quizService;
+    private final VideoService videoService;
 
 
     @GetMapping("/formations")
@@ -40,5 +43,11 @@ public class FormationController {
     public ResponseEntity<Quiz> getQuizById(@PathVariable Integer quizId) {
         Quiz quiz = quizService.getQuizById(quizId);
         return quiz != null ? ResponseEntity.ok(quiz) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/videos")
+    public ResponseEntity<List<Video>> getAllVideos() {
+        List<Video> videos = videoService.getAllVideos();
+        return ResponseEntity.ok(videos);
     }
 }
