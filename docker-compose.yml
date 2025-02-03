@@ -66,6 +66,7 @@ services:
         - DOZZLE_NO_ANALYTICS=true
         - DOZZLE_BASE=/monitor
         - DOZZLE_HOSTNAME=Phish&Tips
+        - DOZZLE_ENABLE_ACTIONS=true
     networks:
         - backend
 
