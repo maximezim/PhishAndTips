@@ -11,7 +11,11 @@ services:
       - ./databases/authentication/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/authentication_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready --dbname=authentication_db --username=postgres",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -126,10 +130,10 @@ services:
       - maillogs:/var/log/mail
       - ./config/:/tmp/docker-mailserver/
     ports:
-      - "25:25"     # SMTP
-      - "143:143"   # IMAP
-      - "587:587"   # Submission
-      - "993:993"   # IMAPS
+      - "25:25" # SMTP
+      - "143:143" # IMAP
+      - "587:587" # Submission
+      - "993:993" # IMAPS
     restart: unless-stopped
     networks:
       - backend
@@ -184,7 +188,8 @@ services:
       - ./databases/formation/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
+      test:
+        ["CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -193,7 +198,6 @@ services:
       options:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
-
 
   formation-service:
     image: formation-service:latest
@@ -217,32 +221,32 @@ services:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
 
-#  scoring-service:
-#    image: scoring-service:latest
-#    build:
-#      context: ./scoring
-#      dockerfile: Dockerfile
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=password
-#    networks:
-#      - backend
-#    logging:
-#      driver: fluentd
-#      options:
-#        fluentd-async: "true"
-#        fluentd-address: host.docker.internal:24224
+  #  scoring-service:
+  #    image: scoring-service:latest
+  #    build:
+  #      context: ./scoring
+  #      dockerfile: Dockerfile
+  #    depends_on:
+  #      postgres:
+  #        condition: service_healthy
+  #    environment:
+  #      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
+  #      - SPRING_DATASOURCE_USERNAME=postgres
+  #      - SPRING_DATASOURCE_PASSWORD=password
+  #    networks:
+  #      - backend
+  #    logging:
+  #      driver: fluentd
+  #      options:
+  #        fluentd-async: "true"
+  #        fluentd-address: host.docker.internal:24224
 
   spiderfoot:
     image: spiderfoot:latest
     build: https://github.com/smicallef/spiderfoot.git
     networks:
       - backend
-  
+
   spiderfoot-api:
     build:
       context: ./spiderfoot-api
@@ -266,26 +270,25 @@ services:
         fluentd-async: "true"
         fluentd-address: host.docker.internal:24224
 
-  frontend:
-    image: frontend:latest
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    environment:
-      - VITE_GATEWAY_URL=http://api-gateway:8080
-    ports:
-      - "3001:3000"
-    networks:
-      - backend
-    depends_on:
-      - api-gateway
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+  # frontend:
+  #   image: frontend:latest
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - VITE_GATEWAY_URL=http://api-gateway:8080
+  #   ports:
+  #     - "3001:3000"
+  #   networks:
+  #     - backend
+  #   depends_on:
+  #     - api-gateway
+  #   logging:
+  #     driver: fluentd
+  #     options:
+  #       fluentd-async: "true"
+  #       fluentd-address: host.docker.internal:24224
 
-        
 networks:
   backend:
     driver: bridge

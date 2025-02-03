@@ -1,22 +1,24 @@
-import type { PageLoad, PageParams } from './types';
+import type { PageLoad } from './$types';
 
-export const load: PageLoad = ({ params }: { params: PageParams }) => {
-  const id = params.id;
+export const load: PageLoad = async ({ parent, data }) => {
+	await parent();
+	let { campaignDetails, campaignSummary } = data;
+	return {
+		title: 'Phishing',
+		dash_text: 'white',
+		dash_bg: 'secondary',
+		about_text: 'white',
+		about_bg: 'secondary',
+		form_text: 'white',
+		form_bg: 'secondary',
+		osint_text: 'white',
+		osint_bg: 'secondary',
+		pwd_text: 'white',
+		pwd_bg: 'secondary',
+		phishing_text: 'primary',
+		phishing_bg: 'white',
 
-  return {
-    title: 'Phishing',
-    dash_text: 'white',
-    dash_bg: 'secondary',
-    about_text: 'white',
-    about_bg: 'secondary',
-    form_text: 'white',
-    form_bg: 'secondary',
-    osint_text: 'white',
-    osint_bg: 'secondary',
-    pwd_text: 'white',
-    pwd_bg: 'secondary',
-    phishing_text: 'primary',
-    phishing_bg: 'white',
-    id
-  };
+		campaignDetails: campaignDetails,
+		campaignSummary: campaignSummary
+	};
 };

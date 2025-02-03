@@ -8,10 +8,10 @@
 	import { onMount } from "svelte";
 	import Separator from "$lib/components/custom/Separator.svelte";
     import { goto } from "$app/navigation";
-    import AuthService from "$lib/services/AuthService";
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
-	import { page } from "$app/stores";
-    import { get } from "svelte/store";
+    import type { PageData } from './$types';
+
+    let { data }: { data: PageData } = $props();
 
     interface Target {
         email: string;
@@ -27,34 +27,30 @@
         targets: Target[];
     }
 
-    let group : Group;
-    let users : Target[] = [];
-    let loading_data = true;
-    let selectedUsers : Target[] = [];
-
-    let currentPageUser = 1;
-    const rowsPerPageUser = 4;
-    let totalPagesUser = 1;
+    let group = $state<Group>();
+    let users = $state<Target[]>([]);
+    let loading_data = $state(true);
+    let selectedUsers = $state<Target[]>([]);
+    let currentPageUser = $state(1);
+    const rowsPerPageUser = 5;  // Kept as const
+    let totalPagesUser = $state(1);
 
     onMount(async () => {
-      try {
-        let id = "";
-        const data = get(page).data;
-        if (data && data.id) {
-            id = data.id;
-        } else {
-            console.error('ID is undefined');
+        try {
+            console.log(data);
+            group = data.groupDetails;
+            if (!group) {
+                throw new Error("Groupe non trouvé");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la récupération du groupe:", error);
+        } finally {
+            if (group) users = group.targets;
+            let nbuser = usersFromDb.length;
+            totalPagesUser = Math.ceil(nbuser / rowsPerPageUser);
+            selectedUsers = usersFromDb.filter(user => users.some(target => target.email === user.email));
+            loading_data = false;
         }
-        group = await AuthService.getGroupDetails(Number(id));
-      } catch (error) {
-        console.error("Erreur lors de la récupération du groupe:", error);
-      } finally {
-        users = group.targets;
-        let nbuser = usersFromDb.length;
-        totalPagesUser = Math.ceil(nbuser / rowsPerPageUser);
-        selectedUsers = usersFromDb.filter(user => users.some(target => target.email === user.email));
-        loading_data = false;
-      }
     });
 
     let usersFromDb = [
@@ -80,12 +76,13 @@
     function isUserSelected(user: Target) {
         return selectedUsers.some(selectedUser => selectedUser.email === user.email);
     }
-  
+
     function closeAlertDialog() {
         goto("/phishing");
     }
 
     function saveAndClose() {
+        if (!group) return;
         const groupID = Number(group.id);
         const modifiedDate = new Date().toISOString();
         const groupJson = {
@@ -94,18 +91,19 @@
             modified_date: modifiedDate,
             targets: selectedUsers,
         };
-        AuthService.updateGroup(groupID,groupJson);
+        // AuthService.updateGroup(groupID,groupJson);
         closeAlertDialog();
     }
 
     function deleteGroup() {
+        if (!group) return;
         const groupID = Number(group.id);
-        AuthService.deleteGroup(groupID);
+        // AuthService.deleteGroup(groupID);
         closeAlertDialog();
     }
 
-  </script>
-  
+</script>
+
 {#if loading_data}
     <div class="flex justify-center items-center h-full">
         <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
@@ -119,7 +117,9 @@
         <div class="flex flex-col gap-6">
             <div class="nom flex flex-col gap-3">
                 <Label for="name">Nom du groupe</Label>
-                <Input id="name" type="text" bind:value={group.name} />
+                {#if group}
+                    <Input id="name" type="text" bind:value={group.name} />
+                {/if}                
             </div>
             <div class="users flex flex-col">
                 <Label for="users">Utilisateurs</Label>
@@ -132,7 +132,7 @@
                             <Table.Head>Email</Table.Head>
                             <Table.Head>Position</Table.Head>
                             <Table.Head>Inclus</Table.Head>
-                      </Table.Row>
+                        </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {#each getCurrentPageRowsUser() as user}

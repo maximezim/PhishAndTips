@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { page } from '$app/stores';
     import { onMount } from 'svelte';
-    import { get } from 'svelte/store';
     import CircularProgressBar from "$lib/components/magicUi/AnimatedCircularProgressBar.svelte";
     import * as Table from '$lib/components/ui/table';
     import * as Card  from '$lib/components/ui/card';
@@ -9,7 +7,9 @@
     import { Badge } from '$lib/components/ui/badge';
     import Separator from '$lib/components/custom/Separator.svelte';
     import { Button } from '$lib/components/ui/button';
-    import AuthService from "$lib/services/AuthService";
+    import type { PageData } from './$types';
+
+    let { data }: { data: PageData } = $props();
 
     interface CampaignSummary {
         id: string;
@@ -71,9 +71,10 @@
         position: string;
     }
 
-    let campaign: Campaign;
-    let campaignSummary: CampaignSummary;
-    let users: Target[] = [];
+    let campaign = $state<Campaign>();
+    
+    let campaignSummary = $state<CampaignSummary>();
+    let users = $state<Target[]>([]);
     
     let timelineActions = {
       opened: new Set<string>(),
@@ -81,10 +82,13 @@
       sent: new Set<string>(),  
     };
 
-    let status_text = "";
-    let status_bg = "";
-    let loading_data = true;
-    let currentPageUser = 1;
+    // svelte-ignore non_reactive_update
+        let status_text = ""; 
+    // svelte-ignore non_reactive_update
+        let status_bg = "";
+        
+    let loading_data = $state(true);
+    let currentPageUser = $state(1);
     const rowsPerPageUser = 5;
     let totalPagesUser = 1;
 
@@ -99,19 +103,18 @@
     ];
 
     onMount(async () => {
-      let id = "";
       try {
-        const data = get(page).data;
-      if (data && data.id) {
-        id = data.id;
-        campaign = await AuthService.getCampaignDetails(Number(id));
-        campaignSummary = await AuthService.getCampaignSummary(Number(id)); 
-      } else {
-        console.error('ID is undefined');
-      }
+        campaign = data.campaignDetails;
+        campaignSummary = data.campaignSummary;
       } catch (error) {
         console.error("Erreur lors de la récupération des campagnes:", error);
       } finally {
+        if (!campaign) {
+          throw new Error("Campagne non trouvée");
+        }
+        if (!campaignSummary) {
+          throw new Error("Résumé de la campagne non trouvé");
+        }
         console.log("Campaign:", campaign);
         const timelineEmails = Array.from(
           new Set(campaign.timeline.map(event => event.email).filter(email => email))
@@ -120,13 +123,13 @@
 
         valueSent.set(campaignSummary.stats.sent);
         setTimeout(() => {
-          valueOpened.set(campaignSummary.stats.opened);
+          if (campaignSummary) valueOpened.set(campaignSummary.stats.opened);
         }, 300);
         setTimeout(() => {
-          valueClicked.set(campaignSummary.stats.clicked);
+          if (campaignSummary) valueClicked.set(campaignSummary.stats.clicked);
         }, 600);
         setTimeout(() => {
-          valueSubmittedData.set(campaignSummary.stats.submitted_data);
+          if (campaignSummary) valueSubmittedData.set(campaignSummary.stats.submitted_data);
         }, 900);
 
         campaign.timeline.forEach(event => {
@@ -142,7 +145,6 @@
         loading_data = false; 
       }
     });
-
 
     function changePageUser(page: number) {
         if (page >= 1 && page <= totalPagesUser) {
@@ -234,7 +236,7 @@
 
   </script>
   
-  {#if !loading_data}
+  {#if !loading_data && campaign && campaignSummary}
   <div class="relative z-10 flex flex-col w-full py-6 px-8">
     <div class="header flex items-center gap-4">
       <h1 class="text-2xl font-semibold">Informations sur la campagne</h1>
@@ -242,18 +244,17 @@
     <div class="infos grid grid-cols-3 gap-6 my-6">
       <div class="info flex flex-col gap-2 bg-muted rounded p-5 shadow">
         <span >Nom de la campagne</span>
-        <span class="font-semibold text-lg py-4 px-6 bg-violet-100 rounded">{campaignSummary.name}</span>
+          <span class="font-semibold text-lg py-4 px-6 bg-violet-100 rounded">{campaignSummary.name}</span>
       </div>
       <div class="info flex flex-col gap-2 bg-muted rounded p-5 shadow">
         <span>Date de création</span>
-        <span class="font-semibold text-lg py-4 px-6 bg-violet-100 rounded">{formatDate(campaignSummary.created_date)}</span>
+          <span class="font-semibold text-lg py-4 px-6 bg-violet-100 rounded">{formatDate(campaignSummary.created_date)}</span>
       </div>
       <div class="info flex flex-col gap-2 bg-muted rounded p-5 shadow">
         <span>Status</span>
-        <span class="font-semibold text-lg py-4 px-6 {status_text} {status_bg} rounded">{formatStatus(campaignSummary.status)}</span>
+          <span class="font-semibold text-lg py-4 px-6 {status_text} {status_bg} rounded">{formatStatus(campaignSummary.status)}</span>
       </div>
     </div>
-
 
     <div class="infos grid grid-cols-4 gap-6 mb-6">
       <div class="info flex flex-col items-center gap-8 bg-muted rounded p-5 shadow">
