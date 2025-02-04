@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class GophishUserDTO {
 
-    private String firstName;
-    private String lastName;
+    private String first_name;
+    private String last_name;
     private String email;
     private String position;
 
