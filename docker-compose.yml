@@ -2,10 +2,12 @@ services:
   postgres:
     container_name: postgres
     image: postgres:latest
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: authentication_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${AUTH_PG_USER}
+      POSTGRES_PASSWORD: ${AUTH_PG_PASSWORD}
     networks:
       - backend
     volumes:
@@ -35,16 +37,16 @@ services:
       - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_MAIL_HOST=mailserver
-      - SPRING_MAIL_PORT=25
-      - SPRING_MAIL_USERNAME=${AUTH_MAIL_USERNAME}
-      - SPRING_MAIL_PASSWORD=${AUTH_MAIL_PASSWORD}
+      - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
+      - SPRING_MAIL_HOST=${SMTP_HOST:-mailserver}
+      - SPRING_MAIL_PORT=${SMTP_PORT:-25}
+      - SPRING_MAIL_USERNAME=${SMTP_MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${SMTP_MAIL_PASSWORD}
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
-      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
-      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false
-      - MAIL_FROM=sender@example.com
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=${SMTP_ENABLE_TLS:-false}
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=${SMTP_ENABLE_TLS:-false}
+      - MAIL_FROM=${SMTP_FROM:-sender@example.com}
     profiles:
       - prod
       - dev
@@ -104,7 +106,6 @@ services:
     networks:
       - backend
     profiles:
-      - prod
       - dev
 
   webmail:
@@ -153,10 +154,12 @@ services:
   postgres-formation:
     container_name: postgres-formation
     image: postgres:latest
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: formation_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${FORMATION_PG_USER}
+      POSTGRES_PASSWORD: ${FORMATION_PG_PASSWORD}
     networks:
       - backend
     volumes:
@@ -182,34 +185,38 @@ services:
     depends_on:
       postgres-formation:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-formation:5432/formation_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_USERNAME=${FORMATION_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${FORMATION_PG_PASSWORD}
     volumes:
       - ./formation/data:/var/formation/data
     profiles:
       - prod
       - dev
 
-#  scoring-service:
-#    container_name: scoring-service
-#    image: scoring-service:latest
-#    build:
-#      context: ./scoring
-#      dockerfile: Dockerfile
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=password
-#    networks:
-#      - backend
-#    profiles:
-#      - prod
-#      - dev
+  scoring-service:
+    container_name: scoring-service
+    image: scoring-service:latest
+    build:
+      context: ./scoring
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
+      - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
+    networks:
+      - backend
+    profiles:
+      - prod
+      - dev
 
 
   spiderfoot:
@@ -233,9 +240,11 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${AUTH_PG_USER}
+      POSTGRES_PASSWORD: ${AUTH_PG_PASSWORD}
       POSTGRES_DB: authentication_db
       POSTGRES_HOST: postgres
     profiles:
