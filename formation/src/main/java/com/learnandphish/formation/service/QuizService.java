@@ -46,7 +46,7 @@ public class QuizService {
                 count++;
             }
         }
-        return score / count;
+        return count != 0 ? score / count : 0;
     }
 
     // Get user score for a quiz
