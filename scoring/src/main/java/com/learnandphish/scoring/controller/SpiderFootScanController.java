@@ -2,7 +2,7 @@ package com.learnandphish.scoring.controller;
 
 import com.learnandphish.scoring.service.SpiderFootScanService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
@@ -16,8 +16,8 @@ public class SpiderFootScanController {
     }
 
     @GetMapping("/scoring/results")
-    public Map<String, Object> getResultCount(@RequestParam String target) {
-        int count = spiderFootScanService.countResults(target);
-        return Map.of("target", target, "resultCount", count);
+    public Map<String, Object> getResultCount(@RequestHeader("email") String email) {
+        int count = spiderFootScanService.countResults(email);
+        return Map.of("email", email, "resultCount", count);
     }
 }
