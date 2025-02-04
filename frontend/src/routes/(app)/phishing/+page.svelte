@@ -10,28 +10,28 @@
   import { onMount } from 'svelte';
   import Separator from '$lib/components/custom/Separator.svelte';
   import { goto } from '$app/navigation';
-  import type { PageData } from './$types';
 
-  let { data }: { data: PageData } = $props();
+  let campaigns: any[] = [];
+  let templates: any[] = [];
+  let pages: any[] = [];
+  let groups: any[] = [];
+  let users: any[] = [];
+  let loading_data = true;
 
-  let campaigns = $state<any[]>([]);
-  let templates = $state<any[]>([]);
-  let pages = $state<any[]>([]);
-  let groups = $state<any[]>([]);
-  let loading_data = $state(true);
-  let queryParamsCampaign = $state("");
-  let queryParamsModel = $state("");
-  let currentPageGroup = $state(1);
+  let queryParamsCampaign = "";
+  let queryParamsModel = "";
+
+  let currentPageGroup = 1;
   const rowsPerPageGroup = 5;
-  let totalPagesGroup = $state(1);
+  let totalPagesGroup = 1;
 
   onMount(async () => {
     try {
-      console.log(data);
-      campaigns = data.campaigns; 
-      templates = data.templates;
-      pages = data.pages;
-      groups = data.groups;
+      campaigns = await fetch("/api/phishing/campaigns").then(res => res.json());
+      templates = await fetch("/api/phishing/templates").then(res => res.json());
+      pages = await fetch("/api/phishing/pages").then(res => res.json());
+      groups = await fetch("/api/phishing/groups").then(res => res.json());
+      console.log(groups);
     } catch (error) {
       console.error("Erreur lors de la récupération des campagnes:", error);
     } finally {
@@ -197,7 +197,7 @@
                       <span>{formatDate(group.modified_date)}</span>
                     </Table.Cell>
                     <Table.Cell class="hidden sm:table-cell">
-                      <Badge class="text" variant="secondary">{group.num_targets} utilisateurs</Badge>
+                      <Badge class="text" variant="secondary">{group.targets.length} utilisateurs</Badge>
                     </Table.Cell>
                     <Table.Cell class="text-right">
                       <Button variant='outline' on:click={editGroup(group.id)}>Modifier</Button>

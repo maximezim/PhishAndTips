@@ -1,18 +1,17 @@
-import PhishingService from '$lib/services/PhishingService.js';
+import DbService from '$lib/services/DbService';
 
-export async function GET({ request, cookies }) {
+export async function GET({ url, cookies }) {
 	try {
-		const groupId = await request.json();
 		console.log('Log: enter try');
-		const response = PhishingService.getCampaignSummary(cookies, groupId);
+		const response = await DbService.getUsers(cookies);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
 			console.error('Erreur: la réponse est vide');
+			return new Response(JSON.stringify({ error: "No data found" }), { status: 404 });
 		}
 	} catch (e) {
 		console.error(e);
-		throw e;
 	}
 }

@@ -15,6 +15,7 @@ class PhishingService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
+			console.log(response.data);
 			return response.data;
 		} catch (error: any) {
 			console.error('Erreur lors de la récupération des campagnes Gophish:', error.message);

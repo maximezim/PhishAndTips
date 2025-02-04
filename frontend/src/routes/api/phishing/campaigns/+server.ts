@@ -3,8 +3,8 @@ import PhishingService from '$lib/services/PhishingService.js';
 export async function GET({ cookies }) {
 	try {
 		console.log('Log: enter try');
-		const response = PhishingService.getCampaigns(cookies);
-		console.log(response);
+		const response = await PhishingService.getCampaigns(cookies);
+		console.log("SveltePhish ", response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
@@ -21,7 +21,7 @@ export async function POST({ request, cookies }) {
 	try {
 		console.log('Log: enter try');
 		console.log(groupJson);
-		const response = PhishingService.createCampaign(cookies, groupJson);
+		const response = await PhishingService.createCampaign(cookies, groupJson);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });

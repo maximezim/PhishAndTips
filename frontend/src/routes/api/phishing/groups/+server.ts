@@ -3,7 +3,7 @@ import PhishingService from '$lib/services/PhishingService.js';
 export async function GET({ cookies }) {
 	try {
 		console.log('Log: enter try');
-		const response = PhishingService.getGroups(cookies);
+		const response = await PhishingService.getGroups(cookies);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
@@ -21,7 +21,7 @@ export async function POST({ request, cookies }) {
 	try {
 		console.log('Log: enter try');
 		console.log(groupJson);
-		const response = PhishingService.createGroup(cookies, groupJson);
+		const response = await PhishingService.createGroup(cookies, groupJson);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
@@ -40,7 +40,7 @@ export async function PUT({ request, cookies }) {
 	try {
 		console.log('Log: enter try');
 		console.log(groupJson);
-		const response = PhishingService.updateGroup(cookies, groupJson.id, groupJson);
+		const response = await PhishingService.updateGroup(cookies, groupJson.id, groupJson);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
@@ -58,7 +58,7 @@ export async function DELETE({ request, cookies }) {
 	try {
 		console.log('Log: enter try');
 		console.log(groupId);
-		const response = PhishingService.deleteGroup(cookies, groupId);
+		const response = await PhishingService.deleteGroup(cookies, groupId);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });

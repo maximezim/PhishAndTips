@@ -8,15 +8,15 @@
 	import { onMount } from "svelte";
 	import Separator from "$lib/components/custom/Separator.svelte";
     import { goto } from "$app/navigation";
+    import AuthService from "$lib/services/AuthService";
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
-    import type { PageData } from './$types';
-
-    let { data }: { data: PageData } = $props();
+	import { page } from "$app/stores";
+    import { get } from "svelte/store";
 
     interface Target {
-        email: string;
         first_name: string;
         last_name: string;
+        email: string;
         position: string;
     }
 
@@ -27,40 +27,45 @@
         targets: Target[];
     }
 
-    let group = $state<Group>();
-    let users = $state<Target[]>([]);
-    let loading_data = $state(true);
-    let selectedUsers = $state<Target[]>([]);
-    let currentPageUser = $state(1);
-    const rowsPerPageUser = 5;  // Kept as const
-    let totalPagesUser = $state(1);
+    let group : Group;
+    let users : Target[] = [];
+    let usersFromDb : Target[] = [];
+    let loading_data = true;
+    let selectedUsers : Target[] = [];
+
+    let currentPageUser = 1;
+    const rowsPerPageUser = 4;
+    let totalPagesUser = 1;
 
     onMount(async () => {
-        try {
-            console.log(data);
-            group = data.groupDetails;
-            if (!group) {
-                throw new Error("Groupe non trouvé");
-            }
-        } catch (error) {
-            console.error("Erreur lors de la récupération du groupe:", error);
-        } finally {
-            if (group) users = group.targets;
-            let nbuser = usersFromDb.length;
-            totalPagesUser = Math.ceil(nbuser / rowsPerPageUser);
-            selectedUsers = usersFromDb.filter(user => users.some(target => target.email === user.email));
-            loading_data = false;
+      try {
+        let id = "";
+        const data = get(page).data;
+        if (data && data.id) {
+            id = data.id;
+        } else {
+            console.error('ID is undefined');
         }
+        const groupResponse = await fetch(`/api/phishing/campaigns/details?id=${encodeURIComponent(id)}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        group = await groupResponse.json();
+        usersFromDb = await fetch("/api/db/users").then(res => res.json());
+        console.log("users:", usersFromDb);
+      } catch (error) {
+        console.error("Erreur lors de la récupération du groupe:", error);
+      } finally {
+        users = group.targets;
+        let nbuser = usersFromDb.length;
+        totalPagesUser = Math.ceil(nbuser / rowsPerPageUser);
+        selectedUsers = usersFromDb.filter(user => users.some(target => target.email === user.email));
+        loading_data = false;
+      }
     });
 
-    let usersFromDb = [
-        {email: "test@mail.com", first_name: "John", last_name: "Doe", position: "CEO"},
-        {email: "test2@mail.com", first_name: "Jane", last_name: "Doe", position: "CFO"},
-        {email: "test3@mail.com", first_name: "John", last_name: "Smith", position: "CTO"},
-        {email: "jsmith@insa.com", first_name: "John", last_name: "Smith", position: "manager"},
-        {email: "llita@insa.fr", first_name: "Lea", last_name: "lita", position: "rh"},
-        {email: "mpalvin@insa.fr", first_name: "Mael", last_name: "Palvin", position: "rh"}
-    ];
 
     function changePageUser(page: number) {
         if (page >= 1 && page <= totalPagesUser) {
@@ -76,13 +81,12 @@
     function isUserSelected(user: Target) {
         return selectedUsers.some(selectedUser => selectedUser.email === user.email);
     }
-
+  
     function closeAlertDialog() {
         goto("/phishing");
     }
 
-    async function saveAndClose() {
-        if (!group) return;
+    function saveAndClose() {
         const groupID = Number(group.id);
         const modifiedDate = new Date().toISOString();
         const groupJson = {
@@ -91,43 +95,18 @@
             modified_date: modifiedDate,
             targets: selectedUsers,
         };
-
-        const response = await fetch('/api/groups', {
-			method: 'PUT',
-			body: JSON.stringify(groupJson),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-
-        const response_json = await response.json();
-
-        console.log("page.svelte : ", response_json);
-
+        AuthService.updateGroup(groupID,groupJson);
         closeAlertDialog();
     }
 
-    async function deleteGroup() {
-        if (!group) return;
+    function deleteGroup() {
         const groupID = Number(group.id);
-        
-        const response = await fetch('/api/groups', {
-			method: 'DELETE',
-			body: JSON.stringify(groupID),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-
-		const response_json = await response.json();
-
-        console.log("page.svelte : ", response_json);
-
+        AuthService.deleteGroup(groupID);
         closeAlertDialog();
     }
 
-</script>
-
+  </script>
+  
 {#if loading_data}
     <div class="flex justify-center items-center h-full">
         <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
@@ -141,9 +120,7 @@
         <div class="flex flex-col gap-6">
             <div class="nom flex flex-col gap-3">
                 <Label for="name">Nom du groupe</Label>
-                {#if group}
-                    <Input id="name" type="text" bind:value={group.name} />
-                {/if}                
+                <Input id="name" type="text" bind:value={group.name} />
             </div>
             <div class="users flex flex-col">
                 <Label for="users">Utilisateurs</Label>
@@ -156,7 +133,7 @@
                             <Table.Head>Email</Table.Head>
                             <Table.Head>Position</Table.Head>
                             <Table.Head>Inclus</Table.Head>
-                        </Table.Row>
+                      </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {#each getCurrentPageRowsUser() as user}
@@ -198,10 +175,10 @@
                 </div>
             </div>
         </div>
-        <AlertDialog.Footer class="flex justify-between w-full">
+        <AlertDialog.Footer class="flex flex-row justify-end w-full">
             <ConfirmPopup style="mr-auto" type="destructive" description="Suppression du groupe" name="Supprimer" functionToCall={deleteGroup}/>
             <div class="flex space-x-2">
-                <AlertDialog.Cancel on:click={closeAlertDialog}>Annuler</AlertDialog.Cancel>
+                <AlertDialog.Cancel class="mt-0" on:click={closeAlertDialog}>Annuler</AlertDialog.Cancel>
                 <ConfirmPopup name="Sauvegarder" description="Modification du groupe" style="bg-accent" functionToCall={saveAndClose}/>
             </div>
         </AlertDialog.Footer>

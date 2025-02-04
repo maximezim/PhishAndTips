@@ -1,8 +1,7 @@
-import type { PageLoad } from './$types';
+import type { PageLoad, PageParams } from './types';
 
-export const load: PageLoad = async ({ parent, data }) => {
-	await parent();
-	let { groupDetails } = data;
+export const load: PageLoad = ({ params }: { params: PageParams }) => {
+  	const id = params.id;
 	return {
 		title: 'Phishing',
 		dash_text: 'white',
@@ -17,7 +16,6 @@ export const load: PageLoad = async ({ parent, data }) => {
 		pwd_bg: 'secondary',
 		phishing_text: 'primary',
 		phishing_bg: 'white',
-
-		groupDetails: groupDetails
+		id
 	};
-};
+}

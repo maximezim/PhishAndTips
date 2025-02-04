@@ -1,8 +1,4 @@
-import type { PageLoad } from './$types.js';
-
-export const load: PageLoad = async ({ parent, data }) => {
-	await parent();
-	let { campaigns, templates, pages, groups } = data;
+export function load() {
 	return {
 		title: 'Phishing',
 		dash_text: 'white',
@@ -17,10 +13,5 @@ export const load: PageLoad = async ({ parent, data }) => {
 		pwd_bg: 'secondary',
 		phishing_text: 'primary',
 		phishing_bg: 'white',
-
-		campaigns: campaigns,
-		templates: templates,
-		pages: pages,
-		groups: groups
 	};
-};
+}

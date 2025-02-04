@@ -3,7 +3,7 @@ import PhishingService from '$lib/services/PhishingService.js';
 export async function GET({ cookies }) {
 	try {
 		console.log('Log: enter try');
-		const response = PhishingService.getPages(cookies);
+		const response = await PhishingService.getPages(cookies);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });

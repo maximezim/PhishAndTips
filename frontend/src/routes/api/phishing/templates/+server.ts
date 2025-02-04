@@ -1,10 +1,9 @@
 import PhishingService from '$lib/services/PhishingService.js';
 
-export async function GET({ request, cookies }) {
+export async function GET({ cookies }) {
 	try {
-		const groupId = await request.json();
 		console.log('Log: enter try');
-		const response = PhishingService.getGroupDetails(cookies, groupId);
+		const response = await PhishingService.getTemplates(cookies);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
