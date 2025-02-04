@@ -7,7 +7,18 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
+	var firstName: "";
+	var lastName: "";
+	var position: "";
+	var email: "";
+
 	onMount(async() => {
+		const user = await fetch("/api/auth/get-user").then(res => res.json()); 
+		firstName = user.firstName;
+		lastName = user.lastName;
+		position = user.position;
+		email = user.email;
+
 		if (window.location.pathname === '/') {
 			goto('/dashboard');
 		}
@@ -31,7 +42,7 @@
 		phishing_bg= {$page.data?.phishing_bg}
 	/>
 	<main class="relative w-full h-full overflow-scroll flex flex-col">
-		<Header title={$page.data?.title || 'Phish&Tips'} nom={'Robin'}/>
+		<Header title={$page.data?.title || 'Phish&Tips'} firstName={firstName} lastName={lastName} position={position} email={email} />
 		<div class="relative flex-grow w-full overflow-scroll">
 			<DotPage />
 			<slot></slot>
