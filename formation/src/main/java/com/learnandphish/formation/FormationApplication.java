@@ -5,8 +5,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.model.Quiz;
+import com.learnandphish.formation.model.Video;
 import com.learnandphish.formation.repository.FormationRepository;
 import com.learnandphish.formation.repository.QuizRepository;
+import com.learnandphish.formation.repository.VideoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -31,6 +33,9 @@ public class FormationApplication {
 
     @Autowired
     private FormationRepository formationRepository;
+
+    @Autowired
+    private VideoRepository videoRepository;
 
     // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database
     @Bean
@@ -96,6 +101,42 @@ public class FormationApplication {
                 }
             } else {
                 log.error("Folder data/formation does not exist or is not a directory");
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initializeVideo(){
+        return args -> {
+            File folder = new File("/var/formation/data/videos");
+            if (folder.exists() && folder.isDirectory()) {
+                File[] listOfFiles = folder.listFiles();
+                if (listOfFiles != null && listOfFiles.length > 0) {
+                    for (File file : listOfFiles) {
+                        String videoId = file.getName();
+                        // Make sure the file's name is a number
+                        if (!videoId.matches("\\d+")) {
+                            log.error("File name is not a number");
+                        }else {
+                            String content = Files.readString(file.toPath());
+                            JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
+                            String videoTitle = obj.get("title").getAsString();
+                            String videoDescription = obj.get("description").getAsString();
+                            String videoUrl = obj.get("url").getAsString();
+                            Video video = new Video();
+                            video.setId(Integer.parseInt(videoId));
+                            video.setTitle(videoTitle);
+                            video.setDescription(videoDescription);
+                            video.setUrl(videoUrl);
+                            videoRepository.save(video);
+
+                        }
+                    }
+                } else {
+                    log.error("No video found in data/formation folder");
+                }
+            } else {
+                log.error("Folder data/videos does not exist or is not a directory");
             }
         };
     }

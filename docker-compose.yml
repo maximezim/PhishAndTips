@@ -1,5 +1,6 @@
 services:
   postgres:
+    container_name: postgres
     image: postgres:latest
     environment:
       POSTGRES_DB: authentication_db
@@ -11,21 +12,13 @@ services:
       - ./databases/authentication/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/authentication_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready --dbname=authentication_db --username=postgres",
-        ]
+      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
 
   authentication-service:
+    container_name: authentication-service
     image: authentication-service:latest
     build:
       context: ./authentication
@@ -49,13 +42,9 @@ services:
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false
       - MAIL_FROM=sender@example.com
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
 
   api-gateway:
+    container_name: api-gateway
     image: api-gateway:latest
     build:
       context: ./gateway
@@ -66,55 +55,20 @@ services:
       - backend
     depends_on:
       - authentication-service
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
 
-  loki:
-    image: grafana/loki:latest
-    ports:
-      - "3100:3100"
-    networks:
-      - backend
-
-  fluent-bit:
-    image: grafana/fluent-bit-plugin-loki:latest
-    environment:
-      LOG_LEVEL: warn
-      LOKI_URL: http://loki:3100/loki/api/v1/push
+  dozzle:
+    container_name: dozzle
+    image: ghcr.io/amir20/dozzle:latest
     volumes:
-      - ./fluent-bit/conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
-    ports:
-      - "24224:24224"
-      - "24224:24224/udp"
-    networks:
-      - backend
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      GF_AUTH_DISABLE_LOGIN_FORM: true
-      GF_AUTH_ANONYMOUS_ENABLED: true #remove in prod
-      GF_RENDERING_SERVER_URL: http://renderer:8081/render
-      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
-      GF_LOG_FILTERS: rendering:debug
-    volumes:
-      - ./grafana-data:/var/lib/grafana
+        - DOZZLE_ADDR=:3001
+        - DOZZLE_NO_ANALYTICS=true
+        - DOZZLE_BASE=/monitor
+        - DOZZLE_HOSTNAME=Phish&Tips
+        - DOZZLE_ENABLE_ACTIONS=true
     networks:
-      - backend
-
-  renderer:
-    image: grafana/grafana-image-renderer:latest
-    expose:
-      - "8081"
-    environment:
-      ENABLE_METRICS: "true"
-    networks:
-      - backend
+        - backend
 
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
@@ -130,10 +84,10 @@ services:
       - maillogs:/var/log/mail
       - ./config/:/tmp/docker-mailserver/
     ports:
-      - "25:25" # SMTP
-      - "143:143" # IMAP
-      - "587:587" # Submission
-      - "993:993" # IMAPS
+      - "25:25"     # SMTP
+      - "143:143"   # IMAP
+      - "587:587"   # Submission
+      - "993:993"   # IMAPS
     restart: unless-stopped
     networks:
       - backend
@@ -177,6 +131,7 @@ services:
       - backend
 
   postgres-formation:
+    container_name: postgres-formation
     image: postgres:latest
     environment:
       POSTGRES_DB: formation_db
@@ -188,18 +143,13 @@ services:
       - ./databases/formation/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test:
-        ["CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres"]
+      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
 
   formation-service:
+    container_name: formation-service
     image: formation-service:latest
     build:
       context: ./formation
@@ -215,39 +165,33 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
     volumes:
       - ./formation/data:/var/formation/data
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
 
-  #  scoring-service:
-  #    image: scoring-service:latest
-  #    build:
-  #      context: ./scoring
-  #      dockerfile: Dockerfile
-  #    depends_on:
-  #      postgres:
-  #        condition: service_healthy
-  #    environment:
-  #      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
-  #      - SPRING_DATASOURCE_USERNAME=postgres
-  #      - SPRING_DATASOURCE_PASSWORD=password
-  #    networks:
-  #      - backend
-  #    logging:
-  #      driver: fluentd
-  #      options:
-  #        fluentd-async: "true"
-  #        fluentd-address: host.docker.internal:24224
+#  scoring-service:
+#    container_name: scoring-service
+#    image: scoring-service:latest
+#    build:
+#      context: ./scoring
+#      dockerfile: Dockerfile
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
+#      - SPRING_DATASOURCE_USERNAME=postgres
+#      - SPRING_DATASOURCE_PASSWORD=password
+#    networks:
+#      - backend
+
 
   spiderfoot:
+    container_name: spiderfoot
     image: spiderfoot:latest
     build: https://github.com/smicallef/spiderfoot.git
     networks:
       - backend
-
+  
   spiderfoot-api:
+    container_name: spiderfoot-api
     build:
       context: ./spiderfoot-api
       dockerfile: Dockerfile
@@ -264,30 +208,21 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: authentication_db
       POSTGRES_HOST: postgres
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
 
-  # frontend:
-  #   image: frontend:latest
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   environment:
-  #     - VITE_GATEWAY_URL=http://api-gateway:8080
-  #   ports:
-  #     - "3001:3000"
-  #   networks:
-  #     - backend
-  #   depends_on:
-  #     - api-gateway
-  #   logging:
-  #     driver: fluentd
-  #     options:
-  #       fluentd-async: "true"
-  #       fluentd-address: host.docker.internal:24224
+  frontend:
+    container_name: frontend
+    image: frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - VITE_GATEWAY_URL=http://api-gateway:8080
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+    depends_on:
+      - api-gateway
 
 networks:
   backend:

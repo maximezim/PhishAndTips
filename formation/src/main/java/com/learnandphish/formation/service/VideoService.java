@@ -1,11 +1,12 @@
 package com.learnandphish.formation.service;
 
-import com.learnandphish.formation.dto.VideoRequest;
 import com.learnandphish.formation.model.Video;
 import com.learnandphish.formation.repository.VideoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -13,36 +14,11 @@ import org.springframework.stereotype.Service;
 public class VideoService {
     private final VideoRepository videoRepository;
 
-    public Video createVideo(VideoRequest videoRequest) {
-        Video video = new Video(videoRequest.id(),
-                videoRequest.title(),
-                videoRequest.description(),
-                videoRequest.url(),
-                videoRequest.duration(),
-                videoRequest.difficulty());
-        log.info("Video {} created successfully", video);
-        return videoRepository.save(video);
-    }
-
-    public Video getVideoById(Long id) {
+    public Video getVideoById(Integer id) {
         return videoRepository.findById(id).orElseThrow(() -> new RuntimeException("Video not found"));
     }
 
-    public void deleteVideo(Long id) {
-        videoRepository.deleteById(id);
-    }
-
-    public Video updateVideo(VideoRequest videoRequest) {
-        Video video = videoRepository.findById(videoRequest.id())
-                .orElseThrow(() -> new RuntimeException("Video not found"));
-        video.setTitle(videoRequest.title());
-        video.setDescription(videoRequest.description());
-        video.setUrl(videoRequest.url());
-        video.setDuration(videoRequest.duration());
-        return videoRepository.save(video);
-    }
-
-    public Iterable<Video> getAllVideos() {
+    public List<Video> getAllVideos() {
         return videoRepository.findAll();
     }
 
