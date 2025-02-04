@@ -33,10 +33,6 @@
       } catch (error) {
         console.error("Erreur lors de la récupération du groupe:", error);
       } finally {
-        console.log(usersFromDb);
-        for (let i = 0; i < usersFromDb.length; i++) {
-            console.log(usersFromDb[i]);
-        }
         totalPagesUser = Math.ceil(usersFromDb.length / rowsPerPageUser);
         loading_data = false;
       }

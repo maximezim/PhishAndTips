@@ -9,7 +9,6 @@
   import { Badge } from '$lib/components/ui/badge';
   import Separator from '$lib/components/custom/Separator.svelte';
   import { Button } from '$lib/components/ui/button';
-  import AuthService from "$lib/services/AuthService";
 
   interface CampaignSummary {
       id: string;
@@ -103,7 +102,6 @@
           }
       });
       campaign = await campaignResponse.json();
-      console.log("campagin :",campaign);
 
       const campaignResponseSummary = await fetch(`/api/phishing/campaigns/summary?id=${encodeURIComponent(id)}`, {
         method: 'GET',
@@ -112,7 +110,6 @@
         }
       });
       campaignSummary = await campaignResponseSummary.json();
-      console.log("campagin smmary :",campaignSummary);
       usersFromDb = await fetch("/api/db/users").then(res => res.json());
     } else {
       console.error('ID is undefined');
@@ -120,7 +117,6 @@
     } catch (error) {
       console.error("Erreur lors de la récupération des campagnes:", error);
     } finally {
-      console.log("Campaign:", campaign);
       const timelineEmails = Array.from(
         new Set(campaign.timeline.map(event => event.email).filter(email => email))
       );
@@ -136,8 +132,6 @@
       setTimeout(() => {
         valueSubmittedData.set(campaignSummary.stats.submitted_data);
       }, 900);
-
-      console.log("timeline : ", campaign.timeline);
 
       campaign.timeline.forEach(event => {
         if (event.message === 'Submitted Data') {
@@ -406,7 +400,7 @@
           <div class="relative w-1/3">
               <Button class="bg-accent" on:click={() => changePageUser(currentPageUser - 1)} disabled={currentPageUser === 1}>Précédent</Button>
           </div>
-          <div class="relative w-1/3 hidden sm:flex flex justify-center">
+          <div class="relative w-1/3 hidden sm:flex justify-center">
               <span class="mx-2 text-sm italic">Page {currentPageUser} sur {totalPagesUser}</span>
           </div>
           <div class="relative w-1/3 flex justify-end">

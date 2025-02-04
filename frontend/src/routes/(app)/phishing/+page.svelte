@@ -31,7 +31,6 @@
       templates = await fetch("/api/phishing/templates").then(res => res.json());
       pages = await fetch("/api/phishing/pages").then(res => res.json());
       groups = await fetch("/api/phishing/groups").then(res => res.json());
-      console.log(groups);
     } catch (error) {
       console.error("Erreur lors de la récupération des campagnes:", error);
     } finally {

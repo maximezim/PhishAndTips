@@ -1,35 +1,45 @@
 import PhishingService from '$lib/services/PhishingService.js';
 
+/*
+ * API endpoint : /api/phishing/campaigns
+ * Method : GET
+ * Response : list of campaigns
+ * Description : Get all campaigns
+ */
 export async function GET({ cookies }) {
 	try {
-		console.log('Log: enter try');
 		const response = await PhishingService.getCampaigns(cookies);
-		console.log("SveltePhish ", response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.error('Erreur: la réponse est vide');
+			console.error('Error: No data found');
+			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
-		console.error(e);
+		console.error('Server error:', e);
 		throw e;
 	}
 }
 
+/*
+ * API endpoint : /api/phishing/campaigns
+ * Method : POST
+ * Request : a campaign parsed in json
+ * Response : the campaign created
+ * Description : Create a new campaign
+ */
 export async function POST({ request, cookies }) {
-	const groupJson = await request.json();
+	const campaignJson = await request.json();
 	try {
-		console.log('Log: enter try');
-		console.log(groupJson);
-		const response = await PhishingService.createCampaign(cookies, groupJson);
-		console.log(response);
+		const response = await PhishingService.createCampaign(cookies, campaignJson);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.log('IL Y A UNE ERREUR ICIIII');
+			console.log('Error: No data found');
+			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
-		console.error(e);
+		console.error('Server error:', e);
 		throw e;
 	}
 }

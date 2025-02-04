@@ -8,7 +8,6 @@
   import Checkbox from "../ui/checkbox/checkbox.svelte";
   import type { DateValue } from "@internationalized/date";
   import ConfirmPopup from "./ConfirmPopup.svelte";
-  import AuthService from "$lib/services/AuthService";
 
   type Group = { name: string; date: string; status: string; nb: number };
   type Page = { id: number; name: string; html: string; capture_credentials: boolean; capture_passwords: boolean; modified_date: string; redirect_url: string };
@@ -99,8 +98,6 @@
       send_by_date: endDate ? endDate.toString() : null,
       groups: [{ name: selectedGroup?.name ?? "" }],
     };
-
-    console.log(groupJson);
     
     await fetch('/api/phishing/campaigns', {
 			method: 'POST',

@@ -1,14 +1,19 @@
 import PhishingService from '$lib/services/PhishingService.js';
 
+/*
+ * API endpoint : /api/phishing/groups
+ * Method : GET
+ * Response : list of groups
+ * Description : Get all groups
+ */
 export async function GET({ cookies }) {
 	try {
-		console.log('Log: enter try');
 		const response = await PhishingService.getGroups(cookies);
-		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.error('Erreur: la réponse est vide');
+			console.error('Error: No data found');
+			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
 		console.error(e);
@@ -16,17 +21,22 @@ export async function GET({ cookies }) {
 	}
 }
 
+/*
+ * API endpoint : /api/phishing/groups
+ * Method : POST
+ * Request : a group parsed in json
+ * Response : the group created
+ * Description : Create a new group
+ */
 export async function POST({ request, cookies }) {
 	const groupJson = await request.json();
 	try {
-		console.log('Log: enter try');
-		console.log(groupJson);
 		const response = await PhishingService.createGroup(cookies, groupJson);
-		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.error('Erreur: la réponse est vide');
+			console.log('Error: No data found');
+			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
 		console.error(e);
@@ -34,18 +44,22 @@ export async function POST({ request, cookies }) {
 	}
 }
 
+/*
+ * API endpoint : /api/phishing/groups
+ * Method : PUT
+ * Request : a group parsed in json
+ * Response : the group updated
+ * Description : Update an existing group
+ */
 export async function PUT({ request, cookies }) {
 	const groupJson = await request.json();
-	console.log('\n\n\n=========\n\n\ngroupJson : ', groupJson, '\n\n\n=========\n\n\n');
 	try {
-		console.log('Log: enter try');
-		console.log(groupJson);
 		const response = await PhishingService.updateGroup(cookies, groupJson.id, groupJson);
-		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.error('Erreur: la réponse est vide');
+			console.log('Error: No data found');
+			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
 		console.error(e);
@@ -53,17 +67,22 @@ export async function PUT({ request, cookies }) {
 	}
 }
 
+/*
+ * API endpoint : /api/phishing/groups
+ * Method : DELETE
+ * Request : a group id
+ * Response : a success message
+ * Description : Delete an existing group
+ */
 export async function DELETE({ request, cookies }) {
 	const groupId = await request.json();
 	try {
-		console.log('Log: enter try');
-		console.log(groupId);
 		const response = await PhishingService.deleteGroup(cookies, groupId);
-		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.error('Erreur: la réponse est vide');
+			console.log('Error: No data found');
+			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
 		console.error(e);
