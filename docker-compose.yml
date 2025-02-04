@@ -270,7 +270,6 @@ services:
       - api-gateway
     profiles:
       - prod
-      - dev
 
 networks:
   backend:
