@@ -13,6 +13,5 @@ import lombok.Setter;
 public class UserQuizScore {
     @EmbeddedId
     private UserQuizId userQuizId;
-
     private Float score;
 }
