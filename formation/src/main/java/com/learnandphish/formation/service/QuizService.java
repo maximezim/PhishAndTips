@@ -9,6 +9,7 @@ import com.learnandphish.formation.repository.UserQuizScoreRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
@@ -35,18 +36,15 @@ public class QuizService {
         quizScoreRepository.save(userQuizScore);
     }
 
-    // Get user scores
-    public double getUserScores(String user_email){
-        double score = 0;
-        int count = 0;
-        Iterable<UserQuizScore> userQuizScores = quizScoreRepository.findAll();
-        for (UserQuizScore userQuizScore : userQuizScores) {
-            if (userQuizScore.getUserQuizzId().getUser_email().equals(user_email)) {
-                score += userQuizScore.getScore();
-                count++;
-            }
-        }
-        return count != 0 ? score / count : 0;
+    // Get user scores robustly using streams
+    public double getUserScores(String user_email) {
+        return StreamSupport.stream(quizScoreRepository.findAll().spliterator(), false)
+                .filter(userQuizScore -> userQuizScore.getUserQuizzId() != null &&
+                        userQuizScore.getUserQuizzId().getUser_email() != null &&
+                        userQuizScore.getUserQuizzId().getUser_email().equals(user_email))
+                .mapToDouble(UserQuizScore::getScore)
+                .average()
+                .orElse(-1);
     }
 
     // Get user score for a quiz
