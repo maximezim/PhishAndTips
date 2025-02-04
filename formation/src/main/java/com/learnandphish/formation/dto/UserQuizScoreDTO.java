@@ -6,5 +6,5 @@ import lombok.Data;
 public class UserQuizScoreDTO {
     String user_email;
     Integer quiz_id;
-    double score;
+    Float score;
 }
