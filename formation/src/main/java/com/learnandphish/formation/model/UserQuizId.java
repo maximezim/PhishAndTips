@@ -12,19 +12,19 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class UserQuizzId implements Serializable {
-    private String user_email;
-    private Integer quiz_id;
+public class UserQuizId implements Serializable {
+    private String userEmail;
+    private Integer quizId;
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        UserQuizzId that = (UserQuizzId) o;
-        return Objects.equals(user_email, that.user_email) && Objects.equals(quiz_id, that.quiz_id);
+        UserQuizId that = (UserQuizId) o;
+        return Objects.equals(userEmail, that.userEmail) && Objects.equals(quizId, that.quizId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(user_email, quiz_id);
+        return Objects.hash(userEmail, quizId);
     }
 }

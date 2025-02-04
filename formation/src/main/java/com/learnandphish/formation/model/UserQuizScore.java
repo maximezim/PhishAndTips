@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class UserQuizScore {
     @EmbeddedId
-    private UserQuizzId userQuizzId;
+    private UserQuizId userQuizId;
 
-    private double score;
+    private Float score;
 }
