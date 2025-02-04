@@ -7,13 +7,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AuthenticationDatabaseFactory {
-    @Value("${auth.datasource.url:jdbc:postgresql://postgres:5432/authentication_db}")
+    @Value("${spring.datasource.url}")
     private String url;
     
-    @Value("${auth.datasource.username:postgres}")
+    @Value("${spring.datasource.username}")
     private String username;
     
-    @Value("${auth.datasource.password:password}")
+    @Value("${spring.datasource.password}")
     private String password;
 
     public DataSource getDataSource() {

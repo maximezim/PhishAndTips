@@ -3,6 +3,8 @@ package com.learnandphish.scoring.service;
 import com.learnandphish.scoring.factory.AuthenticationDatabaseFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ public class SpiderFootScanService {
 
     private final JdbcTemplate jdbcTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Logger logger = LoggerFactory.getLogger(SpiderFootScanService.class);
 
     public SpiderFootScanService(AuthenticationDatabaseFactory authDbFactory) {
         this.jdbcTemplate = new JdbcTemplate(authDbFactory.getDataSource());
@@ -31,8 +34,7 @@ public class SpiderFootScanService {
                 return results.size();
             }
         } catch (Exception e) {
-            // handle exception or rethrow as runtime exception
-            throw new RuntimeException("Error parsing JSON result", e);
+            logger.error("Error parsing JSON result", e);
         }
         return 0;
     }

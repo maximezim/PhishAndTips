@@ -7,13 +7,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class FormationDatabaseFactory {
-    @Value("${formation.datasource.url:jdbc:postgresql://postgres-formation:5432/formation_db}")
+    @Value("${formation.datasource.url}")
     private String url;
     
-    @Value("${formation.datasource.username:postgres}")
+    @Value("${formation.datasource.username}")
     private String username;
     
-    @Value("${formation.datasource.password:password}")
+    @Value("${formation.datasource.password}")
     private String password;
 
     public DataSource getDataSource() {
