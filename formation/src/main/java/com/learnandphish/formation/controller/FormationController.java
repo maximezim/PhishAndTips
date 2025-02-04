@@ -1,5 +1,6 @@
 package com.learnandphish.formation.controller;
 
+import com.learnandphish.formation.dto.UserQuizScoreDTO;
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.model.Quiz;
 import com.learnandphish.formation.model.Video;
@@ -54,5 +55,26 @@ public class FormationController {
     public ResponseEntity<List<Video>> getAllVideos() {
         List<Video> videos = videoService.getAllVideos();
         return ResponseEntity.ok(videos);
+    }
+
+    // Save user score
+    @PostMapping("/quiz/score")
+    public ResponseEntity<String> saveUserScore(@RequestBody UserQuizScoreDTO userQuizScoreDTO){
+        quizService.saveUserScore(userQuizScoreDTO.getUser_email(), userQuizScoreDTO.getQuiz_id(), userQuizScoreDTO.getScore());
+        return ResponseEntity.ok("Score saved successfully");
+    }
+
+    // Get user scores
+    @GetMapping("/quiz/score/{user_email}")
+    public ResponseEntity<Double> getUserScores(@PathVariable String user_email){
+        double score = quizService.getUserScores(user_email);
+        return ResponseEntity.ok(score);
+    }
+
+    // Get user score for a quiz
+    @GetMapping("/quiz/score/{user_email}/{quiz_id}")
+    public ResponseEntity<Double> getUserScoreForQuiz(@PathVariable String user_email, @PathVariable Integer quiz_id){
+        double score = quizService.getUserScoreForQuiz(user_email, quiz_id);
+        return ResponseEntity.ok(score);
     }
 }

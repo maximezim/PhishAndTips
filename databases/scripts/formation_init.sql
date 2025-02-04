@@ -17,9 +17,9 @@ CREATE TABLE IF NOT EXISTS video(
 );
 
 CREATE TABLE IF NOT EXISTS user_quiz_score(
-    user_id INTEGER NOT NULL PRIMARY KEY,
-    quiz_id INTEGER NOT NULL PRIMARY KEY,
+    user_email VARCHAR NOT NULL,
+    quiz_id INTEGER NOT NULL,
     score DOUBLE PRECISION NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    PRIMARY KEY (user_email, quiz_id),
     FOREIGN KEY (quiz_id) REFERENCES quiz(id)
 );
