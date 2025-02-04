@@ -52,9 +52,7 @@
             }
         });
         group = await groupResponse.json();
-        console.log("group:", group);
         usersFromDb = await fetch("/api/db/users").then(res => res.json());
-        console.log("users:", usersFromDb);
       } catch (error) {
         console.error("Erreur lors de la récupération du groupe:", error);
       } finally {
