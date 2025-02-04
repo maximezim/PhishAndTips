@@ -52,14 +52,14 @@ public class FormationApplication {
                         if (!quizId.matches("\\d+")) {
                             log.error("File name is not a number");
                         }else {
-                            Quiz quiz = quizRepository.findById(Integer.parseInt(quizId)).orElse(null);
-                            if (quiz == null) {
+                            Quiz quiz = quizRepository.findById(Integer.parseInt(quizId)).orElse(new Quiz());
+                            // If the quiz doesn't already exist in the db, read the content of the file and create a quiz
+                            if (quiz.getId() == null) {
                                 String content = Files.readString(file.toPath());
                                 String json = gson.toJson(new GsonJsonParser().parseMap(content));
-                                Quiz newquiz = new Quiz();
-                                newquiz.setId(Integer.parseInt(quizId));
-                                newquiz.setJson(json);
-                                quizRepository.save(newquiz);
+                                quiz.setId(Integer.parseInt(quizId));
+                                quiz.setJson(json);
+                                quizRepository.save(quiz);
                             }
                         }
                     }
@@ -72,6 +72,7 @@ public class FormationApplication {
         };
     }
 
+    // For each file in data/formation folder, create a formation if name of file (formation id) does not exist in database
     @Bean
     public CommandLineRunner initializeFormation(){
         return args -> {
@@ -85,19 +86,22 @@ public class FormationApplication {
                         if (!formationId.matches("\\d+")) {
                             log.error("File name is not a number");
                         }else {
-                            String content = Files.readString(file.toPath());
-                            JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
-                            String formationName = obj.get("name").getAsString();
-                            String formationDescription = obj.get("description").getAsString();
-                            Formation formation = new Formation();
-                            formation.setId(Integer.parseInt(formationId));
-                            formation.setName(formationName);
-                            formation.setDescription(formationDescription);
-                            formationRepository.save(formation);
+                            Formation formation = formationRepository.findById(Integer.parseInt(formationId)).orElse(new Formation());
+                            // If the formation doesn't already exist in the db, read the content of the file and create a formation
+                            if (formation.getId() == null) {
+                                String content = Files.readString(file.toPath());
+                                JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
+                                String formationName = obj.get("name").getAsString();
+                                String formationDescription = obj.get("description").getAsString();
+                                formation.setId(Integer.parseInt(formationId));
+                                formation.setName(formationName);
+                                formation.setDescription(formationDescription);
+                                formationRepository.save(formation);
+                            }
                         }
                     }
                 } else {
-                    log.error("No quiz found in data/formation folder");
+                    log.error("No formation found in data/formation folder");
                 }
             } else {
                 log.error("Folder data/formation does not exist or is not a directory");
@@ -105,6 +109,7 @@ public class FormationApplication {
         };
     }
 
+    // For each file in data/videos folder, create a video if name of file (video id) does not exist in database
     @Bean
     public CommandLineRunner initializeVideo(){
         return args -> {
@@ -118,22 +123,24 @@ public class FormationApplication {
                         if (!videoId.matches("\\d+")) {
                             log.error("File name is not a number");
                         }else {
-                            String content = Files.readString(file.toPath());
-                            JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
-                            String videoTitle = obj.get("title").getAsString();
-                            String videoDescription = obj.get("description").getAsString();
-                            String videoUrl = obj.get("url").getAsString();
-                            Video video = new Video();
-                            video.setId(Integer.parseInt(videoId));
-                            video.setTitle(videoTitle);
-                            video.setDescription(videoDescription);
-                            video.setUrl(videoUrl);
-                            videoRepository.save(video);
-
+                            Video video = videoRepository.findById(Integer.parseInt(videoId)).orElse(new Video());
+                            // If the video doesn't already exist in the db, read the content of the file and create a video
+                            if (video.getId() == null) {
+                                String content = Files.readString(file.toPath());
+                                JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
+                                String videoTitle = obj.get("title").getAsString();
+                                String videoDescription = obj.get("description").getAsString();
+                                String videoUrl = obj.get("url").getAsString();
+                                video.setId(Integer.parseInt(videoId));
+                                video.setTitle(videoTitle);
+                                video.setDescription(videoDescription);
+                                video.setUrl(videoUrl);
+                                videoRepository.save(video);
+                            }
                         }
                     }
                 } else {
-                    log.error("No video found in data/formation folder");
+                    log.error("No video found in data/videos folder");
                 }
             } else {
                 log.error("Folder data/videos does not exist or is not a directory");

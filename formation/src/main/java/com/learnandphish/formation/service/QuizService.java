@@ -13,10 +13,12 @@ import org.springframework.stereotype.Service;
 public class QuizService {
     private final QuizRepository quizRepository;
 
+    // Get a quiz by id
     public Quiz getQuizById(Integer id) {
         return quizRepository.findById(id).orElseThrow(() -> new RuntimeException("Quiz not found"));
     }
 
+    // Get all quizzes
     public Iterable<Quiz> getAllQuiz() {
         return quizRepository.findAll();
     }
