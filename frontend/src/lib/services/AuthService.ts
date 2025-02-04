@@ -45,6 +45,30 @@ class AuthService {
 		return '';
 	}
 
+	// Get user information
+	public static async getUser(cookies: any): Promise<string> {
+		const token = await AuthService.getTokenFromServer(cookies);
+		try {
+			const response = await fetch(GATEWAY_URL + '/get-user', {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`
+				}
+			});
+
+			if (response.ok) {
+				const reponseJson = await response.json();
+				return reponseJson;
+			}
+			console.error('Error: bad response from server');
+			return '';
+		} catch (error: any) {
+			console.error('Error while trying to get user info:', error.message);
+			throw error;
+		}
+	}
+
 	// Check if user is logged from client
 	public static async isLogged(): Promise<boolean> {
 		const token = await AuthService.getToken();
