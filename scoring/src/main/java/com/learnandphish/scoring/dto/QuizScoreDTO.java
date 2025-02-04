@@ -1,9 +1,9 @@
-package com.learnandphish.scoring.entity;
+package com.learnandphish.scoring.dto;
 
 import lombok.Data;
 
 @Data
-public class FormationDTO {
+public class QuizScoreDTO {
     private Integer quiz_id;
     private String user_email;
     private Double score;

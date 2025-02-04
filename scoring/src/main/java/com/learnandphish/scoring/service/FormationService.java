@@ -1,6 +1,6 @@
 package com.learnandphish.scoring.service;
 
-import com.learnandphish.scoring.entity.FormationDTO;
+import com.learnandphish.scoring.dto.QuizScoreDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -17,10 +17,10 @@ public class FormationService {
 
     private final Logger logger = LoggerFactory.getLogger(FormationService.class);
 
-    public List<FormationDTO> getUserFormations(String email) {
-        String url = "http://formation-service:8089/formation/getUserScores?email=" + email;
+    public List<QuizScoreDTO> getUserFormations(String email) {
+        String url = "http://formation-service:8089/formation/quiz/score/" + email;
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<List<FormationDTO>> response = restTemplate.exchange(
+        ResponseEntity<List<QuizScoreDTO>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,

@@ -1,6 +1,6 @@
 package com.learnandphish.scoring.controller;
 
-import com.learnandphish.scoring.entity.FormationDTO;
+import com.learnandphish.scoring.dto.QuizScoreDTO;
 import com.learnandphish.scoring.service.FormationService;
 import com.learnandphish.scoring.service.SpiderFootScanService;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ public class ScoringController {
     }
 
     @GetMapping("/formations")
-    public List<FormationDTO> getUserScores(@RequestHeader("email") String email) {
+    public List<QuizScoreDTO> getUserScores(@RequestHeader("email") String email) {
         return formationService.getUserFormations(email);
     }
 
