@@ -209,20 +209,20 @@ services:
       POSTGRES_DB: authentication_db
       POSTGRES_HOST: postgres
 
-  frontend:
-    container_name: frontend
-    image: frontend:latest
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    environment:
-      - VITE_GATEWAY_URL=http://api-gateway:8080
-    ports:
-      - "3000:3000"
-    networks:
-      - backend
-    depends_on:
-      - api-gateway
+#  frontend:
+#    container_name: frontend
+#    image: frontend:latest
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    environment:
+#      - VITE_GATEWAY_URL=http://api-gateway:8080
+#    ports:
+#      - "3000:3000"
+#    networks:
+#      - backend
+#    depends_on:
+#      - api-gateway
 
 networks:
   backend:

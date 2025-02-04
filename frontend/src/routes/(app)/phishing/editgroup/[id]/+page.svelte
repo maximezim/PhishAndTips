@@ -8,15 +8,14 @@
 	import { onMount } from "svelte";
 	import Separator from "$lib/components/custom/Separator.svelte";
     import { goto } from "$app/navigation";
-    import AuthService from "$lib/services/AuthService";
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
 	import { page } from "$app/stores";
     import { get } from "svelte/store";
 
     interface Target {
-        email: string;
         first_name: string;
         last_name: string;
+        email: string;
         position: string;
     }
 
@@ -29,6 +28,7 @@
 
     let group : Group;
     let users : Target[] = [];
+    let usersFromDb : Target[] = [];
     let loading_data = true;
     let selectedUsers : Target[] = [];
 
@@ -45,7 +45,14 @@
         } else {
             console.error('ID is undefined');
         }
-        group = await AuthService.getGroupDetails(Number(id));
+        const groupResponse = await fetch(`/api/phishing/groups/details?id=${encodeURIComponent(id)}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        group = await groupResponse.json();
+        usersFromDb = await fetch("/api/db/users").then(res => res.json());
       } catch (error) {
         console.error("Erreur lors de la récupération du groupe:", error);
       } finally {
@@ -57,14 +64,6 @@
       }
     });
 
-    let usersFromDb = [
-        {email: "test@mail.com", first_name: "John", last_name: "Doe", position: "CEO"},
-        {email: "test2@mail.com", first_name: "Jane", last_name: "Doe", position: "CFO"},
-        {email: "test3@mail.com", first_name: "John", last_name: "Smith", position: "CTO"},
-        {email: "jsmith@insa.com", first_name: "John", last_name: "Smith", position: "manager"},
-        {email: "llita@insa.fr", first_name: "Lea", last_name: "lita", position: "rh"},
-        {email: "mpalvin@insa.fr", first_name: "Mael", last_name: "Palvin", position: "rh"}
-    ];
 
     function changePageUser(page: number) {
         if (page >= 1 && page <= totalPagesUser) {
@@ -85,7 +84,7 @@
         goto("/phishing");
     }
 
-    function saveAndClose() {
+    async function saveAndClose() {
         const groupID = Number(group.id);
         const modifiedDate = new Date().toISOString();
         const groupJson = {
@@ -94,13 +93,25 @@
             modified_date: modifiedDate,
             targets: selectedUsers,
         };
-        AuthService.updateGroup(groupID,groupJson);
+        await fetch(`/api/phishing/groups`, {
+            method: 'PUT',
+            body: JSON.stringify(groupJson),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         closeAlertDialog();
     }
 
-    function deleteGroup() {
+    async function deleteGroup() {
         const groupID = Number(group.id);
-        AuthService.deleteGroup(groupID);
+        await fetch(`/api/phishing/groups`, {
+            method: 'DELETE',
+            body: JSON.stringify(groupID),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         closeAlertDialog();
     }
 
@@ -174,10 +185,10 @@
                 </div>
             </div>
         </div>
-        <AlertDialog.Footer class="flex justify-between w-full">
+        <AlertDialog.Footer class="flex flex-row justify-end w-full">
             <ConfirmPopup style="mr-auto" type="destructive" description="Suppression du groupe" name="Supprimer" functionToCall={deleteGroup}/>
             <div class="flex space-x-2">
-                <AlertDialog.Cancel on:click={closeAlertDialog}>Annuler</AlertDialog.Cancel>
+                <AlertDialog.Cancel class="mt-0" on:click={closeAlertDialog}>Annuler</AlertDialog.Cancel>
                 <ConfirmPopup name="Sauvegarder" description="Modification du groupe" style="bg-accent" functionToCall={saveAndClose}/>
             </div>
         </AlertDialog.Footer>
