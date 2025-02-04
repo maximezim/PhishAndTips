@@ -14,15 +14,13 @@ import java.util.List;
 public class VideoService {
     private final VideoRepository videoRepository;
 
+    // Get a video by id
     public Video getVideoById(Integer id) {
         return videoRepository.findById(id).orElseThrow(() -> new RuntimeException("Video not found"));
     }
 
+    // Get all videos
     public List<Video> getAllVideos() {
         return videoRepository.findAll();
     }
-
-    /*public Iterable<Video> getVideosByFormationId(String formationId) {
-        return videoRepository.findByFormationId(formationId);
-    }*/
 }

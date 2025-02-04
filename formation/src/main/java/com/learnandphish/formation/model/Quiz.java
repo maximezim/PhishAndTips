@@ -13,5 +13,6 @@ public class Quiz {
     @Id
     private Integer id;
 
+    // Json of the SurveyJs quiz
     private String json;
 }
