@@ -28,12 +28,14 @@ public class QuizService {
     }
 
     // Save user score
-    public void saveUserScore(String user_email, Integer quiz_id, double score){
-        UserQuizScore userQuizScore = new UserQuizScore();
-        userQuizScore.setUserQuizzId(new UserQuizzId(user_email, quiz_id));
-        userQuizScore.setScore(score);
-        quizScoreRepository.save(userQuizScore);
-    }
+    public void saveUserScore(String user_email, Integer quiz_id, double score) {
+            UserQuizScore userQuizScore = quizScoreRepository.findById(new UserQuizzId(user_email, quiz_id)).orElse(new UserQuizScore());
+            if (userQuizScore.getUserQuizzId() == null || userQuizScore.getUserQuizzId().getUser_email() == null) {
+                userQuizScore.setUserQuizzId(new UserQuizzId(user_email, quiz_id));
+            }
+            userQuizScore.setScore(score);
+            quizScoreRepository.save(userQuizScore);
+        }
 
     // Get user scores
     public double getUserScores(String user_email){
