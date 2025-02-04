@@ -27,11 +27,14 @@
         </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content class="w-38">
+          <DropdownMenu.Label>Profil</DropdownMenu.Label>
+          <DropdownMenu.Separator />
+          <DropdownMenu.Label>Position : {position}</DropdownMenu.Label>
+          <DropdownMenu.Label>Email : {email}</DropdownMenu.Label>
+          <DropdownMenu.Separator />
           <DropdownMenu.CheckboxItem class="cursor-pointer" on:click={handleLogout}>
             Se déconnecter
           </DropdownMenu.CheckboxItem>
-          <p>{position}</p>
-          <p>{email}</p>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 </header>
