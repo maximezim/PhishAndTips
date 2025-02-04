@@ -1,10 +1,12 @@
 package com.learnandphish.scoring.controller;
 
+import com.learnandphish.scoring.entity.FormationDTO;
 import com.learnandphish.scoring.service.FormationService;
 import com.learnandphish.scoring.service.SpiderFootScanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,8 +29,8 @@ public class ScoringController {
     }
 
     @GetMapping("/formations")
-    public Map<String, Object> getFormations(@RequestHeader("email") String email) {
-        return Map.of("email", email, "formations", formationService.getUserFormations(email));
+    public List<FormationDTO> getUserScores(@RequestHeader("email") String email) {
+        return formationService.getUserFormations(email);
     }
 
 }

@@ -215,9 +215,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
       - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
       - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
-      - FORMATION_DATASOURCE_URL=jdbc:postgresql://postgres-formation:5432/formation_db
-      - FORMATION_DATASOURCE_USERNAME=${FORMATION_PG_USER}
-      - FORMATION_DATASOURCE_PASSWORD=${FORMATION_PG_PASSWORD}
     networks:
       - backend
     profiles:
