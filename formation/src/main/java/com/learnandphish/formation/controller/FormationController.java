@@ -1,10 +1,7 @@
 package com.learnandphish.formation.controller;
 
 import com.learnandphish.formation.dto.UserQuizScoreDTO;
-import com.learnandphish.formation.model.Formation;
-import com.learnandphish.formation.model.Quiz;
-import com.learnandphish.formation.model.UserQuizScore;
-import com.learnandphish.formation.model.Video;
+import com.learnandphish.formation.model.*;
 import com.learnandphish.formation.service.FormationService;
 import com.learnandphish.formation.service.QuizService;
 import com.learnandphish.formation.service.VideoService;
@@ -12,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -67,8 +65,16 @@ public class FormationController {
 
     // Get user scores for all quizzes
     @GetMapping("/quiz/score/{user_email}")
-    public ResponseEntity<Iterable<UserQuizScore>> getUserScores(@PathVariable String user_email){
-        Iterable<UserQuizScore> userQuizScores = quizService.getUserScores(user_email);
+    public ResponseEntity<List<UserQuizScoreDTO>> getUserScores(@PathVariable String user_email){
+        ArrayList<UserQuizScoreDTO> userQuizScores = new ArrayList<>();
+        Iterable<UserQuizScore> userQuizScoresList = quizService.getUserScores(user_email);
+        for (UserQuizScore userQuizScore : userQuizScoresList){
+            UserQuizScoreDTO userQuizScoreDTO = new UserQuizScoreDTO();
+            userQuizScoreDTO.setUser_email(userQuizScore.getUserQuizId().getUserEmail());
+            userQuizScoreDTO.setQuiz_id(userQuizScore.getUserQuizId().getQuizId());
+            userQuizScoreDTO.setScore(userQuizScore.getScore());
+            userQuizScores.add(userQuizScoreDTO);
+        }
         return ResponseEntity.ok(userQuizScores);
     }
 
