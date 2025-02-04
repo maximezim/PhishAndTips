@@ -8,7 +8,6 @@
 	import { onMount } from "svelte";
 	import Separator from "$lib/components/custom/Separator.svelte";
     import { goto } from "$app/navigation";
-    import AuthService from "$lib/services/AuthService";
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
 	import { page } from "$app/stores";
     import { get } from "svelte/store";
@@ -46,13 +45,14 @@
         } else {
             console.error('ID is undefined');
         }
-        const groupResponse = await fetch(`/api/phishing/campaigns/details?id=${encodeURIComponent(id)}`, {
+        const groupResponse = await fetch(`/api/phishing/groups/details?id=${encodeURIComponent(id)}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
         });
         group = await groupResponse.json();
+        console.log("group:", group);
         usersFromDb = await fetch("/api/db/users").then(res => res.json());
         console.log("users:", usersFromDb);
       } catch (error) {
@@ -86,7 +86,7 @@
         goto("/phishing");
     }
 
-    function saveAndClose() {
+    async function saveAndClose() {
         const groupID = Number(group.id);
         const modifiedDate = new Date().toISOString();
         const groupJson = {
@@ -95,13 +95,25 @@
             modified_date: modifiedDate,
             targets: selectedUsers,
         };
-        AuthService.updateGroup(groupID,groupJson);
+        await fetch(`/api/phishing/groups`, {
+            method: 'PUT',
+            body: JSON.stringify(groupJson),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         closeAlertDialog();
     }
 
-    function deleteGroup() {
+    async function deleteGroup() {
         const groupID = Number(group.id);
-        AuthService.deleteGroup(groupID);
+        await fetch(`/api/phishing/groups`, {
+            method: 'DELETE',
+            body: JSON.stringify(groupID),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         closeAlertDialog();
     }
 

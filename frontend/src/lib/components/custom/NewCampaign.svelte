@@ -102,18 +102,13 @@
 
     console.log(groupJson);
     
-    const response = await fetch('/api/campaigns/create', {
+    await fetch('/api/phishing/campaigns', {
 			method: 'POST',
 			body: JSON.stringify(groupJson),
 			headers: {
 				'Content-Type': 'application/json'
 			}
 		});
-
-		const response_json = await response.json();
-
-    console.log(response_json);
-
     closeAlertDialog();
   }
 

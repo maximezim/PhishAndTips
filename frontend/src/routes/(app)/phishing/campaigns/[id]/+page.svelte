@@ -73,6 +73,7 @@
 
   let campaign: Campaign;
   let campaignSummary: CampaignSummary;
+  let usersFromDb: Target[] = [];
   let users: Target[] = [];
   
   let timelineActions = {
@@ -87,16 +88,6 @@
   let currentPageUser = 1;
   const rowsPerPageUser = 5;
   let totalPagesUser = 1;
-
-  let usersFromDb = [
-      {email: "test@mail.com", first_name: "John", last_name: "Doe", position: "CEO"},
-      {email: "test2@mail.com", first_name: "Jane", last_name: "Doe", position: "CFO"},
-      {email: "test3@mail.com", first_name: "John", last_name: "Smith", position: "CTO"},
-      {email: "jsmith@insa.com", first_name: "John", last_name: "Smith", position: "manager"},
-      {email: "llita@insa.fr", first_name: "Lea", last_name: "lita", position: "rh"},
-      {email: "mpalvin@insa.fr", first_name: "Mael", last_name: "Palvin", position: "rh"},
-      {email: "karine@example.com", first_name: "Karine", last_name: "Lafontaine", position: "rh"},
-  ];
 
   onMount(async () => {
     let id = "";
@@ -122,7 +113,7 @@
       });
       campaignSummary = await campaignResponseSummary.json();
       console.log("campagin smmary :",campaignSummary);
-      
+      usersFromDb = await fetch("/api/db/users").then(res => res.json());
     } else {
       console.error('ID is undefined');
     }
@@ -145,6 +136,8 @@
       setTimeout(() => {
         valueSubmittedData.set(campaignSummary.stats.submitted_data);
       }, 900);
+
+      console.log("timeline : ", campaign.timeline);
 
       campaign.timeline.forEach(event => {
         if (event.message === 'Submitted Data') {
@@ -382,7 +375,7 @@
                   <div class="text-muted-foreground hidden text-sm md:inline">{row.email}</div>
                 </Table.Cell>
                 <Table.Cell class="hidden sm:table-cell">
-                  {#if getUserActions(row.email).opened}
+                  {#if getUserActions(row.email).opened || getUserActions(row.email).clicked}
                     <Badge class="text-xs" variant="destructive">Oui</Badge>
                   {:else}
                     <Badge class="text-xs" variant="secondary">Non</Badge>

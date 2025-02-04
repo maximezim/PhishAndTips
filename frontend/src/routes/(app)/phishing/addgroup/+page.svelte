@@ -9,12 +9,12 @@
 	import Separator from "$lib/components/custom/Separator.svelte";
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
     import { goto } from "$app/navigation";
-	import PhishingService from "$lib/services/PhishingService";
+    import AuthService from "$lib/services/AuthService";
 
     interface Target {
-        email: string;
         first_name: string;
         last_name: string;
+        email: string;
         position: string;
     }
 
@@ -28,22 +28,18 @@
     let usersFromDb : Target[] = [];
 
     onMount(async () => {
-        try {
-
-        } catch (error) {
-            console.error("Erreur lors de la récupération du groupe:", error);
-        } finally {
-            usersFromDb = [
-                {email: "test@mail.com", first_name: "John", last_name: "Doe", position: "CEO"},
-                {email: "test2@mail.com", first_name: "Jane", last_name: "Doe", position: "CFO"},
-                {email: "test3@mail.com", first_name: "John", last_name: "Smith", position: "CTO"},
-                {email: "jsmith@insa.com", first_name: "John", last_name: "Smith", position: "manager"},
-                {email: "llita@insa.fr", first_name: "Lea", last_name: "lita", position: "rh"},
-                {email: "mpalvin@insa.fr", first_name: "Mael", last_name: "Palvin", position: "rh"}
-            ]
-            totalPagesUser = Math.ceil(usersFromDb.length / rowsPerPageUser);
-            loading_data = false;
+      try {
+        usersFromDb = await fetch("/api/db/users").then(res => res.json());
+      } catch (error) {
+        console.error("Erreur lors de la récupération du groupe:", error);
+      } finally {
+        console.log(usersFromDb);
+        for (let i = 0; i < usersFromDb.length; i++) {
+            console.log(usersFromDb[i]);
         }
+        totalPagesUser = Math.ceil(usersFromDb.length / rowsPerPageUser);
+        loading_data = false;
+      }
     });
 
 
@@ -61,7 +57,7 @@
     function isUserSelected(user: Target) {
         return selectedUsers.some(selectedUser => selectedUser.email === user.email);
     }
-
+  
     function closeAlertDialog() {
         goto("/phishing");
     }
@@ -71,26 +67,18 @@
             name: group_name,
             targets: selectedUsers,
         };
-        console.log(groupJson);
-        // PhishingService.createGroup(groupJson);
-
-        const response = await fetch('/api/groups/create', {
-			method: 'POST',
-			body: JSON.stringify(groupJson),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-
-		const response_json = await response.json();
-
-        console.log("page.svelte : ", response_json);
-
+        await fetch(`/api/phishing/groups`, {
+            method: 'POST',
+            body: JSON.stringify(groupJson),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         closeAlertDialog();
     }
 
-</script>
-
+  </script>
+  
 {#if loading_data}
     <div class="flex justify-center items-center h-full">
         <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
@@ -117,7 +105,7 @@
                             <Table.Head>Email</Table.Head>
                             <Table.Head>Position</Table.Head>
                             <Table.Head>Inclus</Table.Head>
-                        </Table.Row>
+                      </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {#each getCurrentPageRowsUser() as user}
