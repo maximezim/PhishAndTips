@@ -104,7 +104,7 @@
     
     const response = await fetch('/api/campaigns/create', {
 			method: 'POST',
-			body: JSON.stringify({ groupJson }),
+			body: JSON.stringify(groupJson),
 			headers: {
 				'Content-Type': 'application/json'
 			}

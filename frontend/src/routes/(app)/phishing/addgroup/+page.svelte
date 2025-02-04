@@ -66,13 +66,26 @@
         goto("/phishing");
     }
 
-    function createGroup(){
+    async function createGroup(){
         const groupJson = {
             name: group_name,
             targets: selectedUsers,
         };
         console.log(groupJson);
         // PhishingService.createGroup(groupJson);
+
+        const response = await fetch('/api/groups/create', {
+			method: 'POST',
+			body: JSON.stringify(groupJson),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const response_json = await response.json();
+
+        console.log("page.svelte : ", response_json);
+
         closeAlertDialog();
     }
 

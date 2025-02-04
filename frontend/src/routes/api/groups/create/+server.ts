@@ -6,7 +6,7 @@ export async function POST({ request, cookies }) {
 	try {
 		console.log('Log: enter try');
 		console.log(groupJson);
-		const response = PhishingService.createCampaign(cookies, groupJson);
+		const response = PhishingService.createGroup(cookies, groupJson);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });

@@ -156,7 +156,7 @@
           </div>
       </Card.Content>
       <Card.Footer class="flex justify-end items-center gap-3">
-          <Button variant="outline" href={`phishing/model?${queryParamsModel}`}>Voir touts les modèles</Button>
+          <Button variant="outline" href={`phishing/model?${queryParamsModel}`}>Voir tous les modèles</Button>
       </Card.Footer>
     </Card.Root>
 

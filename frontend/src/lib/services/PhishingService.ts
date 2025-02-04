@@ -18,6 +18,7 @@ class PhishingService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Erreur lors de la récupération des campagnes Gophish:', error.message);
+
 			return [];
 		}
 	}
@@ -127,29 +128,30 @@ class PhishingService {
 	public static async createCampaign(cookies: any, campaign: any) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await fetch(`${API_URL}/api/campaigns?api_key=${API_KEY}`, {
-				method: 'POST',
+			const response = await axios.post(`${API_URL}/api/campaigns/?api_key=${API_KEY}`, campaign, {
 				headers: {
-					'Content-Type': 'application/json',
 					Authorization: `Bearer ${jwt}`
-				},
-				body: JSON.stringify({ Payload: campaign })
+				}
 			});
+
 			console.log('Campagne créée:', response);
-			if (response.ok) {
-				const body = await response.json();
+
+			if (response.data) {
+				const body = await response.data.json();
 				return body;
 			}
 		} catch (error: any) {
 			console.error('Erreur lors de la création de la campagne Gophish:', error.message);
+			console.error(error);
 		}
 	}
 
 	public static async createGroup(cookies: any, group: any) {
 		try {
-			const response = await axios.post(`${API_URL}/api/groups/`, group, {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.post(`${API_URL}/api/groups/?api_key=${API_KEY}`, group, {
 				headers: {
-					Authorization: `${API_KEY}`
+					Authorization: `Bearer ${jwt}`
 				}
 			});
 			console.log('Groupe créé:', response.data);
@@ -161,11 +163,16 @@ class PhishingService {
 
 	public static async updateGroup(cookies: any, groupId: number, group: any) {
 		try {
-			const response = await axios.put(`${API_URL}/api/groups/${groupId}`, group, {
-				headers: {
-					Authorization: `${API_KEY}`
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.put(
+				`${API_URL}/api/groups/${groupId}?api_key=${API_KEY}`,
+				group,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
 				}
-			});
+			);
 			return response.data;
 		} catch (error: any) {
 			console.error('Erreur lors de la modification du groupe Gophish:', error.message);
@@ -174,9 +181,10 @@ class PhishingService {
 
 	public static async deleteGroup(cookies: any, groupId: number) {
 		try {
-			const response = await axios.delete(`${API_URL}/api/groups/${groupId}`, {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.delete(`${API_URL}/api/groups/${groupId}?api_key=${API_KEY}`, {
 				headers: {
-					Authorization: `${API_KEY}`
+					Authorization: `Bearer ${jwt}`
 				}
 			});
 			return response.data;
