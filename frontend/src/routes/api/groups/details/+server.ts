@@ -1,16 +1,15 @@
 import PhishingService from '$lib/services/PhishingService.js';
 
-export async function POST({ request, cookies }) {
-	const groupJson = await request.json();
+export async function GET({ request, cookies }) {
 	try {
+		const groupId = await request.json();
 		console.log('Log: enter try');
-		console.log(groupJson);
-		const response = PhishingService.createCampaign(cookies, groupJson);
+		const response = PhishingService.getGroupDetails(cookies, groupId);
 		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.log('IL Y A UNE ERREUR ICIIII');
+			console.error('Erreur: la réponse est vide');
 		}
 	} catch (e) {
 		console.error(e);
