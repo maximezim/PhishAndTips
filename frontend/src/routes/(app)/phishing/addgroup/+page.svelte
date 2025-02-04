@@ -12,9 +12,9 @@
     import AuthService from "$lib/services/AuthService";
 
     interface Target {
-        email: string;
         first_name: string;
         last_name: string;
+        email: string;
         position: string;
     }
 
@@ -29,18 +29,10 @@
 
     onMount(async () => {
       try {
-
+        usersFromDb = await fetch("/api/db/users").then(res => res.json());
       } catch (error) {
         console.error("Erreur lors de la récupération du groupe:", error);
       } finally {
-        usersFromDb = [
-            {email: "test@mail.com", first_name: "John", last_name: "Doe", position: "CEO"},
-            {email: "test2@mail.com", first_name: "Jane", last_name: "Doe", position: "CFO"},
-            {email: "test3@mail.com", first_name: "John", last_name: "Smith", position: "CTO"},
-            {email: "jsmith@insa.com", first_name: "John", last_name: "Smith", position: "manager"},
-            {email: "llita@insa.fr", first_name: "Lea", last_name: "lita", position: "rh"},
-            {email: "mpalvin@insa.fr", first_name: "Mael", last_name: "Palvin", position: "rh"}
-        ]
         totalPagesUser = Math.ceil(usersFromDb.length / rowsPerPageUser);
         loading_data = false;
       }
@@ -66,13 +58,18 @@
         goto("/phishing");
     }
 
-    function createGroup(){
+    async function createGroup(){
         const groupJson = {
             name: group_name,
             targets: selectedUsers,
         };
-        console.log(groupJson);
-        AuthService.createGroup(groupJson);
+        await fetch(`/api/phishing/groups`, {
+            method: 'POST',
+            body: JSON.stringify(groupJson),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
         closeAlertDialog();
     }
 
