@@ -1,5 +1,4 @@
 import PhishingService from '$lib/services/PhishingService.js';
-import { json } from '@sveltejs/kit';
 
 export async function POST({ request, cookies }) {
 	const groupJson = await request.json();

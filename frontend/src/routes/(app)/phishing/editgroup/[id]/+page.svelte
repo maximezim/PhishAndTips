@@ -81,7 +81,7 @@
         goto("/phishing");
     }
 
-    function saveAndClose() {
+    async function saveAndClose() {
         if (!group) return;
         const groupID = Number(group.id);
         const modifiedDate = new Date().toISOString();
@@ -91,14 +91,38 @@
             modified_date: modifiedDate,
             targets: selectedUsers,
         };
-        // AuthService.updateGroup(groupID,groupJson);
+
+        const response = await fetch('/api/groups', {
+			method: 'PUT',
+			body: JSON.stringify(groupJson),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+        const response_json = await response.json();
+
+        console.log("page.svelte : ", response_json);
+
         closeAlertDialog();
     }
 
-    function deleteGroup() {
+    async function deleteGroup() {
         if (!group) return;
         const groupID = Number(group.id);
-        // AuthService.deleteGroup(groupID);
+        
+        const response = await fetch('/api/groups', {
+			method: 'DELETE',
+			body: JSON.stringify(groupID),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+
+		const response_json = await response.json();
+
+        console.log("page.svelte : ", response_json);
+
         closeAlertDialog();
     }
 

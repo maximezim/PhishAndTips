@@ -181,6 +181,7 @@ class PhishingService {
 
 	public static async deleteGroup(cookies: any, groupId: number) {
 		try {
+			console.log('GROUP ID : ', groupId);
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.delete(`${API_URL}/api/groups/${groupId}?api_key=${API_KEY}`, {
 				headers: {
