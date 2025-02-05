@@ -66,10 +66,9 @@
       text: text,
       html: html,
       modified_date: new Date().toISOString().slice(0, 19) + "+00:00", // formatted date
-      send_by_date: endDate ? endDate.toString() : null,
     };
     
-    await fetch('/api/phishing/campaigns', {
+    await fetch('/api/phishing/templates', {
 			method: 'POST',
 			body: JSON.stringify(groupJson),
 			headers: {
@@ -86,7 +85,7 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class="bg-accent" builders={[builder]}>Créer un modèle</Button>
+    <Button class="bg-accent" builders={[builder]}>Créer un modèle de mail</Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-4xl flex flex-col max-h-[90vh] overflow-y-auto">
     <AlertDialog.Header>
@@ -130,7 +129,7 @@
     </AlertDialog.Header>
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
-      <ConfirmPopup description="Création de la campagne" name="Lancer" style="bg-accent" functionToCall={createTemplate} />
+      <ConfirmPopup description="Création du template" name="Lancer" style="bg-accent" functionToCall={createTemplate} />
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>

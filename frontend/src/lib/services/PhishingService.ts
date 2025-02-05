@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 class PhishingService {
+	// CAMPAIGNS
 	public static async getCampaigns(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
@@ -17,7 +18,7 @@ class PhishingService {
 			});
 			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la récupération des campagnes Gophish:', error.message);
+			console.error('Error while getting Gophish campaigns:', error.message);
 
 			return [];
 		}
@@ -36,10 +37,7 @@ class PhishingService {
 			);
 			return response.data;
 		} catch (error: any) {
-			console.error(
-				'Erreur lors de la récupération des détails de la campagne Gophish:',
-				error.message
-			);
+			console.error('Error while getting Gophish campaign details:', error.message);
 			return [];
 		}
 	}
@@ -57,10 +55,7 @@ class PhishingService {
 			);
 			return response.data;
 		} catch (error: any) {
-			console.error(
-				'Erreur lors de la récupération du résumé de la campagne Gophish:',
-				error.message
-			);
+			console.error('Error while getting Gophish campaign summary:', error.message);
 			return [];
 		}
 	}
@@ -79,11 +74,12 @@ class PhishingService {
 				return body;
 			}
 		} catch (error: any) {
-			console.error('Erreur lors de la création de la campagne Gophish:', error.message);
+			console.error('Error while creating the Gophish campaign:', error.message);
 			console.error(error);
 		}
 	}
 
+	// TEMPLATES
 	public static async getTemplates(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
@@ -94,11 +90,33 @@ class PhishingService {
 			});
 			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la récupération des templates Gophish:', error.message);
+			console.error('Error while getting Gophish templates:', error.message);
 			return [];
 		}
 	}
 
+	public static async createTemplate(cookies: any, template: any) {
+		try {
+			console.log(template);
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.post(`${API_URL}/api/templates/?api_key=${API_KEY}`, template, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+
+			console.log(response);
+			// if (response.data) {
+			// 	const body = await response.data.json();
+			// 	return body;
+			// }
+		} catch (error: any) {
+			console.error('Error while creating the Gophish template:', error.message);
+			console.error(error);
+		}
+	}
+
+	// PAGES
 	public static async getPages(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
@@ -109,7 +127,7 @@ class PhishingService {
 			});
 			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la récupération des pages Gophish:', error.message);
+			console.error('Error while getting Gophish pages:', error.message);
 			return [];
 		}
 	}
@@ -125,7 +143,7 @@ class PhishingService {
 			});
 			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la récupération des groupes Gophish:', error.message);
+			console.error('Error while getting Gophish groups:', error.message);
 			return [];
 		}
 	}
@@ -140,7 +158,7 @@ class PhishingService {
 			});
 			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la récupération des détails du groupe Gophish:', error.message);
+			console.error('Error while getting Gophish group details:', error.message);
 			return [];
 		}
 	}
@@ -156,7 +174,7 @@ class PhishingService {
 
 			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la création du groupe Gophish:', error.message);
+			console.error('Error while creating the Gophish group:', error.message);
 		}
 	}
 
@@ -174,7 +192,7 @@ class PhishingService {
 			);
 			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la modification du groupe Gophish:', error.message);
+			console.error('Error while updating the Gophish group:', error.message);
 		}
 	}
 
@@ -188,7 +206,7 @@ class PhishingService {
 			});
 			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la suppression du groupe Gophish:', error.message);
+			console.error('Error while deleting the Gophish group:', error.message);
 		}
 	}
 }

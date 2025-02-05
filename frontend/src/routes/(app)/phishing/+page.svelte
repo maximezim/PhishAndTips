@@ -85,7 +85,7 @@
 <main class="relative z-10 flex flex-1 flex-col flex-grow gap-4 p-4 md:gap-8 md:p-8">
 
   <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-10">
-    <Card.Root class="col-span-5 row-span-2">
+    <Card.Root class="col-span-10 row-span-2">
       <Card.Header class="flex flex-col gap-3 space-y-0">
         <Card.Title class="text-lg font-semibold flex items-center gap-3">
           <img src={fish_svg} alt="fish" class="w-6 h-6"/>
@@ -124,8 +124,48 @@
     <Card.Root class="col-span-5 row-span-2">
       <Card.Header class="flex flex-row items-center justify-between space-y-0 ">
           <Card.Title class="text-lg font-semibold flex items-center gap-3">
+              <iconify-icon class="text-3xl" icon="mingcute:mail-fill"></iconify-icon>
+              Modèles de mails
+          </Card.Title>
+      </Card.Header>
+      <Card.Content>
+          <div class="w-full flex gap-4 overflow-x-auto">
+              {#each templates as template}
+                  <AlertDialog.Root>
+                      <AlertDialog.Trigger asChild let:builder>
+                          <div class="relative w-64 h-32 bg-accent/[0.1] cursor-pointer rounded flex items-center justify-center shrink-0">
+                              <p class="absolute bottom-3 left-4 text-sm text-gray-700 font-semibold">{template.name}</p>
+                              <Button class="w-full h-full opacity-0" builders={[builder]}>Voir le modèle</Button>
+                          </div>
+                      </AlertDialog.Trigger>
+                      <AlertDialog.Content class="max-w-5xl flex flex-col">
+                          <AlertDialog.Header>
+                              <AlertDialog.Title>Apercu du modèle</AlertDialog.Title>
+                              <AlertDialog.Description>Voici un apercu de modèle qui peut être utilisé dans vos campagnes de phishing</AlertDialog.Description>
+                          </AlertDialog.Header>
+                          <div class="w-full mt-2 p-5 bg-accent/[0.07] shadow rounded h-[60svh] overflow-y-auto">
+                              <iframe srcdoc={template.html} class="w-full h-full rounded-shadow pointer-events-none" title="Redirection Model"></iframe>
+                          </div>
+                          <AlertDialog.Footer>
+                              <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
+                          </AlertDialog.Footer>
+                      </AlertDialog.Content>
+                  </AlertDialog.Root>
+
+              {/each}
+          </div>
+      </Card.Content>
+      <Card.Footer class="flex justify-end items-center gap-3">
+          <Button variant="outline" href={`phishing/email-templates?${queryParamsModel}`}>Voir tous les modèles</Button>
+          <NewTemplate />
+      </Card.Footer>
+    </Card.Root>
+
+    <Card.Root class="col-span-5 row-span-2">
+      <Card.Header class="flex flex-row items-center justify-between space-y-0 ">
+          <Card.Title class="text-lg font-semibold flex items-center gap-3">
               <iconify-icon class="text-3xl" icon="mingcute:web-fill"></iconify-icon>
-              Modèles
+              Modèles de landing pages
           </Card.Title>
       </Card.Header>
       <Card.Content>
@@ -144,7 +184,7 @@
                               <AlertDialog.Description>Voici un apercu de modèle qui peut être utilisé dans vos campagnes de phishing</AlertDialog.Description>
                           </AlertDialog.Header>
                           <div class="w-full mt-2 p-5 bg-accent/[0.07] shadow rounded h-[60svh] overflow-y-auto">
-                              <iframe srcdoc={page.html} class="w-full h-full rounded-shadow" title="Redirection Model"></iframe>
+                              <iframe srcdoc={page.html} class="w-full h-full rounded-shadow pointer-events-none" title="Redirection Model"></iframe>
                           </div>
                           <AlertDialog.Footer>
                               <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
@@ -156,7 +196,7 @@
           </div>
       </Card.Content>
       <Card.Footer class="flex justify-end items-center gap-3">
-          <Button variant="outline" href={`phishing/model?${queryParamsModel}`}>Voir tous les modèles</Button>
+          <Button variant="outline" href={`phishing/page-templates?${queryParamsModel}`}>Voir tous les modèles</Button>
           <NewTemplate />
       </Card.Footer>
     </Card.Root>
