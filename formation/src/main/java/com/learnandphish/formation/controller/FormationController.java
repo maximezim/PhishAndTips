@@ -68,11 +68,14 @@ public class FormationController {
     }
 
     // Get user scores for all quizzes
-    @GetMapping("/quizzes/score/{user_email}")
-    public ResponseEntity<List<UserQuizScoreDTO>> getUserScores(@PathVariable String user_email){
+    @GetMapping("/quizzes/scores/{userEmail}")
+    public ResponseEntity<List<UserQuizScoreDTO>> getUserScores(@PathVariable String userEmail) {
         ArrayList<UserQuizScoreDTO> userQuizScores = new ArrayList<>();
-        Iterable<UserQuizScore> userQuizScoresList = quizService.getUserScores(user_email);
-        for (UserQuizScore userQuizScore : userQuizScoresList){
+        Iterable<UserQuizScore> userQuizScoresList = quizService.getUserScores(userEmail);
+        if (!userQuizScoresList.iterator().hasNext()) {
+            return ResponseEntity.notFound().build();
+        }
+        for (UserQuizScore userQuizScore : userQuizScoresList) {
             UserQuizScoreDTO userQuizScoreDTO = new UserQuizScoreDTO();
             userQuizScoreDTO.setUserEmail(userQuizScore.getUserQuizId().getUserEmail());
             userQuizScoreDTO.setQuizId(userQuizScore.getUserQuizId().getQuizId());
@@ -83,9 +86,9 @@ public class FormationController {
     }
 
     // Get user score for a quiz
-    @GetMapping("/quiz/score/{user_email}/{quiz_id}")
-    public ResponseEntity<Float> getUserScoreForQuiz(@PathVariable String user_email, @PathVariable Integer quiz_id){
-        Float score = quizService.getUserScoreForQuiz(user_email, quiz_id);
+    @GetMapping("/quiz/score/{userEmail}/{quizId}")
+    public ResponseEntity<Float> getUserScoreForQuiz(@PathVariable String userEmail, @PathVariable Integer quizId){
+        Float score = quizService.getUserScoreForQuiz(userEmail, quizId);
         return score != null ? ResponseEntity.ok(score) : ResponseEntity.notFound().build();
     }
 }

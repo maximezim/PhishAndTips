@@ -18,7 +18,7 @@ public class FormationService {
     private final Logger logger = LoggerFactory.getLogger(FormationService.class);
 
     public List<QuizScoreDTO> getUserFormations(String email) {
-        String url = "http://formation-service:8089/formation/quiz/score/" + email;
+        String url = "http://formation-service:8089/formation/quizzes/scores/" + email;
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<List<QuizScoreDTO>> response = restTemplate.exchange(
                 url,
