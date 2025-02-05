@@ -9,17 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 0  # Disable BuildKit for all steps in this job
 
     steps:
       # Step 1: Checkout the repository.
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Set up Docker Buildx for advanced build features.
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # Step 3: Validate Docker Compose configuration.
+      # Step 2: Validate Docker Compose configuration.
       - name: Validate Docker Compose configuration
         run: docker compose -f docker-compose.yml config
 
@@ -30,7 +28,7 @@ jobs:
           username: ${{ secrets.GHCR_USERNAME }}
           password: ${{ secrets.CONTAINER_DEPLOY }}
 
-      # Step 4: Build the authentication-service image.
+      # Step 3: Build the authentication-service image.
       - name: Build authentication-service Image
         run: |
           docker build \
@@ -38,7 +36,7 @@ jobs:
             --tag authentication-service:latest \
             authentication
 
-      # Step 5: Build the api-gateway image.
+      # Step 4: Build the api-gateway image.
       - name: Build api-gateway Image
         run: |
           docker build \
@@ -46,7 +44,7 @@ jobs:
             --tag api-gateway:latest \
             gateway
 
-      # Step 6: Build the formation-service image.
+      # Step 5: Build the formation-service image.
       - name: Build formation-service Image
         run: |
           docker build \
@@ -54,7 +52,7 @@ jobs:
             --tag formation-service:latest \
             formation
 
-      # Step 7: Build the scoring-service image.
+      # Step 6: Build the scoring-service image.
       - name: Build scoring-service Image
         run: |
           docker build \
@@ -62,7 +60,7 @@ jobs:
             --tag scoring-service:latest \
             scoring
 
-      # Step 8: Build the spiderfoot-api image.
+      # Step 7: Build the spiderfoot-api image.
       - name: Build spiderfoot-api Image
         run: |
           docker build \
@@ -70,7 +68,7 @@ jobs:
             --tag spiderfoot-api:latest \
             spiderfoot-api
 
-      # Step 9: Build the frontend image.
+      # Step 8: Build the frontend image.
       - name: Build frontend Image
         run: |
           docker build \
