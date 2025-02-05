@@ -12,6 +12,7 @@
   import Separator from '$lib/components/custom/Separator.svelte';
   import TemplatePopup from '$lib/components/custom/phishing/TemplatePopup.svelte';
   import { goto } from '$app/navigation';
+	import NewPage from '$lib/components/custom/phishing/NewPage.svelte';
 
   let campaigns: any[] = [];
   let templates: any[] = [];
@@ -158,7 +159,7 @@
       </Card.Content>
       <Card.Footer class="flex justify-end items-center gap-3">
           <Button variant="outline" href={`phishing/page-templates?${queryParamsModel}`}>Voir tous les modèles</Button>
-          <NewTemplate />
+          <NewPage />
       </Card.Footer>
     </Card.Root>
 
