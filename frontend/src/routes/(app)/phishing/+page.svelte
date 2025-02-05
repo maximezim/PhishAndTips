@@ -6,6 +6,7 @@
   import * as Table from '$lib/components/ui/table';
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import NewCampaign from '$lib/components/custom/NewCampaign.svelte';
+  import NewTemplate from '$lib/components/custom/NewTemplate.svelte';
   import { Badge } from '$lib/components/ui/badge';
   import { onMount } from 'svelte';
   import Separator from '$lib/components/custom/Separator.svelte';
@@ -156,6 +157,7 @@
       </Card.Content>
       <Card.Footer class="flex justify-end items-center gap-3">
           <Button variant="outline" href={`phishing/model?${queryParamsModel}`}>Voir tous les modèles</Button>
+          <NewTemplate />
       </Card.Footer>
     </Card.Root>
 

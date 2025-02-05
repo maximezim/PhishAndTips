@@ -23,66 +23,6 @@ class PhishingService {
 		}
 	}
 
-	public static async getTemplates(cookies: any): Promise<any[]> {
-		try {
-			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/templates/?api_key=${API_KEY}`, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
-				}
-			});
-			return response.data;
-		} catch (error: any) {
-			console.error('Erreur lors de la récupération des templates Gophish:', error.message);
-			return [];
-		}
-	}
-
-	public static async getPages(cookies: any): Promise<any[]> {
-		try {
-			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/pages/?api_key=${API_KEY}`, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
-				}
-			});
-			return response.data;
-		} catch (error: any) {
-			console.error('Erreur lors de la récupération des pages Gophish:', error.message);
-			return [];
-		}
-	}
-
-	public static async getGroups(cookies: any): Promise<any[]> {
-		try {
-			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/groups/?api_key=${API_KEY}`, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
-				}
-			});
-			return response.data;
-		} catch (error: any) {
-			console.error('Erreur lors de la récupération des groupes Gophish:', error.message);
-			return [];
-		}
-	}
-
-	public static async getGroupDetails(cookies: any, groupId: number): Promise<any> {
-		try {
-			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/groups/${groupId}?api_key=${API_KEY}`, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
-				}
-			});
-			return response.data;
-		} catch (error: any) {
-			console.error('Erreur lors de la récupération des détails du groupe Gophish:', error.message);
-			return [];
-		}
-	}
-
 	public static async getCampaignDetails(cookies: any, campaignId: number): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
@@ -141,6 +81,67 @@ class PhishingService {
 		} catch (error: any) {
 			console.error('Erreur lors de la création de la campagne Gophish:', error.message);
 			console.error(error);
+		}
+	}
+
+	public static async getTemplates(cookies: any): Promise<any[]> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(`${API_URL}/api/templates/?api_key=${API_KEY}`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Erreur lors de la récupération des templates Gophish:', error.message);
+			return [];
+		}
+	}
+
+	public static async getPages(cookies: any): Promise<any[]> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(`${API_URL}/api/pages/?api_key=${API_KEY}`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Erreur lors de la récupération des pages Gophish:', error.message);
+			return [];
+		}
+	}
+
+	// GROUPS
+	public static async getGroups(cookies: any): Promise<any[]> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(`${API_URL}/api/groups/?api_key=${API_KEY}`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Erreur lors de la récupération des groupes Gophish:', error.message);
+			return [];
+		}
+	}
+
+	public static async getGroupDetails(cookies: any, groupId: number): Promise<any> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(`${API_URL}/api/groups/${groupId}?api_key=${API_KEY}`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Erreur lors de la récupération des détails du groupe Gophish:', error.message);
+			return [];
 		}
 	}
 

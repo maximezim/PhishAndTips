@@ -131,7 +131,7 @@
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-4xl flex flex-col max-h-[90vh] overflow-y-auto">
     <AlertDialog.Header>
-      <AlertDialog.Title>Créer une nouvelle campagne</AlertDialog.Title>
+      <AlertDialog.Title>Créer une nouvelle campagne {getFormattedDate(launch_date)}</AlertDialog.Title>
       <AlertDialog.Description>
         Remplissez les informations nécessaires pour créer une nouvelle campagne de phishing.
       </AlertDialog.Description>
