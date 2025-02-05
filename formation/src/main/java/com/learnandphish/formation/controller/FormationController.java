@@ -1,9 +1,7 @@
 package com.learnandphish.formation.controller;
 
 import com.learnandphish.formation.dto.UserQuizScoreDTO;
-import com.learnandphish.formation.model.Formation;
-import com.learnandphish.formation.model.Quiz;
-import com.learnandphish.formation.model.Video;
+import com.learnandphish.formation.model.*;
 import com.learnandphish.formation.service.FormationService;
 import com.learnandphish.formation.service.QuizService;
 import com.learnandphish.formation.service.VideoService;
@@ -11,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -64,17 +63,25 @@ public class FormationController {
         return ResponseEntity.ok("Score saved successfully");
     }
 
-    // Get user scores
+    // Get user scores for all quizzes
     @GetMapping("/quiz/score/{user_email}")
-    public ResponseEntity<Double> getUserScores(@PathVariable String user_email){
-        double score = quizService.getUserScores(user_email);
-        return ResponseEntity.ok(score);
+    public ResponseEntity<List<UserQuizScoreDTO>> getUserScores(@PathVariable String user_email){
+        ArrayList<UserQuizScoreDTO> userQuizScores = new ArrayList<>();
+        Iterable<UserQuizScore> userQuizScoresList = quizService.getUserScores(user_email);
+        for (UserQuizScore userQuizScore : userQuizScoresList){
+            UserQuizScoreDTO userQuizScoreDTO = new UserQuizScoreDTO();
+            userQuizScoreDTO.setUser_email(userQuizScore.getUserQuizId().getUserEmail());
+            userQuizScoreDTO.setQuiz_id(userQuizScore.getUserQuizId().getQuizId());
+            userQuizScoreDTO.setScore(userQuizScore.getScore());
+            userQuizScores.add(userQuizScoreDTO);
+        }
+        return ResponseEntity.ok(userQuizScores);
     }
 
     // Get user score for a quiz
     @GetMapping("/quiz/score/{user_email}/{quiz_id}")
-    public ResponseEntity<Double> getUserScoreForQuiz(@PathVariable String user_email, @PathVariable Integer quiz_id){
-        double score = quizService.getUserScoreForQuiz(user_email, quiz_id);
+    public ResponseEntity<Float> getUserScoreForQuiz(@PathVariable String user_email, @PathVariable Integer quiz_id){
+        Float score = quizService.getUserScoreForQuiz(user_email, quiz_id);
         return ResponseEntity.ok(score);
     }
 }
