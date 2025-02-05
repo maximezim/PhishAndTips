@@ -285,6 +285,7 @@ services:
       MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
       MINIO_DEFAULT_BUCKETS: ${S3_BUCKET:-assets}
       S3_ENDPOINT: ${S3_ENDPOINT:-http://localhost:8080}
+      S3_USE_LOCAL: ${S3_USE_LOCAL:-true}
     command: server --address ':9000' /data
     volumes:
       - ./minio/data:/data

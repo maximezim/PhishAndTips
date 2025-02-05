@@ -16,11 +16,21 @@ public class MinioConfig {
     @Value("${s3.secret.key}")
     private String secretKey;
 
+    @Value("${s3.use.local}")
+    private boolean useLocal;
+
     @Bean
     public MinioClient minioClient() {
-        return MinioClient.builder()
-                .endpoint(endpoint)
-                .credentials(accessKey, secretKey)
-                .build();
+        if (useLocal) {
+            return MinioClient.builder()
+                    .endpoint("http://minio:9000")
+                    .credentials(accessKey, secretKey)
+                    .build();
+        } else {
+            return MinioClient.builder()
+                    .endpoint(endpoint)
+                    .credentials(accessKey, secretKey)
+                    .build();
+        }
     }
 }
