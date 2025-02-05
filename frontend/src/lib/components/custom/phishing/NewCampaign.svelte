@@ -1,13 +1,13 @@
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import * as Select from "$lib/components/ui/select";
-  import { Input } from "../ui/input";
-  import { Button } from "../ui/button";
-  import DataPicker from "./DataPicker.svelte";
-  import Label from "../ui/label/label.svelte";
-  import Checkbox from "../ui/checkbox/checkbox.svelte";
+  import { Input } from "$lib/components/ui/input";
+  import { Button } from "$lib/components/ui/button";
+  import DataPicker from "$lib/components/custom/DataPicker.svelte";
+  import Label from "$lib/components/ui/label/label.svelte";
+  import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
   import type { DateValue } from "@internationalized/date";
-  import ConfirmPopup from "./ConfirmPopup.svelte";
+  import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
 
   type Group = { name: string; date: string; status: string; nb: number };
   type Page = { id: number; name: string; html: string; capture_credentials: boolean; capture_passwords: boolean; modified_date: string; redirect_url: string };

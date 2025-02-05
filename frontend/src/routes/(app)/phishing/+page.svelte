@@ -5,11 +5,12 @@
   import 'iconify-icon';
   import * as Table from '$lib/components/ui/table';
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import NewCampaign from '$lib/components/custom/NewCampaign.svelte';
-  import NewTemplate from '$lib/components/custom/NewTemplate.svelte';
+  import NewCampaign from '$lib/components/custom/phishing/NewCampaign.svelte';
+  import NewTemplate from '$lib/components/custom/phishing/NewTemplate.svelte';
   import { Badge } from '$lib/components/ui/badge';
   import { onMount } from 'svelte';
   import Separator from '$lib/components/custom/Separator.svelte';
+  import TemplatePopup from '$lib/components/custom/phishing/TemplatePopup.svelte';
   import { goto } from '$app/navigation';
 
   let campaigns: any[] = [];
@@ -131,27 +132,7 @@
       <Card.Content>
           <div class="w-full flex gap-4 overflow-x-auto">
               {#each templates as template}
-                  <AlertDialog.Root>
-                      <AlertDialog.Trigger asChild let:builder>
-                          <div class="relative w-64 h-32 bg-accent/[0.1] cursor-pointer rounded flex items-center justify-center shrink-0">
-                              <p class="absolute bottom-3 left-4 text-sm text-gray-700 font-semibold">{template.name}</p>
-                              <Button class="w-full h-full opacity-0" builders={[builder]}>Voir le modèle</Button>
-                          </div>
-                      </AlertDialog.Trigger>
-                      <AlertDialog.Content class="max-w-5xl flex flex-col">
-                          <AlertDialog.Header>
-                              <AlertDialog.Title>Apercu du modèle</AlertDialog.Title>
-                              <AlertDialog.Description>Voici un apercu de modèle qui peut être utilisé dans vos campagnes de phishing</AlertDialog.Description>
-                          </AlertDialog.Header>
-                          <div class="w-full mt-2 p-5 bg-accent/[0.07] shadow rounded h-[60svh] overflow-y-auto">
-                              <iframe srcdoc={template.html} class="w-full h-full rounded-shadow pointer-events-none" title="Redirection Model"></iframe>
-                          </div>
-                          <AlertDialog.Footer>
-                              <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
-                          </AlertDialog.Footer>
-                      </AlertDialog.Content>
-                  </AlertDialog.Root>
-
+                  <TemplatePopup template={template} />
               {/each}
           </div>
       </Card.Content>
@@ -171,27 +152,7 @@
       <Card.Content>
           <div class="w-full flex gap-4 overflow-x-auto">
               {#each pages as page}
-                  <AlertDialog.Root>
-                      <AlertDialog.Trigger asChild let:builder>
-                          <div class="relative w-64 h-32 bg-accent/[0.1] cursor-pointer rounded flex items-center justify-center shrink-0">
-                              <p class="absolute bottom-3 left-4 text-sm text-gray-700 font-semibold">{page.name}</p>
-                              <Button class="w-full h-full opacity-0" builders={[builder]}>Voir le modèle</Button>
-                          </div>
-                      </AlertDialog.Trigger>
-                      <AlertDialog.Content class="max-w-5xl flex flex-col">
-                          <AlertDialog.Header>
-                              <AlertDialog.Title>Apercu du modèle</AlertDialog.Title>
-                              <AlertDialog.Description>Voici un apercu de modèle qui peut être utilisé dans vos campagnes de phishing</AlertDialog.Description>
-                          </AlertDialog.Header>
-                          <div class="w-full mt-2 p-5 bg-accent/[0.07] shadow rounded h-[60svh] overflow-y-auto">
-                              <iframe srcdoc={page.html} class="w-full h-full rounded-shadow pointer-events-none" title="Redirection Model"></iframe>
-                          </div>
-                          <AlertDialog.Footer>
-                              <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
-                          </AlertDialog.Footer>
-                      </AlertDialog.Content>
-                  </AlertDialog.Root>
-
+                  <TemplatePopup page={page} />
               {/each}
           </div>
       </Card.Content>

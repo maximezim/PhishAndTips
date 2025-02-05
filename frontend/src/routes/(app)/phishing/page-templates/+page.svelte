@@ -1,8 +1,7 @@
 <script lang='ts'>
     import 'iconify-icon';
-    import * as AlertDialog from "$lib/components/ui/alert-dialog";
-	import Button from "$lib/components/ui/button/button.svelte";
     import { onMount } from 'svelte';
+    import TemplatePopup from '$lib/components/custom/phishing/TemplatePopup.svelte';
 
     let pages : any[] = [];
     let stylePage = "";
@@ -46,35 +45,7 @@
 
     <div class={stylePage}>
         {#each pages as page}
-        <AlertDialog.Root>
-            <AlertDialog.Trigger asChild let:builder>
-                <div class="page flex flex-col justify-between h-72 bg-white rounded shadow-lg relative overflow-hidden p-4 {stylePageItem}">
-                    <div class="w-full h-48 shadow rounded overflow-hidden">
-                        <iframe srcdoc={page.html} class="w-full h-full rounded-shadow pointer-events-none" title="Redirection Model"></iframe>
-                    </div>
-                    <div class="info flex justify-between items-center mt-2">
-                        <div class="info flex flex-col">
-                            <h2 class="font-semibold">{page.name}</h2>
-                            <p class="text-sm italic text-slate-400">{formatDate(page.modified_date)}</p>
-                        </div>
-                        <Button class="bg-accent" builders={[builder]}>Voir le modèle</Button>
-                    </div>
-                </div>
-            </AlertDialog.Trigger>
-            <AlertDialog.Content class="max-w-5xl flex flex-col">
-                <AlertDialog.Header>
-                    <AlertDialog.Title>Apercu du modèle</AlertDialog.Title>
-                    <AlertDialog.Description>Voici un apercu du modèle qui peut être utilisé dans vos campagnes de phishing</AlertDialog.Description>
-                </AlertDialog.Header>
-                <div class="w-full mt-2 p-5 bg-accent/[0.07] rounded h-[60svh] overflow-y-auto">
-                    <iframe srcdoc={page.html} class="w-full h-full rounded-shadow pointer-events-none" title="Redirection Model"></iframe>
-                </div>
-                <AlertDialog.Footer>
-                    <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
-                </AlertDialog.Footer>
-            </AlertDialog.Content>
-        </AlertDialog.Root>
-            
+            <TemplatePopup page={page} isHtmlPopup={true} styleElementItem={stylePageItem}/>
         {/each}
     </div>
 

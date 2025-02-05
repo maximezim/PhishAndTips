@@ -1,17 +1,15 @@
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import { Input } from "../ui/input";
-  import { Textarea } from "../ui/textarea";
-  import { Button } from "../ui/button";
-  import type { DateValue } from "@internationalized/date";
-  import ConfirmPopup from "./ConfirmPopup.svelte";
+  import { Input } from "$lib/components/ui/input";
+  import { Button } from "$lib/components/ui/button";
+  import { Textarea } from "$lib/components/ui/textarea";
+  import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
 
 
   let subject: "";
   let templateName = "";
   let text = "";
   let html = "";
-  let endDate: DateValue | undefined = undefined;
 
   let errors = {
     templateName: "",
