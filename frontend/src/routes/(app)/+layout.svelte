@@ -6,6 +6,14 @@
 	import DotPage from '$lib/components/custom/DotPage.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { derived } from 'svelte/store';
+
+	const mainPages = ['/about', '/dashboard', '/formation', '/osint', '/password', '/phishing'];
+
+	export const isSubPage = derived(page, ($page) => {
+    return !mainPages.includes($page.url.pathname);
+	});
+
 
 	var firstName: "";
 	var lastName: "";
@@ -42,7 +50,7 @@
 		phishing_bg= {$page.data?.phishing_bg}
 	/>
 	<main class="relative w-full h-full overflow-scroll flex flex-col">
-		<Header title={$page.data?.title || 'Phish&Tips'} firstName={firstName} lastName={lastName} position={position} email={email} />
+		<Header title={$page.data?.title || 'Phish&Tips'} firstName={firstName} lastName={lastName} position={position} email={email} isSubPage={$isSubPage} />
 		<div class="relative flex-grow w-full overflow-scroll">
 			<DotPage />
 			<slot></slot>
