@@ -23,7 +23,7 @@ public class MinioConfig {
     public MinioClient minioClient() {
         if (useLocal) {
             return MinioClient.builder()
-                    .endpoint("http://minio:9000")
+                    .endpoint("http://s3:9000")
                     .credentials(accessKey, secretKey)
                     .build();
         } else {
