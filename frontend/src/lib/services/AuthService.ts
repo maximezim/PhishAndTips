@@ -178,6 +178,23 @@ class AuthService {
 			throw error;
 		}
 	}
+
+	public static async isAdmin(cookies: any): Promise<boolean> {
+		const token = await AuthService.getTokenFromServer(cookies);
+		if (token) {
+			const response = await fetch(GATEWAY_URL + '/test-admin', {
+				method: 'GET',
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
+			if (response.status === 200) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
 
 export default AuthService;
