@@ -7,7 +7,6 @@ import com.learnandphish.formation.repository.UserBadgeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,19 +35,18 @@ public class BadgeService {
         if (badge == null) {
             throw new RuntimeException("Badge not found");
         }
-        if (userBadgeRepository.existsByUser_emailAndBadge(email, badgeId)) {
+        if (userBadgeRepository.existsByUserEmailAndBadgeId(email, Long.valueOf(badgeId))) {
             throw new RuntimeException("Badge already claimed by user");
         }
         UserBadge userBadge = new UserBadge();
-        userBadge.setUser_email(email);
-        userBadge.setBadge(badge);
+        userBadge.setUserEmail(email);
+        userBadge.setBadgeId(Long.valueOf(badgeId));
         userBadgeRepository.save(userBadge);
         return badge;
     }
 
     public List<Badge> getBadgesByUser(String email) {
-        return userBadgeRepository.findAllByUser_email(email).stream()
-            .map(UserBadge::getBadge)
-            .collect(Collectors.toList());
+        List<UserBadge> userBadges = userBadgeRepository.findAllByUserEmail(email);
+        return userBadges.stream().map(userBadge -> getBadgeById(userBadge.getBadgeId().intValue())).collect(Collectors.toList());
     }
 }

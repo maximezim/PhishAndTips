@@ -21,16 +21,16 @@ public class MinioService {
 
     private static final Logger log = LoggerFactory.getLogger(MinioService.class);
 
-    @Value("${minio.endpoint}")
+    @Value("${s3.endpoint}")
     private String endpoint;
 
-    @Value("${minio.accessKey}")
+    @Value("${s3.access.key}")
     private String accessKey;
 
-    @Value("${minio.secretKey}")
+    @Value("${s3.secret.key}")
     private String secretKey;
 
-    @Value("${minio.bucketName}")
+    @Value("${s3.bucket}")
     private String bucketName;
 
     private final MinioClient minioClient;
@@ -42,7 +42,7 @@ public class MinioService {
                 .build();
     }
 
-    public void uploadFile(File file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public String uploadFile(File file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         try {
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
             if (!found) {
@@ -61,9 +61,11 @@ public class MinioService {
                             .filename(filePath)
                             .build());
             log.info("File '{}' is successfully uploaded as object '{}' to bucket '{}'.", filePath, objectName, bucketName);
+            return System.getenv("S3_ENDPOINT") + "/" + bucketName + "/" + objectName;
         } catch (MinioException e) {
             log.error("Error occurred: {}", e.getMessage());
             log.error("HTTP trace: {}", e.httpTrace());
         }
+        return null;
     }
 }

@@ -10,6 +10,8 @@ import com.learnandphish.formation.model.Video;
 import com.learnandphish.formation.repository.FormationRepository;
 import com.learnandphish.formation.repository.QuizRepository;
 import com.learnandphish.formation.repository.VideoRepository;
+import com.learnandphish.formation.repository.BadgeRepository;
+import com.learnandphish.formation.service.MinioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -37,6 +39,12 @@ public class FormationApplication {
 
     @Autowired
     private VideoRepository videoRepository;
+
+    @Autowired
+    private BadgeRepository badgeRepository;
+
+    @Autowired
+    private MinioService minioService;
 
     // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database
     @Bean
@@ -167,7 +175,11 @@ public class FormationApplication {
                                 JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
                                 String badgeName = obj.get("name").getAsString();
                                 String badgeDescription = obj.get("description").getAsString();
-                                String badgeImageUrl = obj.get("imageUrl").getAsString();
+                                String badgeImageUrl = minioService.uploadFile(new File(obj.get("imageUrl").getAsString()));
+                                if (badgeImageUrl == null) {
+                                    log.error("Error uploading image to S3");
+                                    continue;
+                                }
                                 badge.setId(Long.parseLong(badgeId));
                                 badge.setName(badgeName);
                                 badge.setDescription(badgeDescription);
@@ -177,10 +189,10 @@ public class FormationApplication {
                         }
                     }
                 } else {
-                    log.error("No badge found in data/badges folder");
+                    log.error("No badge found in data/badges/ folder");
                 }
             } else {
-                log.error("Folder data/badges does not exist or is not a directory");
+                log.error("Folder data/badges/ does not exist or is not a directory");
             }
         };
     }

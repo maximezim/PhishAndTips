@@ -1,29 +1,25 @@
 package com.learnandphish.formation.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-@IdClass(UserBadge.UserBadgeId.class)
-public class UserBadge implements Serializable {
+@Table(name = "user_badge")
+@IdClass(UserBadgeId.class)
+public class UserBadge {
     @Id
-    private String user_email;
+    @Column(name = "user_email", nullable = false)
+    private String userEmail;
 
     @Id
-    @ManyToOne
-    @JoinColumn(name = "badge_id")
-    private Badge badge;
-
-    @Data
-    public static class UserBadgeId implements Serializable {
-        private String user_email;
-        private Long badge_id;
-    }
+    @Column(name = "badge_id", nullable = false)
+    private Long badgeId;
 }
+

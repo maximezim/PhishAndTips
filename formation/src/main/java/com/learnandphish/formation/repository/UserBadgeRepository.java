@@ -7,6 +7,7 @@ import java.util.List;
 
 @Repository
 public interface UserBadgeRepository extends JpaRepository<UserBadge, Integer> {
-    List<UserBadge> findAllByUser_email(String email);
-    boolean existsByUser_emailAndBadge(String email, Integer badgeId);
+    List<UserBadge> findAllByUserEmail(String email);
+    boolean existsByUserEmailAndBadgeId(String email, Long badgeId);
+
 }
