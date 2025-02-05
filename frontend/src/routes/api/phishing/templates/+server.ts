@@ -43,3 +43,49 @@ export async function POST({ request, cookies }) {
 		throw e;
 	}
 }
+
+/*
+ * API endpoint : /api/phishing/templates
+ * Method : PUT
+ * Request : a template parsed in json
+ * Response : the template updated
+ * Description : Update an existing template
+ */
+export async function PUT({ request, cookies }) {
+	const templateJson = await request.json();
+	try {
+		const response = await PhishingService.updateTemplate(cookies, templateJson.id, templateJson);
+		if (response != null) {
+			return new Response(JSON.stringify(response), { status: 200 });
+		} else {
+			console.log('Error: No data found');
+			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
+		}
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
+}
+
+/*
+ * API endpoint : /api/phishing/templates
+ * Method : DELETE
+ * Request : a template id
+ * Response : a success message
+ * Description : Delete an existing template
+ */
+export async function DELETE({ request, cookies }) {
+	const groupId = await request.json();
+	try {
+		const response = await PhishingService.deleteTemplate(cookies, groupId);
+		if (response != null) {
+			return new Response(JSON.stringify(response), { status: 200 });
+		} else {
+			console.log('Error: No data found');
+			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
+		}
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
+}

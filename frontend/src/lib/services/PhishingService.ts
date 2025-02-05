@@ -7,7 +7,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 class PhishingService {
-	// CAMPAIGNS
+	/*
+	 * Campaigns
+	 * CRUD and details/summary
+	 */
 	public static async getCampaigns(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
@@ -21,6 +24,60 @@ class PhishingService {
 			console.error('Error while getting Gophish campaigns:', error.message);
 
 			return [];
+		}
+	}
+
+	public static async createCampaign(cookies: any, campaign: any) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.post(`${API_URL}/api/campaigns/?api_key=${API_KEY}`, campaign, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+
+			if (response.data) {
+				const body = await response.data.json();
+				return body;
+			}
+		} catch (error: any) {
+			console.error('Error while creating the Gophish campaign:', error.message);
+			console.error(error);
+		}
+	}
+
+	public static async updateCampaign(cookies: any, campaignId: number, campaign: any) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.put(
+				`${API_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
+				campaign,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
+				}
+			);
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while updating the Gophish campaign:', error.message);
+		}
+	}
+
+	public static async deleteCampaign(cookies: any, campaignId: number) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.delete(
+				`${API_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
+				}
+			);
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while deleting the Gophish campaign:', error.message);
 		}
 	}
 
@@ -60,26 +117,11 @@ class PhishingService {
 		}
 	}
 
-	public static async createCampaign(cookies: any, campaign: any) {
-		try {
-			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${API_URL}/api/campaigns/?api_key=${API_KEY}`, campaign, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
-				}
-			});
-
-			if (response.data) {
-				const body = await response.data.json();
-				return body;
-			}
-		} catch (error: any) {
-			console.error('Error while creating the Gophish campaign:', error.message);
-			console.error(error);
-		}
-	}
-
-	// TEMPLATES
+	/*
+	 * =============================
+	 * Templates
+	 * CRUD
+	 */
 	public static async getTemplates(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
@@ -104,19 +146,56 @@ class PhishingService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
-
-			console.log(response);
-			// if (response.data) {
-			// 	const body = await response.data.json();
-			// 	return body;
-			// }
+			if (response.data) {
+				const body = await response.data.json();
+				return body;
+			}
 		} catch (error: any) {
 			console.error('Error while creating the Gophish template:', error.message);
 			console.error(error);
 		}
 	}
 
-	// PAGES
+	public static async updateTemplate(cookies: any, templateId: number, template: any) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.put(
+				`${API_URL}/api/templates/${templateId}?api_key=${API_KEY}`,
+				template,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
+				}
+			);
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while updating the Gophish template:', error.message);
+		}
+	}
+
+	public static async deleteTemplate(cookies: any, templateId: number) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.delete(
+				`${API_URL}/api/templates/${templateId}?api_key=${API_KEY}`,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
+				}
+			);
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while deleting the Gophish template:', error.message);
+		}
+	}
+
+	/*
+	 * =============================
+	 * PAGES
+	 * CRUD
+	 */
 	public static async getPages(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
@@ -132,7 +211,58 @@ class PhishingService {
 		}
 	}
 
-	// GROUPS
+	public static async createPage(cookies: any, page: any) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.post(`${API_URL}/api/pages/?api_key=${API_KEY}`, page, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+
+			if (response.data) {
+				const body = await response.data.json();
+				return body;
+			}
+		} catch (error: any) {
+			console.error('Error while creating the Gophish page:', error.message);
+			console.error(error);
+		}
+	}
+
+	public static async updatePage(cookies: any, pageId: number, page: any) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.put(`${API_URL}/api/pages/${pageId}?api_key=${API_KEY}`, page, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while updating the Gophish page:', error.message);
+		}
+	}
+
+	public static async deletePage(cookies: any, pageId: number) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.delete(`${API_URL}/api/pages/${pageId}?api_key=${API_KEY}`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while deleting the Gophish page:', error.message);
+		}
+	}
+
+	/*
+	 * =============================
+	 * GROUPS
+	 * CRUD and details
+	 */
 	public static async getGroups(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
