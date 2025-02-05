@@ -3,6 +3,7 @@ package com.learnandphish.formation;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.learnandphish.formation.model.Badge;
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.model.Quiz;
 import com.learnandphish.formation.model.Video;
@@ -144,6 +145,42 @@ public class FormationApplication {
                 }
             } else {
                 log.error("Folder data/videos does not exist or is not a directory");
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initializeBadge(){
+        return args -> {
+            File folder = new File("/var/formation/data/badges");
+            if (folder.exists() && folder.isDirectory()) {
+                File[] listOfFiles = folder.listFiles();
+                if (listOfFiles != null && listOfFiles.length > 0) {
+                    for (File file : listOfFiles) {
+                        String badgeId = file.getName(); // File name = badge id
+                        if (!badgeId.matches("\\d+")) {
+                            log.error("File name not a number");
+                        }else {
+                            Badge badge = badgeRepository.findById(Integer.parseInt(badgeId)).orElse(new Badge());
+                            if (badge.getId() == null) {
+                                String content = Files.readString(file.toPath());
+                                JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
+                                String badgeName = obj.get("name").getAsString();
+                                String badgeDescription = obj.get("description").getAsString();
+                                String badgeImageUrl = obj.get("imageUrl").getAsString();
+                                badge.setId(Long.parseLong(badgeId));
+                                badge.setName(badgeName);
+                                badge.setDescription(badgeDescription);
+                                badge.setImageUrl(badgeImageUrl);
+                                badgeRepository.save(badge);
+                            }
+                        }
+                    }
+                } else {
+                    log.error("No badge found in data/badges folder");
+                }
+            } else {
+                log.error("Folder data/badges does not exist or is not a directory");
             }
         };
     }
