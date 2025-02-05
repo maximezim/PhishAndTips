@@ -19,7 +19,7 @@ public class QuizService {
 
     // Get a quiz by id
     public Quiz getQuizById(Integer id) {
-        return quizRepository.findById(id).orElseThrow(() -> new RuntimeException("Quiz not found"));
+        return quizRepository.findById(id).orElse(null);
     }
 
     // Get all quizzes
@@ -46,7 +46,7 @@ public class QuizService {
     // Get user score for a quiz
     public Float getUserScoreForQuiz(String user_email, Integer quiz_id){
         UserQuizScore userQuizScore = quizScoreRepository.findById(new UserQuizId(user_email, quiz_id)).orElse(null);
-        return userQuizScore != null ? userQuizScore.getScore() : 0;
+        return userQuizScore != null ? userQuizScore.getScore() : null;
     }
 
 }

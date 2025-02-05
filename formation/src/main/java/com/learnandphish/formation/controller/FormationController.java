@@ -58,9 +58,13 @@ public class FormationController {
 
     // Save user score
     @PostMapping("/quiz/score")
-    public ResponseEntity<String> saveUserScore(@RequestBody UserQuizScoreDTO userQuizScoreDTO){
-        quizService.saveUserScore(userQuizScoreDTO.getUser_email(), userQuizScoreDTO.getQuiz_id(), userQuizScoreDTO.getScore());
-        return ResponseEntity.ok("Score saved successfully");
+    public ResponseEntity<String> saveUserScore(@RequestBody UserQuizScoreDTO userQuizScoreDTO) {
+        try {
+            quizService.saveUserScore(userQuizScoreDTO.getUserEmail(), userQuizScoreDTO.getQuizId(), userQuizScoreDTO.getScore());
+            return ResponseEntity.ok("Score saved successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error saving score");
+        }
     }
 
     // Get user scores for all quizzes
@@ -70,8 +74,8 @@ public class FormationController {
         Iterable<UserQuizScore> userQuizScoresList = quizService.getUserScores(user_email);
         for (UserQuizScore userQuizScore : userQuizScoresList){
             UserQuizScoreDTO userQuizScoreDTO = new UserQuizScoreDTO();
-            userQuizScoreDTO.setUser_email(userQuizScore.getUserQuizId().getUserEmail());
-            userQuizScoreDTO.setQuiz_id(userQuizScore.getUserQuizId().getQuizId());
+            userQuizScoreDTO.setUserEmail(userQuizScore.getUserQuizId().getUserEmail());
+            userQuizScoreDTO.setQuizId(userQuizScore.getUserQuizId().getQuizId());
             userQuizScoreDTO.setScore(userQuizScore.getScore());
             userQuizScores.add(userQuizScoreDTO);
         }
@@ -82,6 +86,6 @@ public class FormationController {
     @GetMapping("/quiz/score/{user_email}/{quiz_id}")
     public ResponseEntity<Float> getUserScoreForQuiz(@PathVariable String user_email, @PathVariable Integer quiz_id){
         Float score = quizService.getUserScoreForQuiz(user_email, quiz_id);
-        return ResponseEntity.ok(score);
+        return score != null ? ResponseEntity.ok(score) : ResponseEntity.notFound().build();
     }
 }

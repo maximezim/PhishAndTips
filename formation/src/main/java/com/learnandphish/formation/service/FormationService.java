@@ -16,7 +16,7 @@ public class FormationService {
 
     // Get a formation by id
     public Formation getFormationById(Integer id) {
-        return formationRepository.findById(id).orElseThrow(() -> new RuntimeException("Formation not found"));
+        return formationRepository.findById(id).orElse(null);
     }
 
     // Get all formations
