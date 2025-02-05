@@ -66,7 +66,7 @@ public class FormationController {
     }
 
     // Get user scores for all quizzes
-    @GetMapping("/quiz/score}")
+    @GetMapping("/quiz/score")
     public ResponseEntity<List<UserQuizScoreDTO>> getUserScores(@RequestHeader("email") String email){
         ArrayList<UserQuizScoreDTO> userQuizScores = new ArrayList<>();
         Iterable<UserQuizScore> userQuizScoresList = quizService.getUserScores(email);

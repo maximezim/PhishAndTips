@@ -25,15 +25,15 @@ CREATE TABLE IF NOT EXISTS user_quiz_score(
 );
 
 CREATE TABLE IF NOT EXISTS badge(
-    id BIGINT PRIMARY KEY,
-    name VARCHAR(50) UNIQUE NOT NULL,
-    description VARCHAR(100) NOT NULL,
+    id INTEGER PRIMARY KEY,
+    name VARCHAR UNIQUE NOT NULL,
+    description VARCHAR NOT NULL,
     image_url VARCHAR NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_badge(
     user_email VARCHAR NOT NULL,
-    badge_id BIGINT NOT NULL,
+    badge_id INTEGER NOT NULL,
     PRIMARY KEY (user_email, badge_id),
     FOREIGN KEY (badge_id) REFERENCES badge(id)
 );

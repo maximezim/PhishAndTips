@@ -1,5 +1,5 @@
 {
     "name": "POLICE",
     "description": "Badge de la police !",
-    "imageUrl": "data/badges/img/POLICE.jpg"
+    "imageUrl": "/var/formation/data/badges/img/POLICE.jpg"
 }

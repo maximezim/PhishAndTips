@@ -7,9 +7,9 @@ import io.minio.UploadObjectArgs;
 import io.minio.errors.MinioException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -19,28 +19,14 @@ import java.util.UUID;
 @Service
 public class MinioService {
 
-    private static final Logger log = LoggerFactory.getLogger(MinioService.class);
-
-    @Value("${s3.endpoint}")
-    private String endpoint;
-
-    @Value("${s3.access.key}")
-    private String accessKey;
-
-    @Value("${s3.secret.key}")
-    private String secretKey;
-
     @Value("${s3.bucket}")
     private String bucketName;
 
-    private final MinioClient minioClient;
+    @Autowired
+    private MinioClient minioClient;
 
-    public MinioService() {
-        this.minioClient = MinioClient.builder()
-                .endpoint(endpoint)
-                .credentials(accessKey, secretKey)
-                .build();
-    }
+    private static final Logger log = LoggerFactory.getLogger(MinioService.class);
+
 
     public String uploadFile(File file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         try {

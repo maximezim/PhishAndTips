@@ -160,7 +160,7 @@ public class FormationApplication {
     @Bean
     public CommandLineRunner initializeBadge(){
         return args -> {
-            File folder = new File("/var/formation/data/badges");
+            File folder = new File("/var/formation/data/badges/metadata");
             if (folder.exists() && folder.isDirectory()) {
                 File[] listOfFiles = folder.listFiles();
                 if (listOfFiles != null && listOfFiles.length > 0) {
@@ -175,12 +175,17 @@ public class FormationApplication {
                                 JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
                                 String badgeName = obj.get("name").getAsString();
                                 String badgeDescription = obj.get("description").getAsString();
-                                String badgeImageUrl = minioService.uploadFile(new File(obj.get("imageUrl").getAsString()));
-                                if (badgeImageUrl == null) {
-                                    log.error("Error uploading image to S3");
+                                String badgeImageUrl;
+                                try {
+                                    badgeImageUrl = minioService.uploadFile(new File(obj.get("imageUrl").getAsString()));
+                                    if (badgeImageUrl == null) {
+                                        throw new Exception("Image upload failed");
+                                    }
+                                } catch (Exception e) {
+                                    log.error("Error uploading image to S3", e);
                                     continue;
                                 }
-                                badge.setId(Long.parseLong(badgeId));
+                                badge.setId(Integer.valueOf(badgeId));
                                 badge.setName(badgeName);
                                 badge.setDescription(badgeDescription);
                                 badge.setImageUrl(badgeImageUrl);
@@ -189,10 +194,10 @@ public class FormationApplication {
                         }
                     }
                 } else {
-                    log.error("No badge found in data/badges/ folder");
+                    log.error("No badge found in data/badges/metadata/ folder");
                 }
             } else {
-                log.error("Folder data/badges/ does not exist or is not a directory");
+                log.error("Folder data/badges/metadata/ does not exist or is not a directory");
             }
         };
     }
