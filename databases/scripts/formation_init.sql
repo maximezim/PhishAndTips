@@ -15,3 +15,11 @@ CREATE TABLE IF NOT EXISTS video(
     description VARCHAR NOT NULL,
     url VARCHAR NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS user_quiz_score(
+    user_email VARCHAR NOT NULL,
+    quiz_id INTEGER NOT NULL,
+    score DOUBLE PRECISION NOT NULL,
+    PRIMARY KEY (user_email, quiz_id),
+    FOREIGN KEY (quiz_id) REFERENCES quiz(id)
+);

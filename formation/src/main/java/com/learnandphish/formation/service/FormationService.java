@@ -14,10 +14,12 @@ import java.util.List;
 public class FormationService {
     private final FormationRepository formationRepository;
 
+    // Get a formation by id
     public Formation getFormationById(Integer id) {
         return formationRepository.findById(id).orElseThrow(() -> new RuntimeException("Formation not found"));
     }
 
+    // Get all formations
     public List<Formation> getAllFormations() {
         return formationRepository.findAll();
     }

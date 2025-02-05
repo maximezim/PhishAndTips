@@ -33,4 +33,4 @@ RUN touch /var/log/cron.log
 EXPOSE 8001
 
 # Start cron and uvicorn
-CMD ["sh", "-c", "cron -f & uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+CMD ["sh", "-c", "cron -f & uvicorn app.main:app --host 0.0.0.0 --port 8001"]

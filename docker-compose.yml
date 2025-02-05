@@ -2,10 +2,12 @@ services:
   postgres:
     container_name: postgres
     image: postgres:latest
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: authentication_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${AUTH_PG_USER}
+      POSTGRES_PASSWORD: ${AUTH_PG_PASSWORD}
     networks:
       - backend
     volumes:
@@ -16,6 +18,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles:
+      - prod
+      - dev
 
   authentication-service:
     container_name: authentication-service
@@ -32,16 +37,19 @@ services:
       - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-      - SPRING_MAIL_HOST=mailserver
-      - SPRING_MAIL_PORT=25
-      - SPRING_MAIL_USERNAME=${AUTH_MAIL_USERNAME}
-      - SPRING_MAIL_PASSWORD=${AUTH_MAIL_PASSWORD}
+      - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
+      - SPRING_MAIL_HOST=${SMTP_HOST:-mailserver}
+      - SPRING_MAIL_PORT=${SMTP_PORT:-25}
+      - SPRING_MAIL_USERNAME=${SMTP_MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${SMTP_MAIL_PASSWORD}
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
-      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=false
-      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=false
-      - MAIL_FROM=sender@example.com
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=${SMTP_ENABLE_TLS:-false}
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=${SMTP_ENABLE_TLS:-false}
+      - MAIL_FROM=${SMTP_FROM:-sender@example.com}
+    profiles:
+      - prod
+      - dev
 
   api-gateway:
     container_name: api-gateway
@@ -55,12 +63,18 @@ services:
       - backend
     depends_on:
       - authentication-service
+    profiles:
+      - prod
+      - dev
 
   dozzle:
     container_name: dozzle
     image: ghcr.io/amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+        postgres:
+          condition: service_healthy
     environment:
         - DOZZLE_ADDR=:3001
         - DOZZLE_NO_ANALYTICS=true
@@ -69,6 +83,9 @@ services:
         - DOZZLE_ENABLE_ACTIONS=true
     networks:
         - backend
+    profiles:
+      - prod
+      - dev
 
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
@@ -91,6 +108,8 @@ services:
     restart: unless-stopped
     networks:
       - backend
+    profiles:
+      - dev
 
   webmail:
     image: roundcube/roundcubemail:latest
@@ -114,6 +133,8 @@ services:
       - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
     networks:
       - backend
+    profiles:
+      - dev
 
   gophish:
     image: gophish/gophish:latest
@@ -121,6 +142,8 @@ services:
     volumes:
       - gophish-data:/opt/gophish
       - ./gophish/config.json:/opt/gophish/config.json
+    environment:
+      - GOPHISH_INITIAL_ADMIN_API_TOKEN=9e4537166e25f0d6f8187ada15c6134e80db62f34773e08bf50aba45abcf3fdf
     ports:
       - "3333:3333" # Remove in prod
       - "80:80"
@@ -129,14 +152,19 @@ services:
     restart: unless-stopped
     networks:
       - backend
+    profiles:
+      - prod
+      - dev
 
   postgres-formation:
     container_name: postgres-formation
     image: postgres:latest
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: formation_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${FORMATION_PG_USER}
+      POSTGRES_PASSWORD: ${FORMATION_PG_PASSWORD}
     networks:
       - backend
     volumes:
@@ -147,6 +175,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles:
+      - prod
+      - dev
 
   formation-service:
     container_name: formation-service
@@ -159,28 +190,38 @@ services:
     depends_on:
       postgres-formation:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-formation:5432/formation_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
+      - SPRING_DATASOURCE_USERNAME=${FORMATION_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${FORMATION_PG_PASSWORD}
     volumes:
       - ./formation/data:/var/formation/data
+    profiles:
+      - prod
+      - dev
 
-#  scoring-service:
-#    container_name: scoring-service
-#    image: scoring-service:latest
-#    build:
-#      context: ./scoring
-#      dockerfile: Dockerfile
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#    environment:
-#      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
-#      - SPRING_DATASOURCE_USERNAME=postgres
-#      - SPRING_DATASOURCE_PASSWORD=password
-#    networks:
-#      - backend
+  scoring-service:
+    container_name: scoring-service
+    image: scoring-service:latest
+    build:
+      context: ./scoring
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
+      - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
+    networks:
+      - backend
+    profiles:
+      - prod
+      - dev
 
 
   spiderfoot:
@@ -189,6 +230,9 @@ services:
     build: https://github.com/smicallef/spiderfoot.git
     networks:
       - backend
+    profiles:
+      - prod
+      - dev
   
   spiderfoot-api:
     container_name: spiderfoot-api
@@ -198,16 +242,19 @@ services:
     image: spiderfoot-api:latest
     networks:
       - backend
-    ports:
-      - "8001:8001" # remove in prod
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${AUTH_PG_USER}
+      POSTGRES_PASSWORD: ${AUTH_PG_PASSWORD}
       POSTGRES_DB: authentication_db
       POSTGRES_HOST: postgres
+    profiles:
+      - prod
+      - dev
 
   frontend:
     container_name: frontend
@@ -223,6 +270,8 @@ services:
       - backend
     depends_on:
       - api-gateway
+    profiles:
+      - prod
 
 networks:
   backend:
