@@ -2,6 +2,7 @@ package com.learnandphish.formation.controller;
 
 import com.learnandphish.formation.dto.UserQuizScoreDTO;
 import com.learnandphish.formation.model.*;
+import com.learnandphish.formation.service.BadgeService;
 import com.learnandphish.formation.service.FormationService;
 import com.learnandphish.formation.service.QuizService;
 import com.learnandphish.formation.service.VideoService;
@@ -19,6 +20,7 @@ public class FormationController {
     private final FormationService formationService;
     private final QuizService quizService;
     private final VideoService videoService;
+    private final BadgeService badgeService;
 
     // Get all formations
     @GetMapping("/formations")
@@ -64,10 +66,10 @@ public class FormationController {
     }
 
     // Get user scores for all quizzes
-    @GetMapping("/quiz/score/{user_email}")
-    public ResponseEntity<List<UserQuizScoreDTO>> getUserScores(@PathVariable String user_email){
+    @GetMapping("/quiz/score}")
+    public ResponseEntity<List<UserQuizScoreDTO>> getUserScores(@RequestHeader("email") String email){
         ArrayList<UserQuizScoreDTO> userQuizScores = new ArrayList<>();
-        Iterable<UserQuizScore> userQuizScoresList = quizService.getUserScores(user_email);
+        Iterable<UserQuizScore> userQuizScoresList = quizService.getUserScores(email);
         for (UserQuizScore userQuizScore : userQuizScoresList){
             UserQuizScoreDTO userQuizScoreDTO = new UserQuizScoreDTO();
             userQuizScoreDTO.setUser_email(userQuizScore.getUserQuizId().getUserEmail());
@@ -79,9 +81,30 @@ public class FormationController {
     }
 
     // Get user score for a quiz
-    @GetMapping("/quiz/score/{user_email}/{quiz_id}")
-    public ResponseEntity<Float> getUserScoreForQuiz(@PathVariable String user_email, @PathVariable Integer quiz_id){
-        Float score = quizService.getUserScoreForQuiz(user_email, quiz_id);
+    @GetMapping("/quiz/score/{quiz_id}")
+    public ResponseEntity<Float> getUserScoreForQuiz(@RequestHeader("email") String email, @PathVariable Integer quiz_id){
+        Float score = quizService.getUserScoreForQuiz(email, quiz_id);
         return ResponseEntity.ok(score);
+    }
+
+    @PostMapping("/badge/claim/{badgeId}")
+    public ResponseEntity<Badge> claimBadge(@PathVariable Integer badgeId, @RequestHeader("email") String email){
+        Badge badge = badgeService.claimBadge(badgeId, email);
+        if (badge == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(badge);
+    }
+
+    @GetMapping("/badge/all")
+    public ResponseEntity<List<Badge>> getBadges(@RequestHeader("email") String email){
+        List<Badge> badges = badgeService.getBadgesByUser(email);
+        return ResponseEntity.ok(badges);
+    }
+
+    @GetMapping("/badge/{badgeId}")
+    public ResponseEntity<Badge> getBadgeById(@PathVariable Integer badgeId){
+        Badge badge = badgeService.getBadgeById(badgeId);
+        return badge != null ? ResponseEntity.ok(badge) : ResponseEntity.notFound().build();
     }
 }
