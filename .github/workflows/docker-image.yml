@@ -21,7 +21,7 @@ jobs:
 
       # Step 3: Validate Docker Compose configuration.
       - name: Validate Docker Compose configuration
-        run: docker-compose -f docker-compose.yml config
+        run: docker compose -f docker-compose.yml config
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v2
