@@ -117,6 +117,7 @@ public class AuthFilter implements GatewayFilter {
                 .mutate()
                 .header("id", String.valueOf(claims.get("id")))
                 .header("role", String.valueOf(claims.get("role")))
+                .header("email", String.valueOf(claims.get("sub")))
                 .build();
     }
 }

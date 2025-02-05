@@ -386,8 +386,8 @@ public class AuthenticationController {
      */
     private boolean isValidPassword(String password) {
         if (password.length() < 8) return false;
-        if (!password.matches(".*[A-Z].*")) return false; // At least one uppercase letter
-        return password.matches(".*\\d.*");   // At least one digit
+        if (!password.chars().anyMatch(Character::isUpperCase)) return false; // At least one uppercase letter
+        return password.chars().anyMatch(Character::isDigit);   // At least one digit
     }
 
     private String generatePassword() {
