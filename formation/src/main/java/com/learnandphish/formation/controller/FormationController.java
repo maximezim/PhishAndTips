@@ -35,7 +35,7 @@ public class FormationController {
     }
 
     // Get all quizzes
-    @GetMapping("/quiz")
+    @GetMapping("/quizzes")
     public ResponseEntity<List<Quiz>> getAllQuiz() {
         Iterable<Quiz> Quiz = quizService.getAllQuiz();
         return ResponseEntity.ok((List<Quiz>) Quiz);
