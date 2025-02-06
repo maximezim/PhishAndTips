@@ -218,12 +218,12 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
       - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
       - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
+      - GOPHISH_API_KEY=${GOPHISH_API_KEY}
     networks:
       - backend
     profiles:
       - prod
       - dev
-
 
   spiderfoot:
     container_name: spiderfoot

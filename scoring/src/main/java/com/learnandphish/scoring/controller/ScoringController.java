@@ -1,7 +1,9 @@
 package com.learnandphish.scoring.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.learnandphish.scoring.dto.QuizScoreDTO;
 import com.learnandphish.scoring.service.FormationService;
+import com.learnandphish.scoring.service.GophishActionService;
 import com.learnandphish.scoring.service.SpiderFootScanService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ public class ScoringController {
 
     private final SpiderFootScanService spiderFootScanService;
     private final FormationService formationService;
+    private final GophishActionService gophishActionService;
 
     @GetMapping("/ping")
     public String ping() {
@@ -33,4 +36,8 @@ public class ScoringController {
         return formationService.getUserFormations(email);
     }
 
+    @GetMapping("/gophish-actions")
+    public List<JsonNode> getGophishActions(@RequestHeader("email") String email) {
+        return gophishActionService.getUserActions(email);
+    }
 }
