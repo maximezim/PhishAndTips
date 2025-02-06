@@ -1,33 +1,85 @@
 <script lang="ts">
-  import * as Card  from '$lib/components/ui/card';
+  import * as Card from '$lib/components/ui/card';
   import fish_svg from '$lib/assets/images/fish.svg';
   import 'iconify-icon';
   import AnimatedCircularProgressBar from '$lib/components/magicUi/AnimatedCircularProgressBar.svelte';
   import * as Tabs from '$lib/components/ui/tabs';
-  import * as Table from '$lib/components/ui/table';
+  import { onMount } from 'svelte';
+  import ScoringDiv from '$lib/components/custom/scoring/ScoringDiv.svelte';
+	import Separator from '$lib/components/custom/Separator.svelte';
+
+  let osintScore: number = 0;
+  let phishingScore: number = 0;
+  let formationScore: number = 0;
+  let totalScore: number = 0;
 
   const accentColor = 'hsl(var(--accent))';
+
+  async function getPhishingScore() {
+    try {
+      phishingScore = await fetch("/api/scoring/phishing").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte de score phishing: ', e);
+    }
+  }
+
+  async function getOsintScore() {
+    try {
+      osintScore = await fetch("/api/scoring/osint").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
+    }
+  }  
+
+  async function getFormationScore() {
+    try {
+      formationScore = await fetch("/api/scoring/formation").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte de score formation: ', e);
+    }
+  }
+
+  async function getTotalScore() {
+    try {
+      formationScore = await fetch("/api/scoring").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte du score total: ', e);
+    }
+  }
+
+  onMount(async () => {
+    await Promise.all([
+      getPhishingScore(),
+      getOsintScore(),
+      getFormationScore(),
+      getTotalScore(),
+    ]);
+  });
 </script>
 
 <main class="relative z-10 flex flex-1 flex-col flex-grow gap-4 p-4 md:gap-8 md:p-8">
-
-    <Tabs.Root value="user" class="max-w-5xl">
-      <Tabs.List class="grid max-w-sm grid-cols-2">
-        <Tabs.Trigger value="user">Perso</Tabs.Trigger>
-        <Tabs.Trigger value="admin">Admin</Tabs.Trigger>
-      </Tabs.List>
-      <Tabs.Content value="user" >
-        <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-10 w-full">
-
-        
+  <Tabs.Root value="user" class="max-w-5xl">
+    <Tabs.List class="grid max-w-sm grid-cols-2">
+      <Tabs.Trigger value="user">Perso</Tabs.Trigger>
+      <Tabs.Trigger value="admin">Admin</Tabs.Trigger>
+    </Tabs.List>
+    <Tabs.Content value="user">
+      <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-10 w-full">
         <Card.Root class="col-span-5 row-span-2">
           <Card.Header class="flex flex-col gap-3 space-y-0">
             <Card.Title class="text-lg font-semibold flex items-center gap-3 justify-between">
-              <span>Mon score</span>
-              <iconify-icon class="text-3xl text-accent" icon="mingcute:trophy-fill"></iconify-icon>
-              </Card.Title>
+              <span>Score de vulnérabilité</span>
+              <iconify-icon class="text-3xl text-accent" icon="mingcute:safe-alert-fill"></iconify-icon>
+            </Card.Title>
           </Card.Header>
           <Card.Content>
+            <div class="flex flex-col gap-2">
+              <ScoringDiv title="Osint" score={osintScore} />
+              <Separator width="w-full" />
+              <ScoringDiv title="Phishing" score={phishingScore} />
+              <Separator width="w-full" />
+              <ScoringDiv title="Formation" score={formationScore} />
+            </div>
           </Card.Content>
         </Card.Root>
 
