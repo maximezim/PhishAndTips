@@ -7,6 +7,7 @@ import com.learnandphish.scoring.service.GophishActionService;
 import com.learnandphish.scoring.service.SpiderFootScanService;
 import com.learnandphish.scoring.service.OsintScoringService;
 import com.learnandphish.scoring.service.AverageScoreService;
+import com.learnandphish.scoring.service.TotalScoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class ScoringController {
     private final GophishActionService gophishActionService;
     private final OsintScoringService osintScoringService;
     private final AverageScoreService averageScoreService;
+    private final TotalScoreService totalScoreService;
 
     @GetMapping("/ping")
     public String ping() {
@@ -61,5 +63,11 @@ public class ScoringController {
     public Map<String, Object> getFormationAverageScore(@RequestHeader("email") String email) {
         double average = averageScoreService.getUserAverageScore(email);
         return Map.of("email", email, "formationAverage", average);
+    }
+
+    @GetMapping("/total-score")
+    public Map<String, Object> getTotalScore(@RequestHeader("email") String email) {
+        double totalScore = totalScoreService.getTotalScore(email);
+        return Map.of("email", email, "totalScore", totalScore);
     }
 }
