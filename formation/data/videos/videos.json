@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "title": "Mise en contexte",
+    "description": "Vidéo de mise en contexte de la formation",
+    "url": "https://youtu.be/ApU9N-j2qjI"
+  },
+  {
+    "id": 2,
+    "title": "Différents types de phishing",
+    "description": "Vidéo sur les différents types de phishing",
+    "url": "https://youtu.be/RDuPLhojpQc"
+  },
+  {
+    "id": 3,
+    "title": "Phishing par réseaux sociaux",
+    "description": "Vidéo sur le phishing par réseaux sociaux",
+    "url": "https://youtu.be/db9otn4dR8I"
+  },
+  {
+    "id": 4,
+    "title": "Spear phishing",
+    "description": "Vidéo sur le spear phishing",
+    "url": "https://youtu.be/o55406MrMSE"
+  },
+  {
+    "id": 5,
+    "title": "Smishing",
+    "description": "Vidéo sur le smishing",
+    "url": "https://youtu.be/QAq_va0Rw-k"
+  },
+  {
+    "id": 6,
+    "title": "Ingénierie sociale",
+    "description": "Vidéo sur l'ingénierie sociale",
+    "url": "https://youtu.be/83VKzzv2w5E"
+  },
+  {
+    "id": 7,
+    "title": "Fausses addresses mails",
+    "description": "Vidéo sur les fausses addresses mails",
+    "url": "https://youtu.be/O1JG6oe2TeY"
+  },
+  {
+    "id": 8,
+    "title": "Geste de premier secours",
+    "description": "Vidéo sur les gestes de premier secours",
+    "url": "https://youtu.be/_OQtGUVNau0"
+  },
+  {
+    "id": 9,
+    "title": "Choisir ses mots de passe",
+    "description": "Vidéo sur comment bien choisir ses mots de passe",
+    "url": "https://youtu.be/P9KhSc8WWZs"
+  },
+  {
+    "id": 10,
+    "title": "Partage d'informations",
+    "description": "Vidéo de prévention sur le partage d'informations",
+    "url": "https://youtu.be/KZsTtKEDxkI"
+  },
+  {
+    "id": 11,
+    "title": "Éléments de détection et de prévention",
+    "description": "Vidéo sur les éléments de détection et de prévention",
+    "url": "https://youtu.be/5jDKbACoz5E"
+  }
+]
