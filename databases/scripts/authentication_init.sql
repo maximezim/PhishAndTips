@@ -5,5 +5,7 @@ CREATE TABLE IF NOT EXISTS user_data(
   email VARCHAR NOT NULL,
   password_hash VARCHAR NOT NULL,
   role VARCHAR NOT NULL,
-  position VARCHAR
+  position VARCHAR,
+  change_password BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

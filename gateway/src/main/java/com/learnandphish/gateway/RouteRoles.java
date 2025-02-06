@@ -13,13 +13,22 @@ public class RouteRoles {
         Map.entry("/user/**", List.of("USER", "ADMIN")),
         Map.entry("/export-users", List.of("ADMIN")),
         Map.entry("/change-password", List.of("USER", "ADMIN")),
+        Map.entry("/need-change-password", List.of("USER", "ADMIN")),
+        Map.entry("/reset-password", List.of("USER","ADMIN")),
+        Map.entry("/delete-user", List.of("ADMIN")),
         Map.entry("/get-user", List.of("USER", "ADMIN")),
         Map.entry("/register", List.of("ADMIN")),
         Map.entry("/test-admin", List.of("ADMIN")),
         Map.entry("/test-user", List.of("USER", "ADMIN")),
         Map.entry("/test-both", List.of("USER", "ADMIN")),
-        Map.entry("/gophish/**", List.of("ADMIN")),
-        Map.entry("/api/**", List.of("ADMIN"))
+        Map.entry("/api/**", List.of("ADMIN")),
+        Map.entry("/get-all-users", List.of("ADMIN")),
+        Map.entry("/formation/**", List.of("USER", "ADMIN")),
+        Map.entry("/scoring/admin/**", List.of("ADMIN")),
+        Map.entry("/scoring/**", List.of("USER", "ADMIN")),
+        Map.entry("/monitor/**", List.of("ADMIN")),
+        Map.entry("/my-scan/**", List.of("USER", "ADMIN")),
+        Map.entry("/assets/**", List.of("USER","ADMIN"))
     );
 
     public static List<String> requiredRolesForPath(String path) {

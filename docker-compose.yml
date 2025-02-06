@@ -1,12 +1,13 @@
 services:
   postgres:
+    container_name: postgres
     image: postgres:latest
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: authentication_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${AUTH_PG_USER}
+      POSTGRES_PASSWORD: ${AUTH_PG_PASSWORD}
     networks:
       - backend
     volumes:
@@ -17,34 +18,41 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+    profiles:
+      - prod
+      - dev
 
   authentication-service:
+    container_name: authentication-service
     image: authentication-service:latest
     build:
       context: ./authentication
       dockerfile: Dockerfile
-    # Removed the ports section to prevent direct access
     networks:
       - backend
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=password
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+      - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
+      - SPRING_MAIL_HOST=${SMTP_HOST:-mailserver}
+      - SPRING_MAIL_PORT=${SMTP_PORT:-25}
+      - SPRING_MAIL_USERNAME=${SMTP_MAIL_USERNAME}
+      - SPRING_MAIL_PASSWORD=${SMTP_MAIL_PASSWORD}
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=${SMTP_ENABLE_TLS:-false}
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=${SMTP_ENABLE_TLS:-false}
+      - MAIL_FROM=${SMTP_FROM:-sender@example.com}
+    profiles:
+      - prod
+      - dev
 
   api-gateway:
+    container_name: api-gateway
     image: api-gateway:latest
     build:
       context: ./gateway
@@ -55,58 +63,29 @@ services:
       - backend
     depends_on:
       - authentication-service
-    environment:
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].ID=auth-service
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].URI=http://authentication-service:8082
-      - SPRING_CLOUD_GATEWAY_ROUTES[0].PREDICATES[0]=Path=/authenticate
-      - GOPHISH_API_KEY=${GOPHISH_API_KEY}
-    env_file:
-      - .env
-    logging:
-      driver: fluentd
-      options:
-        fluentd-async: "true"
-        fluentd-address: host.docker.internal:24224
+    profiles:
+      - prod
+      - dev
 
-  loki:
-    image: grafana/loki:latest
-    ports:
-      - "3100:3100"
-    networks:
-      - backend
-
-  fluent-bit:
-    image: grafana/fluent-bit-plugin-loki:latest
-    environment:
-      LOG_LEVEL: warn
-      LOKI_URL: http://loki:3100/loki/api/v1/push
+  dozzle:
+    container_name: dozzle
+    image: ghcr.io/amir20/dozzle:latest
     volumes:
-      - ./fluent-bit/conf/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
-    ports:
-      - "24224:24224"
-      - "24224:24224/udp"
-    networks:
-      - backend
-
-  grafana:
-    image: grafana/grafana:latest
-    ports:
-      - "3000:3000"
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+        postgres:
+          condition: service_healthy
     environment:
-      GF_RENDERING_SERVER_URL: http://renderer:8081/render
-      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
-      GF_LOG_FILTERS: rendering:debug
+        - DOZZLE_ADDR=:3001
+        - DOZZLE_NO_ANALYTICS=true
+        - DOZZLE_BASE=/monitor
+        - DOZZLE_HOSTNAME=Phish&Tips
+        - DOZZLE_ENABLE_ACTIONS=true
     networks:
-      - backend
-
-  renderer:
-    image: grafana/grafana-image-renderer:latest
-    expose:
-      - "8081"
-    environment:
-      ENABLE_METRICS: "true"
-    networks:
-      - backend
+        - backend
+    profiles:
+      - prod
+      - dev
 
   mailserver:
     image: docker.io/mailserver/docker-mailserver:latest
@@ -127,6 +106,10 @@ services:
       - "587:587"   # Submission
       - "993:993"   # IMAPS
     restart: unless-stopped
+    networks:
+      - backend
+    profiles:
+      - dev
 
   webmail:
     image: roundcube/roundcubemail:latest
@@ -148,6 +131,10 @@ services:
     volumes:
       - webmail_data:/var/www/html
       - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
+    networks:
+      - backend
+    profiles:
+      - dev
 
   gophish:
     image: gophish/gophish:latest
@@ -155,13 +142,164 @@ services:
     volumes:
       - gophish-data:/opt/gophish
       - ./gophish/config.json:/opt/gophish/config.json
+    environment:
+      - GOPHISH_INITIAL_ADMIN_API_TOKEN=${GOPHISH_API_KEY}
     ports:
-      - "3333:3333"
+      - "3333:3333" # Remove in prod
       - "80:80"
     depends_on:
       - mailserver
     restart: unless-stopped
+    networks:
+      - backend
+    profiles:
+      - prod
+      - dev
+
+  postgres-formation:
+    container_name: postgres-formation
+    image: postgres:latest
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: formation_db
+      POSTGRES_USER: ${FORMATION_PG_USER}
+      POSTGRES_PASSWORD: ${FORMATION_PG_PASSWORD}
+    networks:
+      - backend
+    volumes:
+      - ./databases/formation/pgdata:/var/lib/postgresql/data
+      - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - prod
+      - dev
+
+  formation-service:
+    container_name: formation-service
+    image: formation-service:latest
+    build:
+      context: ./formation
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    depends_on:
+      postgres-formation:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-formation:5432/formation_db
+      - SPRING_DATASOURCE_USERNAME=${FORMATION_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${FORMATION_PG_PASSWORD}
+      - S3_ENDPOINT=${S3_ENDPOINT:-http://localhost:8080}
+      - S3_BUCKET=${S3_BUCKET:-assets}
+      - S3_USE_LOCAL=${S3_USE_LOCAL:-true}
+    volumes:
+      - ./formation/data:/var/formation/data
+    profiles:
+      - prod
+      - dev
+
+  scoring-service:
+    container_name: scoring-service
+    image: scoring-service:latest
+    build:
+      context: ./scoring
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
+      - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
+      - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
+      - GOPHISH_API_KEY=${GOPHISH_API_KEY}
+    networks:
+      - backend
+    profiles:
+      - prod
+      - dev
+
+  spiderfoot:
+    container_name: spiderfoot
+    image: spiderfoot:latest
+    build: https://github.com/smicallef/spiderfoot.git
+    networks:
+      - backend
+    profiles:
+      - prod
+      - dev
   
+  spiderfoot-api:
+    container_name: spiderfoot-api
+    build:
+      context: ./spiderfoot-api
+      dockerfile: Dockerfile
+    image: spiderfoot-api:latest
+    networks:
+      - backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${AUTH_PG_USER}
+      POSTGRES_PASSWORD: ${AUTH_PG_PASSWORD}
+      POSTGRES_DB: authentication_db
+      POSTGRES_HOST: postgres
+    profiles:
+      - prod
+      - dev
+
+  frontend:
+    container_name: frontend
+    image: frontend:latest
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      - VITE_GATEWAY_URL=http://api-gateway:8080
+    ports:
+      - "3000:3000"
+    networks:
+      - backend
+    depends_on:
+      - api-gateway
+    profiles:
+      - prod
+
+  s3:
+    image: minio/minio:latest
+    container_name: s3
+    env_file:
+      - .env
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
+      MINIO_DEFAULT_BUCKETS: ${S3_BUCKET:-assets}
+      S3_ENDPOINT: ${S3_ENDPOINT:-http://localhost:8080}
+    command: server --address ':9000' /data
+    volumes:
+      - ./minio/data:/data
+      - ./minio/config:/root/.minio
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://s3:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    profiles:
+      - dev
+      - local_s3
 
 networks:
   backend:

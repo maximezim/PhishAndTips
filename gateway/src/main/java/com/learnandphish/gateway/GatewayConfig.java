@@ -30,10 +30,21 @@ public class GatewayConfig {
                         .uri("http://authentication-service:8082"))
                 .route("auth-swagger", r -> r.path("/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**")
                         .uri("http://authentication-service:8082"))
+                .route("formation-service", r -> r.path("/formation/**")
+                        .filters(f -> f.filter(authFilter))
+                        .uri("http://formation-service:8089"))
+                .route("scoring-service", r -> r.path("/scoring/**")
+                        .filters(f -> f.filter(authFilter))
+                        .uri("http://scoring-service:8088"))
                 .route("gophish", r -> r.path("/api/**")
-                        .filters(f -> f.filter(authFilter)
-                        .setRequestHeader("Authorization", System.getenv("GOPHISH_API_KEY")))
+                        .filters(f -> f.filter(authFilter))
                         .uri("http://gophish:3333"))
+                .route("monitor", r -> r.path("/monitor/**")
+                        .filters(f -> f.filter(authFilter))
+                        .uri("http://dozzle:3001"))
+                .route("s3", r -> r.path("/assets/**")
+                        .filters(f -> f.filter(authFilter))
+                        .uri("http://s3:9000"))
                 .route("protected-routes", r -> r.path("/**")
                         .filters(f -> f.filter(authFilter))
                         .uri("http://authentication-service:8082"))
@@ -43,7 +54,8 @@ public class GatewayConfig {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(Collections.singletonList("http://localhost:5173")); // Allow only this origin
+        //corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://frontend:3001"));
+        corsConfig.setAllowedOriginPatterns(Collections.singletonList("*"));
         corsConfig.setMaxAge(3600L);
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
@@ -51,7 +63,6 @@ public class GatewayConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
-
         return new CorsWebFilter(source);
     }
 }

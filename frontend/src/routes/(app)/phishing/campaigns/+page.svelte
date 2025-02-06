@@ -1,11 +1,14 @@
 <script lang="ts">
-	import Separator from "$lib/components/custom/Separator.svelte";
     import 'iconify-icon';
     import fish_svg from '$lib/assets/images/fish.svg';
-    import { page } from '$app/stores';
     import { onMount } from 'svelte';
     import { goto } from "$app/navigation";
 	import Button from "$lib/components/ui/button/button.svelte";
+    import { browser } from "$app/environment";
+
+    function nav_back() {
+        if (browser) window.history.back();
+    }
 
     let campaigns: any[] = [];
     let campaignStyle = "";
@@ -32,7 +35,6 @@
     function scaleHTML(html: string): string {
         //take account of the gap between the differents items
         const scale = window.innerWidth / (1920 + window.innerWidth / 12);
-        console.log(scale);
         return html.replace(
             /<html([^>]*)>/, // Capture la balise <html> et ses attributs éventuels
             `<html$1 style="transform: scale(${scale}); transform-origin: top left;">`

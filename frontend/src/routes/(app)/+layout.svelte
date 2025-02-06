@@ -1,13 +1,32 @@
 <script lang="ts">
 	import Header from '$lib/components/custom/header.svelte';
-	import '../../app.css';
+	import '$lib/../app.css';
 	import { page } from '$app/stores';
 	import Sidebar from '$lib/components/custom/Sidebar.svelte';
 	import DotPage from '$lib/components/custom/DotPage.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
+	import { derived } from 'svelte/store';
 
-	onMount(() => {
+	const mainPages = ['/about', '/dashboard', '/formation', '/osint', '/password', '/phishing'];
+
+	export const isSubPage = derived(page, ($page) => {
+    return !mainPages.includes($page.url.pathname);
+	});
+
+
+	var firstName: "";
+	var lastName: "";
+	var position: "";
+	var email: "";
+
+	onMount(async() => {
+		const user = await fetch("/api/auth/get-user").then(res => res.json()); 
+		firstName = user.firstName;
+		lastName = user.lastName;
+		position = user.position;
+		email = user.email;
+
 		if (window.location.pathname === '/') {
 			goto('/dashboard');
 		}
@@ -31,7 +50,7 @@
 		phishing_bg= {$page.data?.phishing_bg}
 	/>
 	<main class="relative w-full h-full overflow-scroll flex flex-col">
-		<Header title={$page.data?.title || 'Phish&Tips'} nom={'Robin'}/>
+		<Header title={$page.data?.title || 'Phish&Tips'} firstName={firstName} lastName={lastName} position={position} email={email} isSubPage={$isSubPage} />
 		<div class="relative flex-grow w-full overflow-scroll">
 			<DotPage />
 			<slot></slot>
