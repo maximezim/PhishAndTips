@@ -8,6 +8,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 
 import java.util.List;
 
@@ -17,13 +19,16 @@ public class FormationService {
 
     private final Logger logger = LoggerFactory.getLogger(FormationService.class);
 
-    public List<QuizScoreDTO> getUserFormations(String email) {
-        String url = "http://formation-service:8089/formation/quiz/score/" + email;
+    public List<QuizScoreDTO> getUserQuizScores(String email) {
+        String url = "http://formation-service:8089/formation/quiz/score";
         RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> httpEntity = new HttpEntity<>(null, headers);
+        headers.set("email", email);
         ResponseEntity<List<QuizScoreDTO>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
-                null,
+                httpEntity,
                 new ParameterizedTypeReference<>() {
                 }
         );

@@ -15,5 +15,9 @@ public class Video {
 
     private String description;
 
-    private String url;
+    private String videoUrl;
+
+    private String captionUrl;
+
+    private String thumbnailUrl;
 }

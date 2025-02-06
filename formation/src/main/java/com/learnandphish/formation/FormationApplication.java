@@ -1,14 +1,15 @@
 package com.learnandphish.formation;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.learnandphish.formation.model.Badge;
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.model.Quiz;
 import com.learnandphish.formation.model.Video;
 import com.learnandphish.formation.repository.FormationRepository;
 import com.learnandphish.formation.repository.QuizRepository;
 import com.learnandphish.formation.repository.VideoRepository;
+import com.learnandphish.formation.repository.BadgeRepository;
+import com.learnandphish.formation.service.MinioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -36,6 +37,12 @@ public class FormationApplication {
 
     @Autowired
     private VideoRepository videoRepository;
+
+    @Autowired
+    private BadgeRepository badgeRepository;
+
+    @Autowired
+    private MinioService minioService;
 
     // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database
     @Bean
@@ -72,78 +79,89 @@ public class FormationApplication {
         };
     }
 
-    // For each file in data/formation folder, create a formation if name of file (formation id) does not exist in database
+    // For each object in data/formations/formations.json, create a formation if id does not exist in database
     @Bean
     public CommandLineRunner initializeFormation(){
         return args -> {
-            File folder = new File("/var/formation/data/formations");
-            if (folder.exists() && folder.isDirectory()) {
-                File[] listOfFiles = folder.listFiles();
-                if (listOfFiles != null && listOfFiles.length > 0) {
-                    for (File file : listOfFiles) {
-                        String formationId = file.getName();
-                        // Make sure the file's name is a number
-                        if (!formationId.matches("\\d+")) {
-                            log.error("File name is not a number");
-                        }else {
-                            Formation formation = formationRepository.findById(Integer.parseInt(formationId)).orElse(new Formation());
-                            // If the formation doesn't already exist in the db, read the content of the file and create a formation
-                            if (formation.getId() == null) {
-                                String content = Files.readString(file.toPath());
-                                JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
-                                String formationName = obj.get("name").getAsString();
-                                String formationDescription = obj.get("description").getAsString();
-                                formation.setId(Integer.parseInt(formationId));
-                                formation.setName(formationName);
-                                formation.setDescription(formationDescription);
-                                formationRepository.save(formation);
-                            }
+           File file = new File("/var/formation/data/formations/formations.json");
+                if (file.exists() && file.isFile()) {
+                    String content = Files.readString(file.toPath());
+                    Gson gson = new Gson();
+                    Formation[] formations = gson.fromJson(content, Formation[].class);
+                    for (Formation formation : formations) {
+                        Formation existingFormation = formationRepository.findById(formation.getId()).orElse(new Formation());
+                        if (existingFormation.getId() == null) {
+                            formationRepository.save(formation);
                         }
                     }
                 } else {
-                    log.error("No formation found in data/formation folder");
+                    log.error("File formations.json does not exist or is not a file");
                 }
-            } else {
-                log.error("Folder data/formation does not exist or is not a directory");
-            }
         };
     }
 
-    // For each file in data/videos folder, create a video if name of file (video id) does not exist in database
+    // For each object in data/videos/videos.json, create a video if id does not exist in database
     @Bean
     public CommandLineRunner initializeVideo(){
         return args -> {
-            File folder = new File("/var/formation/data/videos");
-            if (folder.exists() && folder.isDirectory()) {
-                File[] listOfFiles = folder.listFiles();
-                if (listOfFiles != null && listOfFiles.length > 0) {
-                    for (File file : listOfFiles) {
-                        String videoId = file.getName();
-                        // Make sure the file's name is a number
-                        if (!videoId.matches("\\d+")) {
-                            log.error("File name is not a number");
-                        }else {
-                            Video video = videoRepository.findById(Integer.parseInt(videoId)).orElse(new Video());
-                            // If the video doesn't already exist in the db, read the content of the file and create a video
-                            if (video.getId() == null) {
-                                String content = Files.readString(file.toPath());
-                                JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
-                                String videoTitle = obj.get("title").getAsString();
-                                String videoDescription = obj.get("description").getAsString();
-                                String videoUrl = obj.get("url").getAsString();
-                                video.setId(Integer.parseInt(videoId));
-                                video.setTitle(videoTitle);
-                                video.setDescription(videoDescription);
-                                video.setUrl(videoUrl);
-                                videoRepository.save(video);
+            File file = new File("/var/formation/data/videos/videos.json");
+                if (file.exists() && file.isFile()) {
+                    String content = Files.readString(file.toPath());
+                    Video[] videos = new Gson().fromJson(content, Video[].class);
+                    for (Video video : videos) {
+                        videoRepository.findById(video.getId()).ifPresentOrElse(
+                            existingVideo -> log.info("Video with id {} already exists", video.getId()),
+                            () -> {
+                                try {
+                                    String videoUrl = minioService.uploadFile(new File(video.getVideoUrl()));
+                                    String thumbnailUrl = minioService.uploadFile(new File(video.getThumbnailUrl()));
+                                    String captionUrl = minioService.uploadFile(new File(video.getCaptionUrl()));
+                                    if (videoUrl == null || thumbnailUrl == null || captionUrl == null) {
+                                        throw new Exception("Video upload failed");
+                                    }
+                                    video.setVideoUrl(videoUrl);
+                                    video.setThumbnailUrl(thumbnailUrl);
+                                    video.setCaptionUrl(captionUrl);
+                                    videoRepository.save(video);
+                                } catch (Exception e) {
+                                    log.error("Error uploading video to S3", e);
+                                }
                             }
-                        }
+                        );
                     }
                 } else {
-                    log.error("No video found in data/videos folder");
+                    log.error("File videos.json does not exist or is not a file");
+                }
+        };
+    }
+
+    // For each object in data/badges/badges.json, create a badge if id does not exist in database
+    @Bean
+    public CommandLineRunner initializeBadge(){
+        return args -> {
+            File file = new File("/var/formation/data/badges/badges.json");
+            if (file.exists() && file.isFile()) {
+                String content = Files.readString(file.toPath());
+                Badge[] badges = new Gson().fromJson(content, Badge[].class);
+                for (Badge badge : badges) {
+                    badgeRepository.findById(badge.getId()).ifPresentOrElse(
+                        existingBadge -> log.info("Badge with id {} already exists", badge.getId()),
+                        () -> {
+                            try {
+                                String badgeImageUrl = minioService.uploadFile(new File(badge.getImageUrl()));
+                                if (badgeImageUrl == null) {
+                                    throw new Exception("Badge upload failed");
+                                }
+                                badge.setImageUrl(badgeImageUrl);
+                                badgeRepository.save(badge);
+                            } catch (Exception e) {
+                                log.error("Error uploading badge to S3", e);
+                            }
+                        }
+                    );
                 }
             } else {
-                log.error("Folder data/videos does not exist or is not a directory");
+                log.error("File badges.json does not exist or is not a file");
             }
         };
     }
