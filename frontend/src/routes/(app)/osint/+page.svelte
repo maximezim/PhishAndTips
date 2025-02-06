@@ -233,10 +233,10 @@
         </div>
     
         {#if status === "Terminé"}
-        <div class="results grid grid-cols-2">
+        <div class="results grid grid-cols-2 gap-1 bg-white mt-1">
             {#if scanResult}
               {#each scanResult.parsed_data.results as result, index}
-                <div class="result flex flex-col gap-2 p-4 bg-white border-2 border-gray-100 overflow-auto">
+                <div class="result flex flex-col gap-2 p-4 bg-white shadow overflow-auto">
                   <p class="text-medium font-semibold">{result.Type}</p>
                   <p class="text-sm italic text-gray-600">{result.Data}</p>
                 </div>
@@ -260,6 +260,7 @@
         <Table.Root class="w-full">
           <Table.Header class="bg-violet-50">
               <Table.Row>
+                  <Table.Head>Risque</Table.Head>
                   <Table.Head>Nom</Table.Head>
                   <Table.Head>Prénom</Table.Head>
                   <Table.Head>Email</Table.Head>
@@ -276,6 +277,7 @@
             {:else}
             {#each getCurrentPageRowsUser() as user}
               <Table.Row class="hover:bg-gray-50 bg-white">
+                  <Table.Cell><span class="flex w-4 h-4 rounded-full bg-green-400"></span></Table.Cell>
                   <Table.Cell>{user.target.last_name}</Table.Cell>
                   <Table.Cell>{user.target.first_name}</Table.Cell>
                   <Table.Cell>{user.target.email}</Table.Cell>
@@ -289,13 +291,27 @@
                       <AlertDialog.Trigger>
                         <iconify-icon class="text-2xl" style="color: #9183ec" icon="mingcute:eye-2-fill"></iconify-icon>
                       </AlertDialog.Trigger>
-                      <AlertDialog.Content class="max-w-3xl">
+                      <AlertDialog.Content class="max-w-3xl p-0 overflow-hidden">
+                        <div class="w-full flex justify-between items-center bg-violet-50 p-6">
+                          <div class="left flex gap-5">
+                            <iconify-icon class="text-7xl p-2 pb-1 bg-white rounded-lg" icon="mingcute:face-fill"></iconify-icon>
+                            <div class="flex flex-col justify-center">
+                              <p class="text-lg font-semibold">{user.target.first_name} {user.target.last_name}</p>
+                              <p class="text-medium">{user.target.email}</p>
+                              <p class="text-medium">{user.target.position}</p>
+                            </div>
+                          </div> 
+                          <div class="right">
+                            <span class="shadow flex w-10 h-10 rounded-full bg-green-400"></span>
+                          </div>
+
+                        </div>
                         {#if user.scan}
-                          <AlertDialog.Header class="flex flex-row justify-between items-center">
-                            <AlertDialog.Title>Scan du {formatDate(user.scan.updatedAt)}</AlertDialog.Title>
+                          <AlertDialog.Header class="flex flex-row justify-between items-center px-6">
+                            <AlertDialog.Title class="text-medium">Scan du {formatDate(user.scan.updatedAt)}</AlertDialog.Title>
                             <Button class="bg-accent" on:click={() => {}}>Nouveau scan</Button>
                           </AlertDialog.Header>
-                          <div class="h-[60vh] overflow-y-auto p-1">
+                          <div class="h-[50vh] overflow-y-auto px-6">
                             {#each parseScanResult(user.scan.result).parsed_data.results as result, index}
                               <div class="result flex flex-col mt-2 gap-2 p-4 bg-gray-50 shadow">
                                 <p class="text-medium font-semibold">{result.Type}</p>
@@ -307,7 +323,7 @@
                             </div>
                           </div>
                         {/if}
-                        <AlertDialog.Footer>
+                        <AlertDialog.Footer class="p-6 pt-2">
                           <AlertDialog.Action>Fermer</AlertDialog.Action>
                         </AlertDialog.Footer>
                       </AlertDialog.Content>
