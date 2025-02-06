@@ -1,11 +1,14 @@
 <script lang="ts">
-	import Separator from "$lib/components/custom/Separator.svelte";
     import 'iconify-icon';
     import fish_svg from '$lib/assets/images/fish.svg';
-    import { page } from '$app/stores';
     import { onMount } from 'svelte';
     import { goto } from "$app/navigation";
 	import Button from "$lib/components/ui/button/button.svelte";
+    import { browser } from "$app/environment";
+
+    function nav_back() {
+        if (browser) window.history.back();
+    }
 
     let campaigns: any[] = [];
     let campaignStyle = "";

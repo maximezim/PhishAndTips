@@ -8,35 +8,70 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 0  # Disable BuildKit for all steps in this job
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      # Step 1: Checkout the repository.
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      # Step 2: Validate Docker Compose configuration.
+      - name: Validate Docker Compose configuration
+        run: docker compose -f docker-compose.yml config
 
-    - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ghcr.io
-        username: ${{ secrets.GHCR_USERNAME }}
-        password: ${{ secrets.CONTAINER_DEPLOY }}
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.CONTAINER_DEPLOY }}
 
-    - name: Build and push authentication-service Image
-      run: |
-        docker build \
-          --file authentication/Dockerfile \
-          --tag ghcr.io/${{ secrets.GHCR_USERNAME }}/authentication-service:latest \
-          authentication
-        docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/authentication-service:latest
+      # Step 3: Build the authentication-service image.
+      - name: Build authentication-service Image
+        run: |
+          docker build \
+            --file authentication/Dockerfile \
+            --tag authentication-service:latest \
+            authentication
 
-    - name: Build and push api-gateway Image
-      run: |
-        docker build \
-          --file gateway/Dockerfile \
-          --tag ghcr.io/${{ secrets.GHCR_USERNAME }}/api-gateway:latest \
-          gateway
-        docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/api-gateway:latest
+      # Step 4: Build the api-gateway image.
+      - name: Build api-gateway Image
+        run: |
+          docker build \
+            --file gateway/Dockerfile \
+            --tag api-gateway:latest \
+            gateway
+
+      # Step 5: Build the formation-service image.
+      - name: Build formation-service Image
+        run: |
+          docker build \
+            --file formation/Dockerfile \
+            --tag formation-service:latest \
+            formation
+
+      # Step 6: Build the scoring-service image.
+      - name: Build scoring-service Image
+        run: |
+          docker build \
+            --file scoring/Dockerfile \
+            --tag scoring-service:latest \
+            scoring
+
+      # Step 7: Build the spiderfoot-api image.
+      - name: Build spiderfoot-api Image
+        run: |
+          docker build \
+            --file spiderfoot-api/Dockerfile \
+            --tag spiderfoot-api:latest \
+            spiderfoot-api
+
+      # TODO Step 8: Build the frontend image.
+      # - name: Build frontend Image
+      #   run: |
+      #     docker build \
+      #       --file frontend/Dockerfile \
+      #       --tag frontend:latest \
+      #       frontend
