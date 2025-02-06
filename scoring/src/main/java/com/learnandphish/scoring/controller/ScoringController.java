@@ -70,4 +70,11 @@ public class ScoringController {
         double totalScore = totalScoreService.getTotalScore(email);
         return Map.of("email", email, "totalScore", totalScore);
     }
+
+    @PostMapping("/admin/total-score")
+    public Map<String, Object> postTotalScore(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        double totalScore = totalScoreService.getTotalScore(email);
+        return Map.of("email", email, "totalScore", totalScore);
+    }
 }
