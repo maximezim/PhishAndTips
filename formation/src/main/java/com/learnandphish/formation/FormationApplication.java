@@ -3,12 +3,15 @@ package com.learnandphish.formation;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.learnandphish.formation.model.Badge;
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.model.Quiz;
 import com.learnandphish.formation.model.Video;
 import com.learnandphish.formation.repository.FormationRepository;
 import com.learnandphish.formation.repository.QuizRepository;
 import com.learnandphish.formation.repository.VideoRepository;
+import com.learnandphish.formation.repository.BadgeRepository;
+import com.learnandphish.formation.service.MinioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -36,6 +39,12 @@ public class FormationApplication {
 
     @Autowired
     private VideoRepository videoRepository;
+
+    @Autowired
+    private BadgeRepository badgeRepository;
+
+    @Autowired
+    private MinioService minioService;
 
     // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database
     @Bean
@@ -144,6 +153,51 @@ public class FormationApplication {
                 }
             } else {
                 log.error("Folder data/videos does not exist or is not a directory");
+            }
+        };
+    }
+
+    @Bean
+    public CommandLineRunner initializeBadge(){
+        return args -> {
+            File folder = new File("/var/formation/data/badges/metadata");
+            if (folder.exists() && folder.isDirectory()) {
+                File[] listOfFiles = folder.listFiles();
+                if (listOfFiles != null && listOfFiles.length > 0) {
+                    for (File file : listOfFiles) {
+                        String badgeId = file.getName(); // File name = badge id
+                        if (!badgeId.matches("\\d+")) {
+                            log.error("File name not a number");
+                        }else {
+                            Badge badge = badgeRepository.findById(Integer.parseInt(badgeId)).orElse(new Badge());
+                            if (badge.getId() == null) {
+                                String content = Files.readString(file.toPath());
+                                JsonObject obj = JsonParser.parseString(content).getAsJsonObject();
+                                String badgeName = obj.get("name").getAsString();
+                                String badgeDescription = obj.get("description").getAsString();
+                                String badgeImageUrl;
+                                try {
+                                    badgeImageUrl = minioService.uploadFile(new File(obj.get("imageUrl").getAsString()));
+                                    if (badgeImageUrl == null) {
+                                        throw new Exception("Image upload failed");
+                                    }
+                                } catch (Exception e) {
+                                    log.error("Error uploading image to S3", e);
+                                    continue;
+                                }
+                                badge.setId(Integer.valueOf(badgeId));
+                                badge.setName(badgeName);
+                                badge.setDescription(badgeDescription);
+                                badge.setImageUrl(badgeImageUrl);
+                                badgeRepository.save(badge);
+                            }
+                        }
+                    }
+                } else {
+                    log.error("No badge found in data/badges/metadata/ folder");
+                }
+            } else {
+                log.error("Folder data/badges/metadata/ does not exist or is not a directory");
             }
         };
     }

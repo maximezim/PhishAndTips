@@ -196,6 +196,9 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-formation:5432/formation_db
       - SPRING_DATASOURCE_USERNAME=${FORMATION_PG_USER}
       - SPRING_DATASOURCE_PASSWORD=${FORMATION_PG_PASSWORD}
+      - S3_ENDPOINT=${S3_ENDPOINT:-http://localhost:8080}
+      - S3_BUCKET=${S3_BUCKET:-assets}
+      - S3_USE_LOCAL=${S3_USE_LOCAL:-true}
     volumes:
       - ./formation/data:/var/formation/data
     profiles:
@@ -272,6 +275,33 @@ services:
       - api-gateway
     profiles:
       - prod
+
+  s3:
+    image: minio/minio:latest
+    container_name: s3
+    ports:
+        - "9000:9000"
+    env_file:
+      - .env
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
+      MINIO_DEFAULT_BUCKETS: ${S3_BUCKET:-assets}
+      S3_ENDPOINT: ${S3_ENDPOINT:-http://localhost:8080}
+    command: server --address ':9000' /data
+    volumes:
+      - ./minio/data:/data
+      - ./minio/config:/root/.minio
+    networks:
+      - backend
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://minio:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    profiles:
+      - dev
+      - local_s3
 
 networks:
   backend:

@@ -2,6 +2,7 @@ package com.learnandphish.formation.controller;
 
 import com.learnandphish.formation.dto.UserQuizScoreDTO;
 import com.learnandphish.formation.model.*;
+import com.learnandphish.formation.service.BadgeService;
 import com.learnandphish.formation.service.FormationService;
 import com.learnandphish.formation.service.QuizService;
 import com.learnandphish.formation.service.VideoService;
@@ -19,6 +20,7 @@ public class FormationController {
     private final FormationService formationService;
     private final QuizService quizService;
     private final VideoService videoService;
+    private final BadgeService badgeService;
 
     // Get all formations
     @GetMapping("/formations")
@@ -93,5 +95,26 @@ public class FormationController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(score);
+    }
+
+    @PostMapping("/badge/claim/{badgeId}")
+    public ResponseEntity<Badge> claimBadge(@PathVariable Integer badgeId, @RequestHeader("email") String email){
+        Badge badge = badgeService.claimBadge(badgeId, email);
+        if (badge == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(badge);
+    }
+
+    @GetMapping("/badge/all")
+    public ResponseEntity<List<Badge>> getBadges(@RequestHeader("email") String email){
+        List<Badge> badges = badgeService.getBadgesByUser(email);
+        return ResponseEntity.ok(badges);
+    }
+
+    @GetMapping("/badge/{badgeId}")
+    public ResponseEntity<Badge> getBadgeById(@PathVariable Integer badgeId){
+        Badge badge = badgeService.getBadgeById(badgeId);
+        return badge != null ? ResponseEntity.ok(badge) : ResponseEntity.notFound().build();
     }
 }
