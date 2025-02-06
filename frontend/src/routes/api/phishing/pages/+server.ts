@@ -75,9 +75,9 @@ export async function PUT({ request, cookies }) {
  * Description : Delete an existing page
  */
 export async function DELETE({ request, cookies }) {
-	const groupId = await request.json();
+	const pageId = await request.json();
 	try {
-		const response = await PhishingService.deletePage(cookies, groupId);
+		const response = await PhishingService.deletePage(cookies, pageId);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
