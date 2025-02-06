@@ -40,4 +40,10 @@ public class ScoringController {
     public List<JsonNode> getGophishActions(@RequestHeader("email") String email) {
         return gophishActionService.getUserActions(email);
     }
+
+    @GetMapping("/gophish-score")
+    public Map<String, Object> getUserScore(@RequestHeader("email") String email) {
+        double score = gophishActionService.getUserOverallScore(email);
+        return Map.of("email", email, "score", score);
+    }
 }
