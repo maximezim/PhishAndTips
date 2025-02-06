@@ -8,12 +8,10 @@
 
   let subject: "";
   let templateName = "";
-  let text = "";
   let html = "";
 
   let errors = {
     templateName: "",
-    text: "",
     html: "",
     subject: "",
   };
@@ -35,15 +33,8 @@
       errors.subject = "";
     }
 
-    if (!text.trim()) {
-      errors.text = "Le texte est obligatoire.";
-      isValid = false;
-    } else {
-      errors.text = "";
-    }
-
     if (!html.trim()) {
-      errors.html = "Le HTML est obligatoire.";
+      errors.html = "Le contenu HTML est obligatoire.";
       isValid = false;
     } else {
       errors.html = "";
@@ -61,7 +52,7 @@
     const templateJson = {
       name: templateName,
       subject: subject,
-      text: text,
+      text: "",
       html: html,
       modified_date: new Date().toISOString().slice(0, 19) + "+00:00", // formatted date
     };
@@ -105,14 +96,6 @@
           <Input type="text" bind:value={subject} placeholder="Objet du modèle" class="w-full" />
           {#if errors.subject}
             <p class="text-red-500 text-sm">{errors.subject}</p>
-          {/if}
-        </div>
-          
-        <div class="group flex flex-col gap-2">
-          <p class="text-sm">Choisir un contenu</p>
-          <Textarea bind:value={text} placeholder="Contenu" class="w-full min-h-[350px] max-h-[500px]" />
-          {#if errors.text}
-            <p class="text-red-500 text-sm">{errors.text}</p>
           {/if}
         </div>
           

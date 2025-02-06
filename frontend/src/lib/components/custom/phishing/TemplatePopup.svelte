@@ -84,7 +84,7 @@
             {:else}
                 <EditTemplate template={element}/>
             {/if}
-            <ConfirmPopup name={"Supprimer"} style={"bg-red-500 hover:bg-red-700"} functionToCall={isPage ? deletePage : deleteTemplate}/>
+            <ConfirmPopup name={"Supprimer"} description={isPage ? "Suppression du modèle de page" : "Suppression du modèle de mail"} style={"bg-red-500 hover:bg-red-700"} functionToCall={isPage ? deletePage : deleteTemplate}/>
         </AlertDialog.Footer>
     </AlertDialog.Content>
 </AlertDialog.Root>

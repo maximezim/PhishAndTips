@@ -17,7 +17,7 @@
 
   let errors = {
     templateName: "",
-    content: "",
+    html: "",
     subject: "",
   };
 
@@ -38,11 +38,11 @@
       errors.subject = "";
     }
 
-    if (!template.text.trim() && !template.html.trim()) {
-      errors.content = "Entrez au moins un contenu ou un contenu HTML.";
+    if (!template.html.trim()) {
+      errors.html = "Le contenu HTML est obligatoire.";
       isValid = false;
     } else {
-      errors.content = "";
+      errors.html = "";
     }
 
     return isValid;
@@ -99,18 +99,10 @@
         </div>
           
         <div class="group flex flex-col gap-2">
-          <p class="text-sm">Choisir un contenu</p>
-          <Textarea bind:value={template.text} placeholder="Contenu" class="w-full min-h-[350px] max-h-[500px]" />
-          {#if errors.content}
-            <p class="text-red-500 text-sm">{errors.content}</p>
-          {/if}
-        </div>
-          
-        <div class="group flex flex-col gap-2">
           <p class="text-sm">Choisir un contenu HTML</p>
           <Textarea bind:value={template.html} placeholder="Contenu HTML" class="w-full min-h-[350px] max-h-[500px]" />
-          {#if errors.content}
-            <p class="text-red-500 text-sm">{errors.content}</p>
+          {#if errors.html}
+            <p class="text-red-500 text-sm">{errors.html}</p>
           {/if}
         </div>
       </div>
