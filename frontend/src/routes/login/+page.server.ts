@@ -5,19 +5,26 @@ import { formSchema } from './schema.js';
 import { zod } from 'sveltekit-superforms/adapters';
 import AuthService from '$lib/services/AuthService';
 
+// Create the adapter once
+const validatedSchema = zod(formSchema);
+
 export const load: PageServerLoad = async ({ cookies }) => {
-	const isLogged = await AuthService.isLoggedFromServer(cookies);
-	if (isLogged) {
+  // Only check token if it exists
+	const token = cookies.get('authToken');
+	if (token) {
+		const isLogged = await AuthService.isLoggedFromServer(cookies);
+		if (isLogged) {
 		throw redirect(303, '/dashboard');
+		}
 	}
-	const form = await superValidate(zod(formSchema));
+	const form = await superValidate(validatedSchema);
 	return { form };
 };
 
 export const actions: Actions = {
 	default: async (event) => {
 		const { cookies } = event;
-		const form = await superValidate(event, zod(formSchema));
+		const form = await superValidate(event, validatedSchema);
 
 		if (!form.valid) {
 			return fail(400, { form });
