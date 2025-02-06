@@ -5,6 +5,7 @@ import com.learnandphish.scoring.dto.QuizScoreDTO;
 import com.learnandphish.scoring.service.FormationService;
 import com.learnandphish.scoring.service.GophishActionService;
 import com.learnandphish.scoring.service.SpiderFootScanService;
+import com.learnandphish.scoring.service.OsintScoringService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ public class ScoringController {
     private final SpiderFootScanService spiderFootScanService;
     private final FormationService formationService;
     private final GophishActionService gophishActionService;
+    private final OsintScoringService osintScoringService;
 
     @GetMapping("/ping")
     public String ping() {
@@ -45,5 +47,11 @@ public class ScoringController {
     public Map<String, Object> getUserScore(@RequestHeader("email") String email) {
         double score = gophishActionService.getUserOverallScore(email);
         return Map.of("email", email, "score", score);
+    }
+
+    @GetMapping("/osint-score")
+    public Map<String, Object> getOsintScore(@RequestHeader("email") String email) {
+        double score = osintScoringService.getOsintScore(email);
+        return Map.of("email", email, "osintScore", score);
     }
 }
