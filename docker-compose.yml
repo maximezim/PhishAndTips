@@ -277,8 +277,6 @@ services:
   s3:
     image: minio/minio:latest
     container_name: s3
-    ports:
-        - "9000:9000"
     env_file:
       - .env
     environment:
@@ -293,7 +291,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://minio:9000/minio/health/live" ]
+      test: [ "CMD", "curl", "-f", "http://s3:9000/minio/health/live" ]
       interval: 30s
       timeout: 20s
       retries: 3

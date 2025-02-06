@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS video(
 CREATE TABLE IF NOT EXISTS user_quiz_score(
     user_email VARCHAR NOT NULL,
     quiz_id INTEGER NOT NULL,
-    score DOUBLE PRECISION NOT NULL,
+    score DOUBLE PRECISION CHECK (score >= 0.0 AND score <= 1.0) NOT NULL,
     PRIMARY KEY (user_email, quiz_id),
     FOREIGN KEY (quiz_id) REFERENCES quiz(id)
 );
