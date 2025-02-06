@@ -68,6 +68,7 @@
     let dateScan = "";
     let status = "";
     let nbResults = "";
+    let score = 7;
 
     let currentPageUser = 1;
     const rowsPerPageUser = 10;
@@ -203,6 +204,34 @@
       }
     }
 
+    const gradientColors = [
+      { r: 100, g: 255, b: 100 },  // Vert
+      { r: 255, g: 255, b: 100 }, // Jaune
+      { r: 255, g: 100, b: 100 } // Rouge
+    ];
+    function interpolateColor(color1: { r: number, g: number, b: number }, color2: { r: number, g: number, b: number }, factor: number) {
+      const result = {
+        r: Math.round(color1.r + factor * (color2.r - color1.r)),
+        g: Math.round(color1.g + factor * (color2.g - color1.g)),
+        b: Math.round(color1.b + factor * (color2.b - color1.b))
+      };
+      return result;
+    }
+    function getScoreColor(percentage : number) {
+      if (percentage <= 0) return gradientColors[0];
+      if (percentage >= 100) return gradientColors[gradientColors.length - 1];
+
+      const totalSegments = gradientColors.length - 1;
+      const segment = Math.floor((percentage / 100) * totalSegments);
+      const segmentPercentage = (percentage / 100) * totalSegments - segment;
+
+      return interpolateColor(gradientColors[segment], gradientColors[segment + 1], segmentPercentage);
+    }
+
+    let color = getScoreColor(score);
+    let rgb_color = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
+    console.log(`Couleur pour ${color}% : ${rgb_color}`);
+
   </script>
 
   <div class="relative z-10 flex flex-1 flex-col flex-grow gap-4 p-4 md:gap-2 md:p-8">
@@ -250,7 +279,9 @@
           </div>
         </div>
         <div class="bg-white w-full p-6 border-2 border-t-0 border-gray-100">
-         
+          <div class="relative color-bar h-4 w-full rounded">
+            <div class="absolute h-7 w-0.5 top-[50%] translate-y-[-50%] bg-accent" style="right: {score}%"></div>
+          </div>
         </div>
         {/if}
 
@@ -388,7 +419,11 @@
         <p class="text-medium font-semibold">Analyse des résultats</p>
       </div>
     </div>
-    <div class="bg-white w-full p-6 border-2 border-t-0 border-gray-100"></div>
+    <div class="bg-white w-full p-6 border-2 border-t-0 border-gray-100">
+      <div class="relative color-bar h-4 w-full rounded">
+        <div class="absolute h-7 w-0.5 top-[50%] translate-y-[-50%] bg-accent" style="right: {score}%"></div>
+      </div>
+    </div>
     {/if}
     
     {/if}
@@ -400,6 +435,9 @@
 <style>
   .light-bg{
     background-color: #f4f2fd;
+  }
+  .color-bar {
+    background: linear-gradient(to right, rgb(255, 100, 100), rgb(255, 255, 100), rgb(100, 255, 100));
   }
 </style>
    
