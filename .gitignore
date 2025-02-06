@@ -3,6 +3,7 @@
 .idea/
 .vscode/
 /build/
+/minio/*
 /databases/*
 !/databases/scripts/
 .env
