@@ -107,13 +107,27 @@ public class FormationApplication {
             File file = new File("/var/formation/data/videos/videos.json");
                 if (file.exists() && file.isFile()) {
                     String content = Files.readString(file.toPath());
-                    Gson gson = new Gson();
-                    Video[] videos = gson.fromJson(content, Video[].class);
+                    Video[] videos = new Gson().fromJson(content, Video[].class);
                     for (Video video : videos) {
-                        Video existingVideo = videoRepository.findById(video.getId()).orElse(new Video());
-                        if (existingVideo.getId() == null) {
-                            videoRepository.save(video);
-                        }
+                        videoRepository.findById(video.getId()).ifPresentOrElse(
+                            existingVideo -> log.info("Video with id {} already exists", video.getId()),
+                            () -> {
+                                try {
+                                    String videoUrl = minioService.uploadFile(new File(video.getVideoUrl()));
+                                    String thumbnailUrl = minioService.uploadFile(new File(video.getThumbnailUrl()));
+                                    String captionUrl = minioService.uploadFile(new File(video.getCaptionUrl()));
+                                    if (videoUrl == null || thumbnailUrl == null || captionUrl == null) {
+                                        throw new Exception("Video upload failed");
+                                    }
+                                    video.setVideoUrl(videoUrl);
+                                    video.setThumbnailUrl(thumbnailUrl);
+                                    video.setCaptionUrl(captionUrl);
+                                    videoRepository.save(video);
+                                } catch (Exception e) {
+                                    log.error("Error uploading video to S3", e);
+                                }
+                            }
+                        );
                     }
                 } else {
                     log.error("File videos.json does not exist or is not a file");
@@ -126,29 +140,29 @@ public class FormationApplication {
     public CommandLineRunner initializeBadge(){
         return args -> {
             File file = new File("/var/formation/data/badges/badges.json");
-                if (file.exists() && file.isFile()) {
-                    String content = Files.readString(file.toPath());
-                    Badge[] badges = new Gson().fromJson(content, Badge[].class);
-                    for (Badge badge : badges) {
-                        Badge existingBadge = badgeRepository.findById(badge.getId()).orElse(new Badge());
-                        if (existingBadge.getId() == null) {
+            if (file.exists() && file.isFile()) {
+                String content = Files.readString(file.toPath());
+                Badge[] badges = new Gson().fromJson(content, Badge[].class);
+                for (Badge badge : badges) {
+                    badgeRepository.findById(badge.getId()).ifPresentOrElse(
+                        existingBadge -> log.info("Badge with id {} already exists", badge.getId()),
+                        () -> {
                             try {
                                 String badgeImageUrl = minioService.uploadFile(new File(badge.getImageUrl()));
                                 if (badgeImageUrl == null) {
-                                    throw new Exception("Image upload failed");
+                                    throw new Exception("Badge upload failed");
                                 }
                                 badge.setImageUrl(badgeImageUrl);
+                                badgeRepository.save(badge);
                             } catch (Exception e) {
-                                log.error("Error uploading image to S3", e);
-                                continue;
+                                log.error("Error uploading badge to S3", e);
                             }
-                            badgeRepository.save(badge);
                         }
-                        log.info("Badge with id {} already exists", badge.getId());
-                    }
-                } else {
-                    log.error("File badges.json does not exist or is not a file");
+                    );
                 }
+            } else {
+                log.error("File badges.json does not exist or is not a file");
+            }
         };
     }
 

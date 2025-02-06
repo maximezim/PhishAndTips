@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS video(
     id SERIAL PRIMARY KEY,
     title VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
-    url VARCHAR NOT NULL
+    video_url VARCHAR NOT NULL,
+    caption_url VARCHAR NOT NULL,
+    thumbnail_url VARCHAR NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS user_quiz_score(

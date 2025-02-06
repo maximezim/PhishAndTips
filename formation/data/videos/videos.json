@@ -3,66 +3,88 @@
     "id": 1,
     "title": "Mise en contexte",
     "description": "Vidéo de mise en contexte de la formation",
-    "url": "https://youtu.be/ApU9N-j2qjI"
+    "videoUrl": "/var/formation/data/videos/videos/Mise en contexte.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Mise en contexte.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Mise en contexte.jpg"
   },
   {
     "id": 2,
     "title": "Différents types de phishing",
     "description": "Vidéo sur les différents types de phishing",
-    "url": "https://youtu.be/RDuPLhojpQc"
+    "videoUrl": "/var/formation/data/videos/videos/Les differents types.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Les differents types.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Les differents types.jpg"
   },
   {
     "id": 3,
     "title": "Phishing par réseaux sociaux",
     "description": "Vidéo sur le phishing par réseaux sociaux",
-    "url": "https://youtu.be/db9otn4dR8I"
+    "videoUrl": "/var/formation/data/videos/videos/Phishing par reseaux sociaux.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Phishing par reseaux sociaux.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Phishing par reseaux sociaux.jpg"
   },
   {
     "id": 4,
     "title": "Spear phishing",
     "description": "Vidéo sur le spear phishing",
-    "url": "https://youtu.be/o55406MrMSE"
+    "videoUrl": "/var/formation/data/videos/videos/Spearphishing.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Spearphishing.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Spearphishing.jpg"
   },
   {
     "id": 5,
     "title": "Smishing",
     "description": "Vidéo sur le smishing",
-    "url": "https://youtu.be/QAq_va0Rw-k"
+    "videoUrl": "/var/formation/data/videos/videos/Phishing par SMS ou Smishing.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Phishing par SMS ou Smishing.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Phishing par SMS ou Smishing.jpg"
   },
   {
     "id": 6,
     "title": "Ingénierie sociale",
     "description": "Vidéo sur l'ingénierie sociale",
-    "url": "https://youtu.be/83VKzzv2w5E"
+    "videoUrl": "/var/formation/data/videos/videos/Ingenierie sociale.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Ingenierie sociale.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Ingenierie sociale.jpg"
   },
   {
     "id": 7,
     "title": "Fausses addresses mails",
     "description": "Vidéo sur les fausses addresses mails",
-    "url": "https://youtu.be/O1JG6oe2TeY"
+    "videoUrl": "/var/formation/data/videos/videos/Fausses adresses mails.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Fausses adresses mails.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Fausses adresses mails.jpg"
   },
   {
     "id": 8,
     "title": "Geste de premier secours",
     "description": "Vidéo sur les gestes de premier secours",
-    "url": "https://youtu.be/_OQtGUVNau0"
+    "videoUrl": "/var/formation/data/videos/videos/Gestes de premiers secours.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Gestes de premiers secours.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Gestes de premiers secours.jpg"
   },
   {
     "id": 9,
     "title": "Choisir ses mots de passe",
     "description": "Vidéo sur comment bien choisir ses mots de passe",
-    "url": "https://youtu.be/P9KhSc8WWZs"
+    "videoUrl": "/var/formation/data/videos/videos/Choisir ses mots de passe.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Choisir ses mots de passe.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Choisir ses mots de passe.jpg"
   },
   {
     "id": 10,
     "title": "Partage d'informations",
     "description": "Vidéo de prévention sur le partage d'informations",
-    "url": "https://youtu.be/KZsTtKEDxkI"
+    "videoUrl": "/var/formation/data/videos/videos/Les bonnes pratiques.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Les bonnes pratiques.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Les bonnes pratiques.jpg"
   },
   {
     "id": 11,
     "title": "Éléments de détection et de prévention",
     "description": "Vidéo sur les éléments de détection et de prévention",
-    "url": "https://youtu.be/5jDKbACoz5E"
+    "videoUrl": "/var/formation/data/videos/videos/Elements de detection et prevention.mkv",
+    "captionUrl": "/var/formation/data/videos/captions/Elements de detection et prevention.vtt",
+    "thumbnailUrl": "/var/formation/data/videos/thumbnails/Elements de detection et prevention.jpg"
   }
 ]
