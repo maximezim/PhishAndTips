@@ -308,13 +308,14 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(user.getLastName());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setPosition(user.getPosition());
-        userDTO.setRole(user.getRole());
+        UserDTO userDTO = new UserDTO(
+            user.getId(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getEmail(),
+            user.getPosition(),
+            user.getRole()
+        );
         return ResponseEntity.ok(userDTO);
     }
 
@@ -328,10 +329,12 @@ public class AuthenticationController {
 
     @RolesAllowed({"ADMIN"})
     @GetMapping("/get-all-users")
-    public ResponseEntity<Page<UserData>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<UserDTO>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("lastName").ascending());
-        Page<UserData> usersPage = userDataRepository.findAll(pageable);
-        return ResponseEntity.ok(usersPage);
+        Page<UserDTO> usersDTO = userDataRepository.findAll(pageable).map(user -> new UserDTO(
+            user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPosition(), user.getRole()
+        ));
+        return ResponseEntity.ok(usersDTO);
     }
 
     // Endpoint for users to retrieve their own scan result using JWT extracted email
