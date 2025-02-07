@@ -77,7 +77,7 @@ class AuthService {
 		if (token) {
 			try {
 				const response = await fetch(GATEWAY_URL + '/scoring/osint-score', {
-					method: 'HEAD',
+					method: 'OPTIONS',
 					headers: {
 						Authorization: `Bearer ${token}`
 					}
@@ -102,7 +102,7 @@ class AuthService {
 		if (token) {
 			try {
 				const response = await fetch(GATEWAY_URL + '/scoring/osint-score', {
-					method: 'HEAD',
+					method: 'OPTIONS',
 					headers: {
 						Authorization: `Bearer ${token}`
 					}
