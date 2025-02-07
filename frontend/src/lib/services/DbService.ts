@@ -7,12 +7,14 @@ class DbService {
 	public static async getUsers(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${GATEWAY_URL}/get-all-users?page=0&size=2`, {
+			const response = await axios.get(`${GATEWAY_URL}/get-all-users`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
-			return response.data;
+			// TODO: handle pagination
+			console.log(response.data.content);
+			return response.data.content;
 		} catch (error: any) {
 			console.error('Erreur lors de la récupération des utilisateurs:', error.message);
 			console.error(error);
