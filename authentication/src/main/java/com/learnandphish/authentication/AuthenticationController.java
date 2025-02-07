@@ -4,12 +4,15 @@ import com.learnandphish.authentication.jwt.JWTUtil;
 import com.learnandphish.authentication.user.ScanResult;
 import com.learnandphish.authentication.jwt.JwtRequest;
 import com.learnandphish.authentication.jwt.JwtResponse;
-import com.learnandphish.authentication.config.RestTemplateConfig;
 import com.learnandphish.authentication.jwt.JwtUserDetailsService;
 import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -317,9 +320,18 @@ public class AuthenticationController {
 
     @RolesAllowed({"ADMIN"})
     @GetMapping("/get-all-users")
-    public ResponseEntity<List<GophishUserDTO>> getAllUsers() {
-        List<UserData> users = userDataRepository.findAll();
-        return ResponseEntity.ok(userExportService.convertToGophishUsersDTO(users));
+    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("lastName").ascending());
+        Page<UserData> usersPage = userDataRepository.findAll(pageable);
+        List<GophishUserDTO> usersDTO = userExportService.convertToGophishUsersDTO(usersPage.getContent());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", usersDTO);
+        response.put("currentPage", usersPage.getNumber());
+        response.put("totalItems", usersPage.getTotalElements());
+        response.put("totalPages", usersPage.getTotalPages());
+
+        return ResponseEntity.ok(response);
     }
 
     // Endpoint for users to retrieve their own scan result using JWT extracted email
@@ -386,7 +398,7 @@ public class AuthenticationController {
      */
     private boolean isValidPassword(String password) {
         if (password.length() < 8) return false;
-        if (!password.chars().anyMatch(Character::isUpperCase)) return false; // At least one uppercase letter
+        if (password.chars().noneMatch(Character::isUpperCase)) return false; // At least one uppercase letter
         return password.chars().anyMatch(Character::isDigit);   // At least one digit
     }
 
