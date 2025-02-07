@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-public class UserExportService {
+public class UserUtilsService {
 
     @Autowired
     private UserDataRepository userDataRepository;
@@ -49,5 +49,18 @@ public class UserExportService {
             gophishUserDTO.setPosition(user.getPosition());
             return gophishUserDTO;
         }).toList();
+    }
+
+    public void importUsersFromCsv(byte[] csvContent) {
+        String[] lines = new String(csvContent).split("\n");
+        for (int i = 1; i < lines.length; i++) {
+            String[] fields = lines[i].split(",");
+            UserData userData = new UserData();
+            userData.setFirstName(fields[0]);
+            userData.setLastName(fields[1]);
+            userData.setEmail(fields[2]);
+            userData.setPosition(fields[3]);
+            userDataRepository.save(userData);
+        }
     }
 }

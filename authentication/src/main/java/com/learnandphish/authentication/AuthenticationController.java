@@ -4,7 +4,6 @@ import com.learnandphish.authentication.jwt.JWTUtil;
 import com.learnandphish.authentication.user.ScanResult;
 import com.learnandphish.authentication.jwt.JwtRequest;
 import com.learnandphish.authentication.jwt.JwtResponse;
-import com.learnandphish.authentication.config.RestTemplateConfig;
 import com.learnandphish.authentication.jwt.JwtUserDetailsService;
 import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
@@ -31,7 +30,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import java.util.Map;
 import org.springframework.web.client.RestTemplate;
-import java.util.HashMap;
 
 @RestController
 public class AuthenticationController {
@@ -52,7 +50,7 @@ public class AuthenticationController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserExportService userExportService;
+    private UserUtilsService userUtilsService;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -63,7 +61,6 @@ public class AuthenticationController {
     @Autowired
     private RestTemplate restTemplate;
 
-    // Updated base URL with proper API prefix
     private final String spiderfootApiUrl = "http://spiderfoot-api:8001/internal/spiderfoot";
 
     /**
@@ -218,7 +215,7 @@ public class AuthenticationController {
     public CompletableFuture<ResponseEntity<byte[]>> exportUsers() {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                byte[] csvContent = userExportService.exportUsersToCsv();
+                byte[] csvContent = userUtilsService.exportUsersToCsv();
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
                 headers.setContentDispositionFormData("attachment", "users_export.csv");
@@ -232,21 +229,11 @@ public class AuthenticationController {
         });
     }
 
-    @RolesAllowed({"USER", "ADMIN"})
-    @GetMapping("/test-user")
-    public ResponseEntity<String> testUser() {
-        return ResponseEntity.ok("This is an user endpoint");
-    }
-
     @RolesAllowed("ADMIN")
-    @GetMapping("/test-admin")
-    public ResponseEntity<String> testAdmin() {
-        return ResponseEntity.ok("This is an admin endpoint");
-    }
-
-    @GetMapping("/test-both")
-    public ResponseEntity<String> testBoth() {
-        return ResponseEntity.ok("This is an user & admin endpoint");
+    @PostMapping("/import-users")
+    public ResponseEntity<?> importUsers(@RequestBody byte[] csvContent) {
+        userUtilsService.importUsersFromCsv(csvContent);
+        return ResponseEntity.ok("Users imported successfully");
     }
 
     @RolesAllowed("ADMIN")
@@ -319,7 +306,7 @@ public class AuthenticationController {
     @GetMapping("/get-all-users")
     public ResponseEntity<List<GophishUserDTO>> getAllUsers() {
         List<UserData> users = userDataRepository.findAll();
-        return ResponseEntity.ok(userExportService.convertToGophishUsersDTO(users));
+        return ResponseEntity.ok(userUtilsService.convertToGophishUsersDTO(users));
     }
 
     // Endpoint for users to retrieve their own scan result using JWT extracted email
@@ -354,9 +341,10 @@ public class AuthenticationController {
     @PostMapping("/my-scan/new")
     public ResponseEntity<?> startMyScan() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("target", email);
-        payload.put("modules", ""); // set default modules if needed
+        Map<String, Object> payload = Map.of(
+                "target", email,
+                "modules", ""
+        );
 
         ResponseEntity<?> response = restTemplate.postForEntity(spiderfootApiUrl + "/scan", payload, Object.class);
         return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
@@ -370,9 +358,10 @@ public class AuthenticationController {
         if (email == null || email.isBlank()) {
             return ResponseEntity.badRequest().body("Email must be provided");
         }
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("target", email);
-        payload.put("modules", ""); // set default modules if needed
+       Map<String, Object> payload = Map.of(
+            "target", email,
+            "modules", ""
+        );
 
         ResponseEntity<?> response = restTemplate.postForEntity(spiderfootApiUrl + "/scan", payload, Object.class);
         return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
@@ -386,7 +375,7 @@ public class AuthenticationController {
      */
     private boolean isValidPassword(String password) {
         if (password.length() < 8) return false;
-        if (!password.chars().anyMatch(Character::isUpperCase)) return false; // At least one uppercase letter
+        if (password.chars().noneMatch(Character::isUpperCase)) return false; // At least one uppercase letter
         return password.chars().anyMatch(Character::isDigit);   // At least one digit
     }
 
