@@ -6,6 +6,9 @@
   import * as Tabs from '$lib/components/ui/tabs';
   import { onMount } from 'svelte';
   import ScoringCard from '$lib/components/custom/scoring/ScoringCard.svelte';
+	import FormationCard from '$lib/components/custom/formation/FormationCard.svelte';
+	import ScoringBadgesCarousel from '$lib/components/custom/scoring/ScoringBadgesCarousel.svelte';
+	import ScoringOsintCard from '$lib/components/custom/scoring/ScoringOsintCard.svelte';
 
   let osintScore: number = 0;
   let phishingScore: number = 0;
@@ -68,37 +71,15 @@
         <ScoringCard totalScore={totalScore} osintScore={osintScore} phishingScore={phishingScore} formationScore={formationScore} />
         
         <!-- Formation Card ($lib/components/custom/formation/FormationCard.svelte) -->
-        <Card.Root class="col-span-4 row-span-2">
-          <Card.Header class="flex flex-col gap-3 space-y-0">
-            <Card.Title class="text-lg font-semibold flex items-center gap-3 justify-between">
-              <span>A suivre...</span>
-              <iconify-icon class="text-3xl text-accent" icon="mingcute:book-6-fill"></iconify-icon>
-              </Card.Title>
-          </Card.Header>
-          <Card.Content>
-          </Card.Content>
-        </Card.Root>
+        <FormationCard />
 
-        <!-- create 10 cards -->
-        {#each Array.from({ length: 3 }, (_, i) => i) as _}
-          <Card.Root class="col-span-1 row-span-1 bg-accent">
-            <Card.Header>
-            </Card.Header>
-            <Card.Content>
-            </Card.Content>
-          </Card.Root>
-        {/each}
+        <!-- Osint scoring Card ($lib/components/custom/scoring/ScoringOsintCard.svelte) -->
+        <ScoringOsintCard />
 
-        {#each Array.from({ length: 7 }, (_, i) => i) as _}
-          <Card.Root class="col-span-1 row-span-1 bg-muted">
-            <Card.Header>
-            </Card.Header>
-            <Card.Content>
-            </Card.Content>
-          </Card.Root>
-        {/each}
+        <!-- Scoring badges carousel ($lib/components/custom/scoring/ScoringBadgesCarousel.svelte) -->
+        <ScoringBadgesCarousel />
 
-        <Card.Root class="col-span-10 row-span-2">
+        <Card.Root class="col-span-8 row-span-2">
           <Card.Header class="flex flex-col gap-3 space-y-0">
             <Card.Title class="text-lg font-semibold flex items-center gap-3 justify-between">
               <span>Phishing</span>
