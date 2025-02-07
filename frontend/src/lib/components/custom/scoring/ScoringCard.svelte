@@ -4,6 +4,7 @@
 	import ScoringPopup from '$lib/components/custom/scoring/ScoringPopup.svelte';
   import ScoringGradientBar from '$lib/components/custom/scoring/ScoringGradientBar.svelte';
 
+  export let title: string = "Score de vulnérabilité";
   export let totalScore: number = 0;
   export let osintScore: number = 0;
   export let phishingScore: number = 0;
@@ -13,7 +14,7 @@
 <Card.Root class="col-span-4 row-span-2">
   <Card.Header class="flex flex-col gap-3 space-y-0">
     <Card.Title class="text-lg font-semibold flex items-center gap-3 justify-between">
-      <span>Score de vulnérabilité</span>
+      <span>{title}</span>
       <iconify-icon class="text-3xl text-accent" icon="mingcute:safe-alert-fill"></iconify-icon>
     </Card.Title>
   </Card.Header>

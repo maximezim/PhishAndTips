@@ -11,7 +11,7 @@ class ScoringService {
 	public static async getPhishingScore(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${GATEWAY_URL}/scoring/phishing-score`, {
+			const response = await axios.get(`${GATEWAY_URL}/scoring/gophish-score`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -57,6 +57,25 @@ class ScoringService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while getting formation score:', error.message);
+			return [];
+		}
+	}
+
+	/*
+	 * Total
+	 * Get the total score of the user connected
+	 */
+	public static async getTotalScore(cookies: any): Promise<any[]> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(`${GATEWAY_URL}/scoring/total-score`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while getting total score:', error.message);
 			return [];
 		}
 	}
