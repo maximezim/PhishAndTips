@@ -1,21 +1,20 @@
 <script lang="ts">
   import * as Card from '$lib/components/ui/card';
-  import fish_svg from '$lib/assets/images/fish.svg';
-  import 'iconify-icon';
-  import AnimatedCircularProgressBar from '$lib/components/magicUi/AnimatedCircularProgressBar.svelte';
   import * as Tabs from '$lib/components/ui/tabs';
   import { onMount } from 'svelte';
   import ScoringCard from '$lib/components/custom/scoring/ScoringCard.svelte';
 	import FormationCard from '$lib/components/custom/formation/FormationCard.svelte';
 	import ScoringBadgesCarousel from '$lib/components/custom/scoring/ScoringBadgesCarousel.svelte';
 	import ScoringOsintCard from '$lib/components/custom/scoring/ScoringOsintCard.svelte';
+	import ScoringPhishingCard from '$lib/components/custom/scoring/ScoringPhishingCard.svelte';
 
+  let isAdmin: boolean = false;
   let osintScore: number = 0;
   let phishingScore: number = 0;
   let formationScore: number = 0;
   let totalScore: number = 0;
 
-  const accentColor = 'hsl(var(--accent))';
+  
 
   async function getPhishingScore() {
     try {
@@ -50,6 +49,7 @@
   }
 
   onMount(async () => {
+    isAdmin = await fetch("/api/auth/admin").then(res => res.json());
     await Promise.all([
       getPhishingScore(),
       getOsintScore(),
@@ -61,10 +61,14 @@
 
 <main class="relative z-10 flex flex-1 flex-col flex-grow gap-4 p-4 md:gap-8 md:p-8">
   <Tabs.Root value="user">
-    <Tabs.List class="grid max-w-sm grid-cols-2">
-      <Tabs.Trigger value="user">Perso</Tabs.Trigger>
-      <Tabs.Trigger value="admin">Admin</Tabs.Trigger>
-    </Tabs.List>
+    <!-- If th user is Admin, it can see its data and access to admin panel -->
+    {#if isAdmin}
+      <Tabs.List class="grid max-w-sm grid-cols-2">
+        <Tabs.Trigger value="user">Perso</Tabs.Trigger>
+        <Tabs.Trigger value="admin">Admin</Tabs.Trigger>
+      </Tabs.List>
+    {/if}
+
     <Tabs.Content value="user">
       <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-12 w-full">
         <!-- Scoring Card ($lib/components/custom/scoring/ScoringCard.svelte) -->
@@ -79,31 +83,9 @@
         <!-- Scoring badges carousel ($lib/components/custom/scoring/ScoringBadgesCarousel.svelte) -->
         <ScoringBadgesCarousel />
 
-        <Card.Root class="col-span-8 row-span-2">
-          <Card.Header class="flex flex-col gap-3 space-y-0">
-            <Card.Title class="text-lg font-semibold flex items-center gap-3 justify-between">
-              <span>Phishing</span>
-              <img src={fish_svg} alt="fish" class="w-5 h-5 ms-1 fish text-accent" />
-              </Card.Title>
-          </Card.Header>
-          <Card.Content class="flex flex-col gap-6">
-            <p class="font-medium"><span class="font-semibold text-accent">6</span> campagnes subies</p>
-            <div class="flex flex-row justify-between gap-5 px-5">
-              <div class="flex flex-col justify-center gap-3">
-                <AnimatedCircularProgressBar class="w-100 h-100" value={0} min={0} max={4} gaugePrimaryColor={accentColor} />
-                <span class="text-center text-sm font-semibold">Attaques évitées</span>
-              </div>
-              <div class="flex flex-col justify-center gap-3">
-                <AnimatedCircularProgressBar class="w-100 h-100" value={3} min={0} max={4} gaugePrimaryColor={accentColor} />
-                <span class="text-center text-sm font-semibold">Liens cliqués</span>
-              </div>
-              <div class="flex flex-col justify-center gap-3">
-                <AnimatedCircularProgressBar class="w-100 h-100" value={4} min={0} max={4} gaugePrimaryColor={accentColor} />
-                <span class="text-center text-sm font-semibold">Informations envoyées</span>
-              </div>
-            </div>
-          </Card.Content>
-        </Card.Root>
+        <!-- Phishing scoring Card ($lib/components/custom/scoring/ScoringPhishingCard.svelte) -->
+        <ScoringPhishingCard />
+        
       </div>
       </Tabs.Content>
     
