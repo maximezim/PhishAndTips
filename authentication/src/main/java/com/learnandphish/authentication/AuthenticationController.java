@@ -319,19 +319,19 @@ public class AuthenticationController {
     }
 
     @RolesAllowed({"ADMIN"})
+    @GetMapping("/get-all-gophish-users")
+    public ResponseEntity<List<GophishUserDTO>> getAllGophishUsers() {
+        List<UserData> users = userDataRepository.findAll();
+        List<GophishUserDTO> usersDTO = userExportService.convertToGophishUsersDTO(users);
+        return ResponseEntity.ok(usersDTO);
+    }
+
+    @RolesAllowed({"ADMIN"})
     @GetMapping("/get-all-users")
-    public ResponseEntity<Map<String, Object>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<UserData>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("lastName").ascending());
         Page<UserData> usersPage = userDataRepository.findAll(pageable);
-        List<GophishUserDTO> usersDTO = userExportService.convertToGophishUsersDTO(usersPage.getContent());
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("users", usersDTO);
-        response.put("currentPage", usersPage.getNumber());
-        response.put("totalItems", usersPage.getTotalElements());
-        response.put("totalPages", usersPage.getTotalPages());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(usersPage);
     }
 
     // Endpoint for users to retrieve their own scan result using JWT extracted email
