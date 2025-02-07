@@ -15,6 +15,7 @@ export async function GET({ url, cookies }) {
 			return new Response(JSON.stringify({ error: 'userEmail is required' }), { status: 400 });
 		}
 		const response = await DbService.getUser(cookies, userEmail);
+		console.log(response);
 		if (response) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {

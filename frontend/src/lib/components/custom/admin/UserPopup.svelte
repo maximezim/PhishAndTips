@@ -15,16 +15,12 @@
     } catch(e) {
       console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
     }
-  }  
-
-  onMount(async () => {
-    await getUser();
-  })
+  }
 </script>
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class={"bg-accent"} builders={[builder]}>
+    <Button class={"bg-accent"} builders={[builder]} on:click={getUser}>
       Voir le détail
     </Button>
   </AlertDialog.Trigger>

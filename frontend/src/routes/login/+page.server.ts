@@ -9,12 +9,12 @@ import AuthService from '$lib/services/AuthService';
 const validatedSchema = zod(formSchema);
 
 export const load: PageServerLoad = async ({ cookies }) => {
-  // Only check token if it exists
+	// Only check token if it exists
 	const token = cookies.get('authToken');
 	if (token) {
 		const isLogged = await AuthService.isLoggedFromServer(cookies);
 		if (isLogged) {
-		throw redirect(303, '/dashboard');
+			throw redirect(303, '/dashboard');
 		}
 	}
 	const form = await superValidate(validatedSchema);

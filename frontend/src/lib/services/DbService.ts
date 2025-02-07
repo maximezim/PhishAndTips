@@ -7,7 +7,7 @@ class DbService {
 	public static async getUsers(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${GATEWAY_URL}/get-all-users`, {
+			const response = await axios.get(`${GATEWAY_URL}/get-all-users?page=0&size=2`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
