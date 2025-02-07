@@ -6,6 +6,7 @@
 	import ScoringBadgesCarousel from '$lib/components/custom/scoring/ScoringBadgesCarousel.svelte';
 	import ScoringOsintCard from '$lib/components/custom/scoring/ScoringOsintCard.svelte';
 	import ScoringPhishingCard from '$lib/components/custom/scoring/ScoringPhishingCard.svelte';
+	import UsersCard from '$lib/components/custom/admin/UsersCard.svelte';
 
   let canGetAllUsers: boolean = false;
   let osintScore: number = 0;
@@ -53,16 +54,12 @@
       getFormationScore(),
       getTotalScore(),
     ]);
-
-    if (canGetAllUsers) {
-
-    }
   });
 </script>
 
 <main class="relative z-10 flex flex-1 flex-col flex-grow gap-4 p-4 md:gap-8 md:p-8">
   <Tabs.Root value="user">
-    <!-- If th user is Admin, it can see its data and access to admin panel -->
+    <!-- If the user is Admin, it can see its data and access to admin panel -->
     {#if canGetAllUsers}
       <Tabs.List class="grid max-w-sm grid-cols-2">
         <Tabs.Trigger value="user">Perso</Tabs.Trigger>
@@ -93,9 +90,7 @@
     <!-- Admin tab -->
     <Tabs.Content value="admin" >
       <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-10 w-full">
-        <ScoringCard title={"Score de vulnérabilité de l'entreprise"} totalScore={totalScore} osintScore={osintScore} phishingScore={phishingScore} formationScore={formationScore} />
-
-        
+        <UsersCard />
       </div>  
     </Tabs.Content>
   </Tabs.Root>
