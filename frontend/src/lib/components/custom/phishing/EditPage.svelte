@@ -5,6 +5,7 @@
   import { Textarea } from "$lib/components/ui/textarea";
   import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
   import type { Page } from "$types/gophish"
+	import Separator from "../Separator.svelte";
 
   export let page: Page = {
     id: 0,
@@ -78,32 +79,33 @@
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-4xl flex flex-col max-h-[90vh] overflow-y-auto">
     <AlertDialog.Header>
-      <AlertDialog.Title>Modifiez votre modèle</AlertDialog.Title>
-      <AlertDialog.Description>
+      <AlertDialog.Title class="text-left">Modifiez votre modèle</AlertDialog.Title>
+      <AlertDialog.Description class="text-left">
         Remplissez les informations nécessaires pour modifier votre modèle de page.
       </AlertDialog.Description>
-      <div class="grid grid-cols-1 w-full gap-x-8 gap-y-4 pt-5">
+      <div class="grid grid-cols-1 w-full gap-x-8 gap-y-4 pt-2">
+        <Separator width={'w-full'} height={'h-px'}/>
         <div class="name flex flex-col gap-2">
-          <p class="text-sm">Choisir un nom</p>
+          <p class="text-sm text-left">Choisir un nom</p>
           <Input type="text" bind:value={page.name} placeholder="Nom du modèle" class="w-full" />
           {#if errors.pageName}
-            <p class="text-red-500 text-sm">{errors.pageName}</p>
+            <p class="text-red-500 text-sm text-left">{errors.pageName}</p>
           {/if}
         </div>
 
         <div class="group flex flex-col gap-2">
-          <p class="text-sm">Choisir un URL de redirection</p>
+          <p class="text-sm text-left">Choisir un URL de redirection</p>
           <Input type="text" bind:value={page.redirect_url} placeholder="https://www.example.com" class="w-full" />
           {#if errors.redirect_url}
-            <p class="text-red-500 text-sm">{errors.redirect_url}</p>
+            <p class="text-red-500 text-sm text-left">{errors.redirect_url}</p>
           {/if}
         </div>
           
         <div class="group flex flex-col gap-2">
-          <p class="text-sm">Choisir un contenu HTML</p>
+          <p class="text-sm text-left">Choisir un contenu HTML</p>
           <Textarea bind:value={page.html} placeholder="Contenu HTML" class="w-full min-h-[350px] max-h-[500px]" />
           {#if errors.html}
-            <p class="text-red-500 text-sm">{errors.html}</p>
+            <p class="text-red-500 text-sm text-left">{errors.html}</p>
           {/if}
         </div>
       </div>

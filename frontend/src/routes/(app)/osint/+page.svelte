@@ -243,26 +243,26 @@
         <Tabs.Trigger value="admin">Admin</Tabs.Trigger>
       </Tabs.List>
       <Tabs.Content value="user" class="w-full" >
-        <div class="w-full p-6 light-bg flex items-center justify-between">
-          <div class="flex flex-col gap-2">
+        <div class="w-full p-6 light-bg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex flex-col text-left gap-2">
             <p class="text-medium font-semibold">Status : {status} {nbResults}</p>
             <p class="text-sm italic text-gray-600">{dateScan}</p>
           </div>
-          <Button class="bg-accent px-12 py-6 relative z-10"  on:click={searchOsint} disabled={!canScan && !running}>
+          <Button class="w-full sm:w-auto bg-accent sm:px-12 sm:py-6 relative z-10"  on:click={searchOsint} disabled={!canScan && !running}>
             {#if running}
-              <span class="text-base">Actualiser</span>
+              <span class="sm:text-base">Actualiser</span>
             {:else}
               {#if canScan}
-                <span class="text-base">Nouveau scan</span>
+                <span class="sm:text-base">Nouveau scan</span>
               {:else}
-                <span class="text-base">Scan disponible demain</span>
+                <span class="sm:text-base">Scan disponible demain</span>
               {/if}
             {/if}
           </Button>
         </div>
     
         {#if status === "Terminé"}
-        <div class="results grid grid-cols-2 gap-1 bg-white mt-1">
+        <div class="results grid grid-cols-1 sm:grid-cols-2 gap-1 bg-white mt-1">
             {#if scanResult}
               {#each scanResult.parsed_data.results as result, index}
                 <div class="result flex flex-col gap-2 p-4 bg-white shadow overflow-auto">
@@ -294,9 +294,9 @@
                   <Table.Head>Risque</Table.Head>
                   <Table.Head>Nom</Table.Head>
                   <Table.Head>Prénom</Table.Head>
-                  <Table.Head>Email</Table.Head>
-                  <Table.Head>Position</Table.Head>
-                  <Table.Head>Date scan</Table.Head>
+                  <Table.Head class="hidden lg:table-cell">Email</Table.Head>
+                  <Table.Head class="hidden lg:table-cell">Position</Table.Head>
+                  <Table.Head class="hidden lg:table-cell">Date scan</Table.Head>
                   <Table.Head>Scan</Table.Head>
             </Table.Row>
           </Table.Header>
@@ -311,9 +311,9 @@
                   <Table.Cell><span class="flex w-4 h-4 rounded-full bg-green-400"></span></Table.Cell>
                   <Table.Cell>{user.target.last_name}</Table.Cell>
                   <Table.Cell>{user.target.first_name}</Table.Cell>
-                  <Table.Cell>{user.target.email}</Table.Cell>
-                  <Table.Cell>{user.target.position}</Table.Cell>
-                  <Table.Cell>{user.scan && Array.isArray(user.scan) && user.scan.length === 0 ? "-" : user.scan ? formatDate(user.scan.updatedAt) : "-"}</Table.Cell>
+                  <Table.Cell class="hidden lg:table-cell">{user.target.email}</Table.Cell>
+                  <Table.Cell class="hidden lg:table-cell">{user.target.position}</Table.Cell>
+                  <Table.Cell class="hidden lg:table-cell">{user.scan && Array.isArray(user.scan) && user.scan.length === 0 ? "-" : user.scan ? formatDate(user.scan.updatedAt) : "-"}</Table.Cell>
                   <Table.Cell>
                     {#if user.scan && Array.isArray(user.scan) && user.scan.length === 0}
                       -
@@ -338,13 +338,13 @@
 
                         </div>
                         {#if user.scan}
-                          <AlertDialog.Header class="flex flex-row justify-between items-center px-6">
-                            <AlertDialog.Title class="text-medium">Scan du {formatDate(user.scan.updatedAt)}</AlertDialog.Title>
-                            <Button class="bg-accent" on:click={() => {}}>Nouveau scan</Button>
+                          <AlertDialog.Header class="flex flex-col gap-2 sm:gap-0 sm:flex-row sm:justify-between sm:items-center px-6">
+                            <AlertDialog.Title class="text-base sm:text-medium text-left">Scan du {formatDate(user.scan.updatedAt)}</AlertDialog.Title>
+                            <Button class="w-full sm:w-auto bg-accent" on:click={() => {}}>Nouveau scan</Button>
                           </AlertDialog.Header>
                           <div class="h-[50vh] overflow-y-auto px-6">
                             {#each parseScanResult(user.scan.result).parsed_data.results as result, index}
-                              <div class="result flex flex-col mt-2 gap-2 p-4 bg-gray-50 shadow">
+                              <div class="result flex flex-col mt-2 gap-2 p-4 bg-gray-50 shadow overflow-auto">
                                 <p class="text-medium font-semibold">{result.Type}</p>
                                 <p class="text-sm italic text-gray-600">{result.Data}</p>
                               </div>
@@ -384,25 +384,26 @@
     </Tabs.Root>
     {:else}
 
-    <div class="w-full p-6 light-bg flex items-center justify-between ">
-      <div class="flex flex-col gap-2">
+    <div class="w-full p-6 light-bg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex flex-col text-left gap-2">
         <p class="text-medium font-semibold">Status : {status} {nbResults}</p>
         <p class="text-sm italic text-gray-600">{dateScan}</p>
       </div>
-      <Button class="bg-accent px-12 py-6 relative z-10"  on:click={searchOsint} disabled={!canScan && !running}>
+      <Button class="w-full sm:w-auto bg-accent sm:px-12 sm:py-6 relative z-10"  on:click={searchOsint} disabled={!canScan && !running}>
         {#if running}
-          <span class="text-base">Actualiser</span>
+          <span class="sm:text-base">Actualiser</span>
         {:else}
           {#if canScan}
-            <span class="text-base">Nouveau scan</span>
+            <span class="sm:text-base">Nouveau scan</span>
           {:else}
-            <span class="text-base">Scan disponible demain</span>
+            <span class="sm:text-base">Scan disponible demain</span>
           {/if}
         {/if}
       </Button>
     </div>
 
-    <div class="results grid grid-cols-2 gap-2 bg-white">
+    {#if status === "Terminé"}
+    <div class="results grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white">
       {#if scanResult}
         {#each scanResult.parsed_data.results as result, index}
           <div class="result flex flex-col gap-2 p-4 bg-white shadow overflow-auto">
@@ -413,7 +414,6 @@
       {/if}
     </div>
 
-    {#if status === "Terminé"}
     <div class="analyse w-full p-6 light-bg flex items-center mt-6">
       <div class="flex flex-col gap-2">
         <p class="text-medium font-semibold">Analyse des résultats</p>

@@ -5,6 +5,7 @@
     import { goto } from "$app/navigation";
 	import Button from "$lib/components/ui/button/button.svelte";
     import { browser } from "$app/environment";
+	import Separator from '$lib/components/custom/Separator.svelte';
 
     function nav_back() {
         if (browser) window.history.back();
@@ -43,10 +44,10 @@
 
     function handleStyle(){
         if(campaigns.length > 1) {
-            campaignStyle = "grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-8";
+            campaignStyle = "grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-5";
         }else{
-            campaignStyle = "grid grid-cols-6 gap-5 my-8";
-            campagneStyleItem = "col-span-6 lg:col-span-3 xl:col-span-2";
+            campaignStyle = "grid grid-cols-1 sm:grid-cols-6 gap-5 my-5";
+            campagneStyleItem = "col-span-1 sm:col-span-6 lg:col-span-3 xl:col-span-2";
         }
     }
 
@@ -55,8 +56,10 @@
 <div class="relative z-10 flex flex-col w-full py-6 px-8">
     <div class="header flex items-center gap-4">
         <img src={fish_svg} alt="fish" class="w-5 h-5"/>
-        <h1 class="text-2xl font-semibold">Mes campagnes</h1>
+        <h1 class="text-xl font-semibold">Mes campagnes</h1>
     </div>
+
+    <Separator color='bg-accent' width='w-1/5' height="h-[2.5px]" margin_top="mt-3"/>
 
     <div class="{campaignStyle}">
         {#each campaigns as campaign}

@@ -68,17 +68,17 @@
     </AlertDialog.Trigger>
     {/if}
     <AlertDialog.Content class="max-w-5xl flex flex-col">
-        <AlertDialog.Header>
-            <div class={"flex flex-row justify-between"}>
+        <AlertDialog.Header class="flex flex-row justify-between gap-3">
+            <div class={"flex flex-col gap-2 text-left"}>
                 <AlertDialog.Title>Apercu du modèle</AlertDialog.Title>
-                <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
+                <AlertDialog.Description>Voici un apercu de modèle qui peut être utilisé dans vos campagnes de phishing</AlertDialog.Description>
             </div>
-            <AlertDialog.Description>Voici un apercu de modèle qui peut être utilisé dans vos campagnes de phishing</AlertDialog.Description>
+            <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
         </AlertDialog.Header>
         <div class="w-full mt-2 p-5 bg-accent/[0.07] shadow rounded h-[60svh] overflow-y-auto">
-            <iframe srcdoc={element.html} class="w-full h-full rounded-shadow pointer-events-none" title="Redirection Model"></iframe>
+            <iframe srcdoc={element.html} class="w-full h-full rounded-shadow pointer-events-none hover:pointer-events-auto" title="Redirection Model"></iframe>
         </div>
-        <AlertDialog.Footer>
+        <AlertDialog.Footer class="flex-col gap-1 sm:gap-0 sm:flex-row">
             {#if isPage	}
                 <EditPage page={element}/>
             {:else}

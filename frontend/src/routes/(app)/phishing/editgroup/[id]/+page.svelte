@@ -125,9 +125,10 @@
 <AlertDialog.Root open={!loading_data} on:close={closeAlertDialog}>
     <AlertDialog.Content class="max-w-4xl flex flex-col">
         <AlertDialog.Header>
-            <AlertDialog.Title>Modifier le groupe</AlertDialog.Title>
+            <AlertDialog.Title class="text-left">Modifier le groupe</AlertDialog.Title>
         </AlertDialog.Header>
         <div class="flex flex-col gap-6">
+            <Separator width={'w-full'}/>
             <div class="nom flex flex-col gap-3">
                 <Label for="name">Nom du groupe</Label>
                 <Input id="name" type="text" bind:value={group.name} />
@@ -140,8 +141,8 @@
                         <Table.Row>
                             <Table.Head>Nom</Table.Head>
                             <Table.Head>Prénom</Table.Head>
-                            <Table.Head>Email</Table.Head>
-                            <Table.Head>Position</Table.Head>
+                            <Table.Head class="hidden sm:table-cell">Email</Table.Head>
+                            <Table.Head class="hidden sm:table-cell">Position</Table.Head>
                             <Table.Head>Inclus</Table.Head>
                       </Table.Row>
                     </Table.Header>
@@ -150,8 +151,8 @@
                         <Table.Row>
                             <Table.Cell>{user.last_name}</Table.Cell>
                             <Table.Cell>{user.first_name}</Table.Cell>
-                            <Table.Cell>{user.email}</Table.Cell>
-                            <Table.Cell>{user.position}</Table.Cell>
+                            <Table.Cell class="hidden sm:table-cell">{user.email}</Table.Cell>
+                            <Table.Cell class="hidden sm:table-cell">{user.position}</Table.Cell>
                             <Table.Cell>
                                 <Checkbox 
                                     checked={selectedUsers.includes(user)}

@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { derived } from 'svelte/store';
+	import TapBar from '$lib/components/custom/TapBar.svelte';
 
 	const mainPages = ['/about', '/dashboard', '/formation', '/osint', '/password', '/phishing'];
 
@@ -36,6 +37,7 @@
 
 <div class="app flex w-full h-screen">
 	<Sidebar 
+		className="hidden md:flex"
 		dash_text={$page.data?.dash_text}
 		dash_bg= {$page.data?.dash_bg}
 		about_text= {$page.data?.about_text}
@@ -51,10 +53,18 @@
 	/>
 	<main class="relative w-full h-full overflow-scroll flex flex-col">
 		<Header title={$page.data?.title || 'Phish&Tips'} firstName={firstName} lastName={lastName} position={position} email={email} isSubPage={$isSubPage} />
-		<div class="relative flex-grow w-full overflow-scroll">
+		<div class="relative flex-grow w-full overflow-scroll pb-[60px] sm:pb-0 ">
 			<DotPage />
 			<slot></slot>
 		</div>
+		<TapBar className="md:hidden"
+			dash_text={$page.data?.dash_text}
+			about_text= {$page.data?.about_text}
+			form_text= {$page.data?.form_text}
+			osint_text= {$page.data?.osint_text}
+			pwd_text= {$page.data?.pwd_text}
+			phishing_text= {$page.data?.phishing_text}
+		/>
 	</main>
 </div>
 
