@@ -12,7 +12,7 @@ export async function GET({ cookies }) {
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.error('Error: No data found');
+			console.error('Error while trying to fetch users: No users found');
 			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {

@@ -19,6 +19,7 @@
     </Card.Title>
   </Card.Header>
   <Card.Content>
+    
     <ScoringGradientBar score={totalScore} />
   </Card.Content>
   <Card.Footer>

@@ -6,7 +6,7 @@
 	import { Input } from "$lib/components/ui/input";
 	import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
   
-  export let user: User = {
+  let user: User = {
     firstName: "",
     lastName: "",
     email: "",
@@ -14,13 +14,10 @@
     role: "",
   };
 
-  let selected = { value: user.role, label: user.role };
-
-  $:selected;
-
   let errors = {
     firstName: "",
     lastName: "",
+    email: "",
     position: "",
     selectedRole: "",
   };
@@ -52,6 +49,13 @@
       errors.lastName = "";
     }
 
+    if (!user.email.trim()) {
+      errors.email = "L'adresse email est obligatoire.";
+      isValid = false;
+    } else {
+      errors.email = "";
+    }
+
     if (!user.position.trim()) {
       errors.position = "La position est obligatoire.";
       isValid = false;
@@ -69,14 +73,14 @@
     return isValid;
   }
 
-  async function updateUser() {
+  async function createUser() {
     if (!validateForm()){
       console.error(errors);
       return;
     }
 
     await fetch('/api/db/user', {
-			method: 'PUT',
+			method: 'POST',
 			body: JSON.stringify(user),
 			headers: {
 				'Content-Type': 'application/json'
@@ -92,13 +96,14 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class={"bg-accent text-xl py-0 px-3"} builders={[builder]} on:click={getRoles}>
-      <iconify-icon class="icon-custom" icon="mingcute:pencil-fill" style={`color: hsl(var(--accent-foreground))`}></iconify-icon>
+    <Button class={"bg-accent py-0 px-3 text-accent-foreground flex flex-row align-middle gap-1"} builders={[builder]} on:click={getRoles}>
+      Importer
+      <iconify-icon class="icon-custom" icon="mingcute:file-import-line"></iconify-icon>
     </Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-full lg:max-w-[60vw] max-h-[90vh] flex flex-col overflow-auto">
     <AlertDialog.Header>
-      <AlertDialog.Title>{user.firstName} {user.lastName} ({user.email})</AlertDialog.Title>
+      <AlertDialog.Title>Ajouter un utilisateur</AlertDialog.Title>
     </AlertDialog.Header>
     <div class="grid grid-cols-1 w-full gap-x-8 gap-y-4 pt-5 overflow-auto">
       <!-- First Name -->
@@ -119,6 +124,15 @@
         {/if}
       </div>
 
+      <!-- Email address -->
+      <div class="name flex flex-col gap-2">
+        <p class="text-sm">Entrer une adresse email</p>
+        <Input type="text" bind:value={user.email} placeholder="Email de l'utilisateur" class="w-full" />
+        {#if errors.email}
+          <p class="text-red-500 text-sm">{errors.email}</p>
+        {/if}
+      </div>
+
       <!-- Position -->
       <div class="name flex flex-col gap-2">
         <p class="text-sm">Entrer une position</p>
@@ -131,7 +145,7 @@
       <!-- Role -->
       <div class="group flex flex-col gap-2">
         <p class="text-sm">Choisir un rôle</p>
-        <Select.Root bind:selected onSelectedChange={(value) => (user.role = value?.value as string)}>
+        <Select.Root onSelectedChange={(value) => (user.role = value?.value as string)}>
           <Select.Trigger>
             <Select.Value placeholder="Rôle de l'utilisateur" />
           </Select.Trigger>
@@ -148,7 +162,7 @@
     </div>
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
-      <ConfirmPopup description="Modification de l'utilisateur" name="Modifier" style="bg-accent" functionToCall={updateUser} />
+      <ConfirmPopup description="Création de l'utilisateur" name="Ajouter" style="bg-accent" functionToCall={createUser} />
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>
