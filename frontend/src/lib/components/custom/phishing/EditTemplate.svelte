@@ -5,6 +5,7 @@
   import { Textarea } from "$lib/components/ui/textarea";
   import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
   import type { Template } from "$types/gophish"
+	import Separator from "../Separator.svelte";
 
   export let template: Template = {
     id: 0,
@@ -77,32 +78,33 @@
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-4xl flex flex-col max-h-[90vh] overflow-y-auto">
     <AlertDialog.Header>
-      <AlertDialog.Title>Modifiez votre modèle</AlertDialog.Title>
-      <AlertDialog.Description>
+      <AlertDialog.Title class="text-left">Modifiez votre modèle</AlertDialog.Title>
+      <AlertDialog.Description class="text-left">
         Remplissez les informations nécessaires pour modifier votre modèle de mail.
       </AlertDialog.Description>
-      <div class="grid grid-cols-1 w-full gap-x-8 gap-y-4 pt-5">
+      <div class="grid grid-cols-1 w-full gap-x-8 gap-y-4 pt-2">
+        <Separator width={'w-full'} height={'h-px'}/>
         <div class="name flex flex-col gap-2">
-          <p class="text-sm">Choisir un nom</p>
+          <p class="text-sm text-left">Choisir un nom</p>
           <Input type="text" bind:value={template.name} placeholder="Nom du modèle" class="w-full" />
           {#if errors.templateName}
-            <p class="text-red-500 text-sm">{errors.templateName}</p>
+            <p class="text-red-500 text-sm text-left">{errors.templateName}</p>
           {/if}
         </div>
 
         <div class="group flex flex-col gap-2">
-          <p class="text-sm">Choisir un objet de mail</p>
+          <p class="text-sm text-left">Choisir un objet de mail</p>
           <Input type="text" bind:value={template.subject} placeholder="Objet du modèle" class="w-full" />
           {#if errors.subject}
-            <p class="text-red-500 text-sm">{errors.subject}</p>
+            <p class="text-red-500 text-sm text-left">{errors.subject}</p>
           {/if}
         </div>
           
         <div class="group flex flex-col gap-2">
-          <p class="text-sm">Choisir un contenu HTML</p>
+          <p class="text-sm text-left">Choisir un contenu HTML</p>
           <Textarea bind:value={template.html} placeholder="Contenu HTML" class="w-full min-h-[350px] max-h-[500px]" />
           {#if errors.html}
-            <p class="text-red-500 text-sm">{errors.html}</p>
+            <p class="text-red-500 text-sm text-left">{errors.html}</p>
           {/if}
         </div>
       </div>
