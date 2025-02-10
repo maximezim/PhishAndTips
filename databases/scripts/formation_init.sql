@@ -26,6 +26,14 @@ CREATE TABLE IF NOT EXISTS user_quiz_score(
     FOREIGN KEY (quiz_id) REFERENCES quiz(id)
 );
 
+CREATE TABLE IF NOT EXISTS user_video_watched(
+    user_email VARCHAR NOT NULL,
+    video_id INTEGER NOT NULL,
+    is_watched BOOLEAN NOT NULL,
+    PRIMARY KEY (user_email, video_id),
+    FOREIGN KEY (video_id) REFERENCES video(id)
+);
+
 CREATE TABLE IF NOT EXISTS badge(
     id INTEGER PRIMARY KEY,
     name VARCHAR UNIQUE NOT NULL,
