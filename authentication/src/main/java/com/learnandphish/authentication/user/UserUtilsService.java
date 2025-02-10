@@ -1,8 +1,12 @@
 package com.learnandphish.authentication.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -11,6 +15,8 @@ public class UserUtilsService {
 
     @Autowired
     private UserDataRepository userDataRepository;
+
+    final Logger logger = LoggerFactory.getLogger(UserUtilsService.class);
 
     public byte[] exportUsersToCsv() throws IOException {
         List<UserData> users = userDataRepository.findAll();
@@ -51,16 +57,23 @@ public class UserUtilsService {
         }).toList();
     }
 
-    public void importUsersFromCsv(byte[] csvContent) {
-        String[] lines = new String(csvContent).split("\n");
-        for (int i = 1; i < lines.length; i++) {
-            String[] fields = lines[i].split(",");
-            UserData userData = new UserData();
-            userData.setFirstName(fields[0]);
-            userData.setLastName(fields[1]);
-            userData.setEmail(fields[2]);
-            userData.setPosition(fields[3]);
-            userDataRepository.save(userData);
+    public void importUsersFromCsv(MultipartFile file) {
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 4) {
+                    UserData userData = new UserData();
+                    userData.setFirstName(data[0]);
+                    userData.setLastName(data[1]);
+                    userData.setEmail(data[2]);
+                    userData.setPosition(data[3]);
+                    userDataRepository.save(userData);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Error importing users from CSV file", e);
         }
     }
 }

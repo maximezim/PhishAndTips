@@ -35,6 +35,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import java.util.Map;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class AuthenticationController {
@@ -257,8 +258,17 @@ public class AuthenticationController {
 
     @RolesAllowed("ADMIN")
     @PostMapping("/import-users")
-    public ResponseEntity<?> importUsers(@RequestBody byte[] csvContent) {
-        userUtilsService.importUsersFromCsv(csvContent);
+    public ResponseEntity<?> importUsers(@RequestBody MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
+
+        if (Objects.equals(file.getContentType(), "text/csv")) {
+            return ResponseEntity.badRequest().body("File must be a CSV");
+        }
+
+        userUtilsService.importUsersFromCsv(file);
+
         return ResponseEntity.ok("Users imported successfully");
     }
 
