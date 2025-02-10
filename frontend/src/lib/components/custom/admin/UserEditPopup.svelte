@@ -22,8 +22,12 @@
 
   let roles:string[] = [""];
 
-  function getRoles(): void {
-    
+  async function getRoles(): Promise<void> {
+    try {
+      roles = await fetch("/api/db/roles").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte de roles: ', e);
+    }
   }
 
   function validateForm(): boolean {
@@ -60,7 +64,7 @@
     return isValid;
   }
 
-  async function updatePage() {
+  async function updateUser() {
     if (!validateForm()){
       console.log(errors);
       return;
