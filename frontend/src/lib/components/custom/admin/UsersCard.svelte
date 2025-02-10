@@ -9,7 +9,7 @@
 	import UserPopup from './UserPopup.svelte';
 
   let currentPage = 1;
-  const rowsPerPageUser = 2;
+  const rowsPerPageUser = 10;
   let totalPagesUser = 1;
   let usersFromDb: User[] = [];
 
@@ -63,11 +63,11 @@
       <Table.Body>
         {#each currentPageRowsUser as user}
           <Table.Row>
-            <Table.Cell>{user.last_name}</Table.Cell>
-            <Table.Cell>{user.first_name}</Table.Cell>
+            <Table.Cell>{user.lastName}</Table.Cell>
+            <Table.Cell>{user.firstName}</Table.Cell>
             <Table.Cell>{user.email}</Table.Cell>
             <Table.Cell>{user.position}</Table.Cell>
-            <Table.Cell><UserPopup email={user.email} /></Table.Cell>
+            <Table.Cell><UserPopup user={user} /></Table.Cell>
           </Table.Row>
         {/each}
       </Table.Body>

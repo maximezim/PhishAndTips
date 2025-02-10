@@ -40,7 +40,7 @@
 
   async function getTotalScore() {
     try {
-      formationScore = await fetch("/api/scoring").then(res => res.json());
+      totalScore = await fetch("/api/scoring").then(res => res.json());
     } catch(e) {
       console.error('Erreur lors de l\'appel de l\'API svelte du score total: ', e);
     }
