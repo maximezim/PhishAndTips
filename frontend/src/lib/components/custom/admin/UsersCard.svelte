@@ -7,6 +7,7 @@
   import 'iconify-icon';
   import Separator from '$lib/components/custom/Separator.svelte';
 	import UserPopup from './UserPopup.svelte';
+	import UserEditPopup from './UserEditPopup.svelte';
 
   let currentPage = 1;
   const rowsPerPageUser = 10;
@@ -56,7 +57,7 @@
           <Table.Head>Prénom</Table.Head>
           <Table.Head>Email</Table.Head>
           <Table.Head>Position</Table.Head>
-          <Table.Head>Détail</Table.Head>
+          <Table.Head>Actions</Table.Head>
         </Table.Row>
       </Table.Header>
 
@@ -67,7 +68,7 @@
             <Table.Cell>{user.firstName}</Table.Cell>
             <Table.Cell>{user.email}</Table.Cell>
             <Table.Cell>{user.position}</Table.Cell>
-            <Table.Cell><UserPopup user={user} /></Table.Cell>
+            <Table.Cell><UserPopup user={user} /><UserEditPopup user={user} /></Table.Cell>
           </Table.Row>
         {/each}
       </Table.Body>

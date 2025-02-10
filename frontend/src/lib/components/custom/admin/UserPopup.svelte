@@ -12,7 +12,8 @@
     firstName: "",
     lastName: "",
     email: "",
-    position: ""
+    position: "",
+    role: "",
   };
 
   let userOsintScore: number = 0;
@@ -68,15 +69,15 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class={"bg-accent"} builders={[builder]} on:click={getUserScore}>
-      Voir le détail
+    <Button class={"bg-transparent hover:bg-slate-200"} builders={[builder]} on:click={getUserScore}>
+      <iconify-icon class="icon-custom" icon="mingcute:eye-fill" style={`color: hsl(var(--accent))`}></iconify-icon>
     </Button>
   </AlertDialog.Trigger>
-  <AlertDialog.Content class="max-w-[90vw] flex flex-col">
+  <AlertDialog.Content class="max-w-[90vw] max-h-[90vh] flex flex-col" >
     <AlertDialog.Header>
       <AlertDialog.Title>{user.firstName} {user.lastName} ({user.email})</AlertDialog.Title>
     </AlertDialog.Header>
-    <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-12 w-full">
+    <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-12 w-full h-full overflow-auto">
       <!-- Scoring Card ($lib/components/custom/scoring/ScoringCard.svelte) -->
       <ScoringCard totalScore={userTotalScore} osintScore={userOsintScore} phishingScore={userPhishingScore} formationScore={userFormationScore} />
       
