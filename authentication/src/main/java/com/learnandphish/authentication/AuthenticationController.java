@@ -1,6 +1,8 @@
 package com.learnandphish.authentication;
 
 import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.mail.EmailSender;
+import com.learnandphish.authentication.mail.MailTemplates;
 import com.learnandphish.authentication.user.ScanResult;
 import com.learnandphish.authentication.jwt.JwtRequest;
 import com.learnandphish.authentication.jwt.JwtResponse;
@@ -8,7 +10,16 @@ import com.learnandphish.authentication.jwt.JwtUserDetailsService;
 import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -25,12 +36,13 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import java.util.Map;
 import org.springframework.web.client.RestTemplate;
-import java.util.HashMap;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class AuthenticationController {
@@ -51,7 +63,7 @@ public class AuthenticationController {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private UserExportService userExportService;
+    private UserUtilsService userUtilsService;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -62,8 +74,9 @@ public class AuthenticationController {
     @Autowired
     private RestTemplate restTemplate;
 
-    // Updated base URL with proper API prefix
     private final String spiderfootApiUrl = "http://spiderfoot-api:8001/internal/spiderfoot";
+
+    private final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     /**
      * Endpoint to authenticate users and provide JWT token.
@@ -169,23 +182,13 @@ public class AuthenticationController {
 
         EmailSender emailSender = new EmailSender(mailSender);
 
-        //TODO: Fix content, use emailTemplate
-        String subject = "Votre mot de passe Phish&Tips";
-        String emailContent = "<html>" +
-                "<body>" +
-                "<p>Votre mot de passe <strong>Phish&amp;Tips</strong> a été réinitialisé.</p>" +
-                "<p>Votre nouveau mot de passe est : <strong>" + password + "</strong></p>" +
-                "<p>Vous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe.</p>" +
-                "<p>Veuillez changer votre mot de passe dès votre première connexion.</p>" +
-                "<p>Cordialement,</p>" +
-                "<p>L'équipe <strong>Phish&amp;Tips</strong></p>" +
-                "</body>" +
-                "</html>";
+        String subject = "[Phish&Tips] Réinitialisation de votre mot de passe";
+        String emailContent = MailTemplates.loadPasswordResetTemplate(password);
 
         try {
             emailSender.sendEmail(email, subject, emailContent);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Error sending email", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
         }
 
@@ -194,10 +197,53 @@ public class AuthenticationController {
 
     @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/need-change-password")
-    public ResponseEntity<?> needChangePassword() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+    public ResponseEntity<Boolean> needChangePassword() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
 
+            UserData user = userDataRepository.findByEmail(email)
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            return ResponseEntity.ok(user.getChangePassword());
+        } catch (Exception e) {
+            logger.error("Error checking if user needs to change password", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
+    }
+
+    @RolesAllowed("ADMIN")
+    @PostMapping("/update-user")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserDTO userDTO) {
+        try {
+
+            if (userDTO.getRole() == null) {
+                return ResponseEntity.badRequest().body("Role must be provided");
+            }
+
+            UserData user = userDataRepository.findByEmail(userDTO.getEmail())
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setPosition(userDTO.getPosition());
+            user.setRole(userDTO.getRole());
+            userDataRepository.save(user);
+
+            return ResponseEntity.ok("User updated successfully");
+        } catch (Exception e) {
+            logger.error("Error updating user", e);
+            return ResponseEntity.badRequest().body("Role must be provided");
+        }
+    }
+
+    @RolesAllowed("ADMIN")
+    @PostMapping("/delete-user")
+    public ResponseEntity<?> deleteUser(@RequestHeader("email") String tokenEmail, @RequestBody String email) {
         UserData user = userDataRepository.findByEmail(email)
                 .stream()
                 .findFirst()
@@ -207,19 +253,8 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        return ResponseEntity.ok(user.getChangePassword());
-    }
-
-    @RolesAllowed("ADMIN")
-    @PostMapping("/delete-user")
-    public ResponseEntity<?> deleteUser(@RequestParam String email) {
-        UserData user = userDataRepository.findByEmail(email)
-                .stream()
-                .findFirst()
-                .orElse(null);
-
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        if (Objects.equals(user.getEmail(), tokenEmail)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You cannot delete your own account");
         }
 
         userDataRepository.delete(user);
@@ -233,7 +268,7 @@ public class AuthenticationController {
     public CompletableFuture<ResponseEntity<byte[]>> exportUsers() {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                byte[] csvContent = userExportService.exportUsersToCsv();
+                byte[] csvContent = userUtilsService.exportUsersToCsv();
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
                 headers.setContentDispositionFormData("attachment", "users_export.csv");
@@ -247,21 +282,27 @@ public class AuthenticationController {
         });
     }
 
-    @RolesAllowed({"USER", "ADMIN"})
-    @GetMapping("/test-user")
-    public ResponseEntity<String> testUser() {
-        return ResponseEntity.ok("This is an user endpoint");
-    }
-
     @RolesAllowed("ADMIN")
-    @GetMapping("/test-admin")
-    public ResponseEntity<String> testAdmin() {
-        return ResponseEntity.ok("This is an admin endpoint");
-    }
+    @PostMapping("/import-users")
+    public ResponseEntity<?> importUsers(@RequestBody MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
 
-    @GetMapping("/test-both")
-    public ResponseEntity<String> testBoth() {
-        return ResponseEntity.ok("This is an user & admin endpoint");
+        if (!Objects.equals(file.getContentType(), "text/csv") && !Objects.equals(file.getContentType(), "application/vnd.ms-excel")) {
+            return ResponseEntity.badRequest().body("File must be a CSV");
+        }
+
+        List<RegisterRequest> usersToRegister = userUtilsService.importUsersFromCsv(file);
+
+        for (RegisterRequest user : usersToRegister) {
+            try {
+                register(user);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error importing user" + user.getEmail());
+            }
+        }
+        return ResponseEntity.ok("Users imported successfully");
     }
 
     @RolesAllowed("ADMIN")
@@ -285,25 +326,23 @@ public class AuthenticationController {
 
         EmailSender emailSender = new EmailSender(mailSender);
 
-        String subject = "Votre compte Phish&Tips";
-        String emailContent = "<html>" +
-                "<body>" +
-                "<p>Votre compte <strong>Phish&amp;Tips</strong> a été créé.</p>" +
-                "<p>Votre mot de passe est : <strong>" + password + "</strong></p>" +
-                "<p>Vous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe.</p>" +
-                "<p>Veuillez changer votre mot de passe dès votre première connexion.</p>" +
-                "<p>Cordialement,</p>" +
-                "<p>L'équipe <strong>Phish&amp;Tips</strong></p>" +
-                "</body>" +
-                "</html>";
+        String subject = "[Phish&Tips] Votre compte a été créé";
+        String emailContent = MailTemplates.loadRegisteredTemplate(password);
 
         try {
             emailSender.sendEmail(request.getEmail(), subject, emailContent);
         } catch (Exception e) {
+            logger.error("Error sending email", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
         }
 
         return ResponseEntity.ok("User registered successfully");
+    }
+
+    @RolesAllowed("ADMIN")
+    @GetMapping("/get-roles")
+    public ResponseEntity<Roles[]> getRoles() {
+        return ResponseEntity.ok(Roles.values());
     }
 
     @RolesAllowed({"USER", "ADMIN"})
@@ -320,21 +359,42 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(user.getLastName());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setPosition(user.getPosition());
-        userDTO.setRole(user.getRole());
+        UserDTO userDTO = new UserDTO(
+            user.getFirstName(),
+            user.getLastName(),
+            user.getEmail(),
+            user.getPosition(),
+            user.getRole()
+        );
         return ResponseEntity.ok(userDTO);
     }
 
     @RolesAllowed({"ADMIN"})
-    @GetMapping("/get-all-users")
-    public ResponseEntity<List<GophishUserDTO>> getAllUsers() {
+    @GetMapping("/get-all-gophish-users")
+    public ResponseEntity<List<GophishUserDTO>> getAllGophishUsers() {
         List<UserData> users = userDataRepository.findAll();
-        return ResponseEntity.ok(userExportService.convertToGophishUsersDTO(users));
+        List<GophishUserDTO> usersDTO = userUtilsService.convertToGophishUsersDTO(users);
+        return ResponseEntity.ok(usersDTO);
+    }
+
+    @RolesAllowed({"ADMIN"})
+    @GetMapping("/get-all-users")
+    public ResponseEntity<PagedModel<EntityModel<UserDTO>>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            PagedResourcesAssembler<UserDTO> assembler) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("lastName").ascending());
+        Page<UserDTO> usersDTO = userDataRepository.findAll(pageable)
+                .map(user -> new UserDTO(
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getPosition(),
+                        user.getRole()
+                ));
+
+        return ResponseEntity.ok(assembler.toModel(usersDTO));
     }
 
     // Endpoint for users to retrieve their own scan result using JWT extracted email
@@ -369,9 +429,10 @@ public class AuthenticationController {
     @PostMapping("/my-scan/new")
     public ResponseEntity<?> startMyScan() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("target", email);
-        payload.put("modules", ""); // set default modules if needed
+        Map<String, Object> payload = Map.of(
+                "target", email,
+                "modules", ""
+        );
 
         ResponseEntity<?> response = restTemplate.postForEntity(spiderfootApiUrl + "/scan", payload, Object.class);
         return ResponseEntity.status(response.getStatusCode()).body(response.getBody());
@@ -385,9 +446,10 @@ public class AuthenticationController {
         if (email == null || email.isBlank()) {
             return ResponseEntity.badRequest().body("Email must be provided");
         }
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("target", email);
-        payload.put("modules", ""); // set default modules if needed
+       Map<String, Object> payload = Map.of(
+            "target", email,
+            "modules", ""
+        );
 
         ResponseEntity<?> response = restTemplate.postForEntity(spiderfootApiUrl + "/scan", payload, Object.class);
         return ResponseEntity.status(response.getStatusCode()).body(response.getBody());

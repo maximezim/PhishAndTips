@@ -1,16 +1,24 @@
 package com.learnandphish.authentication.user;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.multipart.MultipartFile;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserExportService {
+public class UserUtilsService {
 
     @Autowired
     private UserDataRepository userDataRepository;
+
+    final Logger logger = LoggerFactory.getLogger(UserUtilsService.class);
 
     public byte[] exportUsersToCsv() throws IOException {
         List<UserData> users = userDataRepository.findAll();
@@ -49,5 +57,28 @@ public class UserExportService {
             gophishUserDTO.setPosition(user.getPosition());
             return gophishUserDTO;
         }).toList();
+    }
+
+    public List<RegisterRequest> importUsersFromCsv(MultipartFile file) {
+
+        List<RegisterRequest> registerRequests = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 4) {
+                    RegisterRequest registerRequest = new RegisterRequest();
+                    registerRequest.setFirstName(StringUtils.capitalize(data[0]));
+                    registerRequest.setLastName(StringUtils.capitalize(data[1]));
+                    registerRequest.setEmail(data[2]);
+                    registerRequest.setPosition(StringUtils.capitalize(data[3]));
+                    registerRequest.setRole(Roles.USER);
+                    registerRequests.add(registerRequest);
+                }
+            }
+        } catch (IOException e) {
+            logger.error("Error importing users from CSV file", e);
+        }
+        return registerRequests;
     }
 }

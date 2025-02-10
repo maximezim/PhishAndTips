@@ -22,7 +22,7 @@ public class MailConfig {
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", System.getenv("SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE"));
-        props.put("mail.debug", "true");
+        props.put("mail.debug", "false");
 
         return mailSender;
     }
