@@ -220,7 +220,7 @@ public class AuthenticationController {
 
     @RolesAllowed("ADMIN")
     @PostMapping("/delete-user")
-    public ResponseEntity<?> deleteUser(@RequestBody String email) {
+    public ResponseEntity<?> deleteUser(@RequestHeader("email") String tokenEmail, @RequestBody String email) {
         UserData user = userDataRepository.findByEmail(email)
                 .stream()
                 .findFirst()
@@ -332,7 +332,7 @@ public class AuthenticationController {
     @GetMapping("/get-all-gophish-users")
     public ResponseEntity<List<GophishUserDTO>> getAllGophishUsers() {
         List<UserData> users = userDataRepository.findAll();
-        List<GophishUserDTO> usersDTO = userExportService.convertToGophishUsersDTO(users);
+        List<GophishUserDTO> usersDTO = userUtilsService.convertToGophishUsersDTO(users);
         return ResponseEntity.ok(usersDTO);
     }
 
