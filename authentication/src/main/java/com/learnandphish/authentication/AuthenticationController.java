@@ -327,6 +327,12 @@ public class AuthenticationController {
         return ResponseEntity.ok("User registered successfully");
     }
 
+    @RolesAllowed("ADMIN")
+    @GetMapping("/get-roles")
+    public ResponseEntity<Roles[]> getRoles() {
+        return ResponseEntity.ok(Roles.values());
+    }
+
     @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/get-user")
     public ResponseEntity<UserDTO> getUser(@RequestHeader("Authorization") String token) {
