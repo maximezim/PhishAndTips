@@ -11,6 +11,7 @@ public class RouteRoles {
     private static final Map<String, List<String>> routeRoleMap = Map.ofEntries(
         Map.entry("/admin/**", List.of("ADMIN")),
         Map.entry("/user/**", List.of("USER", "ADMIN")),
+        Map.entry("/import-users", List.of("ADMIN")),
         Map.entry("/export-users", List.of("ADMIN")),
         Map.entry("/change-password", List.of("USER", "ADMIN")),
         Map.entry("/need-change-password", List.of("USER", "ADMIN")),
