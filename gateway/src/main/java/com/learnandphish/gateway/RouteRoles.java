@@ -15,6 +15,7 @@ public class RouteRoles {
         Map.entry("/change-password", List.of("USER", "ADMIN")),
         Map.entry("/need-change-password", List.of("USER", "ADMIN")),
         Map.entry("/reset-password", List.of("USER","ADMIN")),
+        Map.entry("/update-user", List.of("ADMIN")),
         Map.entry("/delete-user", List.of("ADMIN")),
         Map.entry("/get-user", List.of("USER", "ADMIN")),
         Map.entry("/register", List.of("ADMIN")),

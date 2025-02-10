@@ -29,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -203,12 +204,33 @@ public class AuthenticationController {
     }
 
     @RolesAllowed("ADMIN")
+    @PostMapping("/update-user")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserDTO userDTO) {
+        UserData user = userDataRepository.findByEmail(userDTO.getEmail())
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setPosition(userDTO.getPosition());
+        user.setRole(userDTO.getRole());
+        userDataRepository.save(user);
+
+        return ResponseEntity.ok("User updated successfully");
+    }
+
+    @RolesAllowed("ADMIN")
     @PostMapping("/delete-user")
-    public ResponseEntity<?> deleteUser(@RequestBody String email) {
+    public ResponseEntity<?> deleteUser(@RequestHeader("email") String tokenEmail, @RequestBody String email) {
         UserData user = userDataRepository.findByEmail(email)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (Objects.equals(user.getEmail(), tokenEmail)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You cannot delete your own account");
+        }
 
         userDataRepository.delete(user);
 
@@ -233,23 +255,6 @@ public class AuthenticationController {
                         .body(("Error exporting users: " + e.getMessage()).getBytes());
             }
         });
-    }
-
-    @RolesAllowed({"USER", "ADMIN"})
-    @GetMapping("/test-user")
-    public ResponseEntity<String> testUser() {
-        return ResponseEntity.ok("This is an user endpoint");
-    }
-
-    @RolesAllowed("ADMIN")
-    @GetMapping("/test-admin")
-    public ResponseEntity<String> testAdmin() {
-        return ResponseEntity.ok("This is an admin endpoint");
-    }
-
-    @GetMapping("/test-both")
-    public ResponseEntity<String> testBoth() {
-        return ResponseEntity.ok("This is an user & admin endpoint");
     }
 
     @RolesAllowed("ADMIN")
@@ -309,7 +314,6 @@ public class AuthenticationController {
         }
 
         UserDTO userDTO = new UserDTO(
-            user.getId(),
             user.getFirstName(),
             user.getLastName(),
             user.getEmail(),
@@ -332,7 +336,7 @@ public class AuthenticationController {
     public ResponseEntity<Page<UserDTO>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("lastName").ascending());
         Page<UserDTO> usersDTO = userDataRepository.findAll(pageable).map(user -> new UserDTO(
-            user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getPosition(), user.getRole()
+            user.getFirstName(), user.getLastName(), user.getEmail(), user.getPosition(), user.getRole()
         ));
         return ResponseEntity.ok(usersDTO);
     }
