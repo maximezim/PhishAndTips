@@ -3,6 +3,8 @@ package com.learnandphish.authentication;
 import com.learnandphish.authentication.user.Roles;
 import com.learnandphish.authentication.user.UserData;
 import com.learnandphish.authentication.user.UserDataRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +29,8 @@ public class AuthenticationApplication {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	final Logger logger = LoggerFactory.getLogger(AuthenticationApplication.class);
+
 	public static void main(String[] args) {
 		SpringApplication.run(AuthenticationApplication.class, args);
 	}
@@ -44,9 +48,9 @@ public class AuthenticationApplication {
 				defaultUser.setPosition("Administrator");
 				defaultUser.setChangePassword(false);
 				userDataRepository.save(defaultUser);
-				System.out.println("Test admin user created.");
+				logger.info("Test admin user created.");
 			} else {
-				System.out.println("Test admin user already exists.");
+				logger.info("Test admin user already exists.");
 			}
 		};
 	}
@@ -64,9 +68,9 @@ public class AuthenticationApplication {
 				defaultUser.setPosition("User");
 				defaultUser.setChangePassword(false);
 				userDataRepository.save(defaultUser);
-				System.out.println("Test user user created.");
+				logger.info("Test user user created.");
 			} else {
-				System.out.println("Test user already exists.");
+				logger.info("Test user already exists.");
 			}
 		};
 	}
@@ -84,9 +88,9 @@ public class AuthenticationApplication {
 				karineUser.setPosition("G.O.A.T.");
 				karineUser.setChangePassword(false);
 				userDataRepository.save(karineUser);
-				System.out.println("Karine user user created.");
+				logger.info("Karine user user created.");
 			} else {
-				System.out.println("Karine user already exists.");
+				logger.info("Karine user already exists.");
 			}
 		};
 	}

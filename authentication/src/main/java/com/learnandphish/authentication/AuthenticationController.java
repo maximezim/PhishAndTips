@@ -1,6 +1,7 @@
 package com.learnandphish.authentication;
 
 import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.mail.MailTemplates;
 import com.learnandphish.authentication.user.ScanResult;
 import com.learnandphish.authentication.jwt.JwtRequest;
 import com.learnandphish.authentication.jwt.JwtResponse;
@@ -8,11 +9,16 @@ import com.learnandphish.authentication.jwt.JwtUserDetailsService;
 import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -68,6 +74,8 @@ public class AuthenticationController {
     private RestTemplate restTemplate;
 
     private final String spiderfootApiUrl = "http://spiderfoot-api:8001/internal/spiderfoot";
+
+    private final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     /**
      * Endpoint to authenticate users and provide JWT token.
@@ -166,22 +174,13 @@ public class AuthenticationController {
         EmailSender emailSender = new EmailSender(mailSender);
 
         //TODO: Fix content, use emailTemplate
-        String subject = "Votre mot de passe Phish&Tips";
-        String emailContent = "<html>" +
-                "<body>" +
-                "<p>Votre mot de passe <strong>Phish&amp;Tips</strong> a été réinitialisé.</p>" +
-                "<p>Votre nouveau mot de passe est : <strong>" + password + "</strong></p>" +
-                "<p>Vous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe.</p>" +
-                "<p>Veuillez changer votre mot de passe dès votre première connexion.</p>" +
-                "<p>Cordialement,</p>" +
-                "<p>L'équipe <strong>Phish&amp;Tips</strong></p>" +
-                "</body>" +
-                "</html>";
+        String subject = "[Phish&Tips] Réinitialisation de votre mot de passe";
+        String emailContent = MailTemplates.loadPasswordResetTemplate(password);
 
         try {
             emailSender.sendEmail(email, subject, emailContent);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            logger.error("Error sending email", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
         }
 
@@ -191,32 +190,47 @@ public class AuthenticationController {
     @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/need-change-password")
     public ResponseEntity<Boolean> needChangePassword() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
 
-        UserData user = userDataRepository.findByEmail(email)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            UserData user = userDataRepository.findByEmail(email)
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        return ResponseEntity.ok(user.getChangePassword());
+            return ResponseEntity.ok(user.getChangePassword());
+        } catch (Exception e) {
+            logger.error("Error checking if user needs to change password", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
     }
 
     @RolesAllowed("ADMIN")
     @PostMapping("/update-user")
     public ResponseEntity<?> updateUser(@Valid @RequestBody UserDTO userDTO) {
-        UserData user = userDataRepository.findByEmail(userDTO.getEmail())
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        try {
 
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setPosition(userDTO.getPosition());
-        user.setRole(userDTO.getRole());
-        userDataRepository.save(user);
+            if (userDTO.getRole() == null) {
+                return ResponseEntity.badRequest().body("Role must be provided");
+            }
 
-        return ResponseEntity.ok("User updated successfully");
+            UserData user = userDataRepository.findByEmail(userDTO.getEmail())
+                    .stream()
+                    .findFirst()
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            user.setFirstName(userDTO.getFirstName());
+            user.setLastName(userDTO.getLastName());
+            user.setPosition(userDTO.getPosition());
+            user.setRole(userDTO.getRole());
+            userDataRepository.save(user);
+
+            return ResponseEntity.ok("User updated successfully");
+        } catch (Exception e) {
+            logger.error("Error updating user", e);
+            return ResponseEntity.badRequest().body("Role must be provided");
+        }
     }
 
     @RolesAllowed("ADMIN")
@@ -263,16 +277,19 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body("File is empty");
         }
 
-        if (Objects.equals(file.getContentType(), "text/csv")) {
+        if (!Objects.equals(file.getContentType(), "text/csv") && !Objects.equals(file.getContentType(), "application/vnd.ms-excel")) {
             return ResponseEntity.badRequest().body("File must be a CSV");
         }
 
         List<RegisterRequest> usersToRegister = userUtilsService.importUsersFromCsv(file);
 
         for (RegisterRequest user : usersToRegister) {
-            register(user);
+            try {
+                register(user);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error importing user" + user.getEmail());
+            }
         }
-
         return ResponseEntity.ok("Users imported successfully");
     }
 
@@ -297,21 +314,13 @@ public class AuthenticationController {
 
         EmailSender emailSender = new EmailSender(mailSender);
 
-        String subject = "Votre compte Phish&Tips";
-        String emailContent = "<html>" +
-                "<body>" +
-                "<p>Votre compte <strong>Phish&amp;Tips</strong> a été créé.</p>" +
-                "<p>Votre mot de passe est : <strong>" + password + "</strong></p>" +
-                "<p>Vous pouvez vous connecter à l'application avec votre adresse email professionnel et ce mot de passe.</p>" +
-                "<p>Veuillez changer votre mot de passe dès votre première connexion.</p>" +
-                "<p>Cordialement,</p>" +
-                "<p>L'équipe <strong>Phish&amp;Tips</strong></p>" +
-                "</body>" +
-                "</html>";
+        String subject = "[Phish&Tips] Votre compte a été créé";
+        String emailContent = MailTemplates.loadRegisteredTemplate(password);
 
         try {
             emailSender.sendEmail(request.getEmail(), subject, emailContent);
         } catch (Exception e) {
+            logger.error("Error sending email", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
         }
 
@@ -352,12 +361,22 @@ public class AuthenticationController {
 
     @RolesAllowed({"ADMIN"})
     @GetMapping("/get-all-users")
-    public ResponseEntity<Page<UserDTO>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<PagedModel<EntityModel<UserDTO>>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            PagedResourcesAssembler<UserDTO> assembler) {
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("lastName").ascending());
-        Page<UserDTO> usersDTO = userDataRepository.findAll(pageable).map(user -> new UserDTO(
-            user.getFirstName(), user.getLastName(), user.getEmail(), user.getPosition(), user.getRole()
-        ));
-        return ResponseEntity.ok(usersDTO);
+        Page<UserDTO> usersDTO = userDataRepository.findAll(pageable)
+                .map(user -> new UserDTO(
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        user.getPosition(),
+                        user.getRole()
+                ));
+
+        return ResponseEntity.ok(assembler.toModel(usersDTO));
     }
 
     // Endpoint for users to retrieve their own scan result using JWT extracted email

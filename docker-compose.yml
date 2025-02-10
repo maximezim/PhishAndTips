@@ -47,6 +47,8 @@ services:
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=${SMTP_ENABLE_TLS:-false}
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=${SMTP_ENABLE_TLS:-false}
       - MAIL_FROM=${SMTP_FROM:-sender@example.com}
+    volumes:
+      - ./authentication/templates:/var/authentication/templates
     profiles:
       - prod
       - dev

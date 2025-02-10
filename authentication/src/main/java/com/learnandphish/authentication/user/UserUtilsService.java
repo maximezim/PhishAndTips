@@ -1,5 +1,6 @@
 package com.learnandphish.authentication.user;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +68,10 @@ public class UserUtilsService {
                 String[] data = line.split(",");
                 if (data.length == 4) {
                     RegisterRequest registerRequest = new RegisterRequest();
-                    registerRequest.setFirstName(data[0]);
-                    registerRequest.setLastName(data[1]);
+                    registerRequest.setFirstName(StringUtils.capitalize(data[0]));
+                    registerRequest.setLastName(StringUtils.capitalize(data[1]));
                     registerRequest.setEmail(data[2]);
-                    registerRequest.setPosition(data[3]);
+                    registerRequest.setPosition(StringUtils.capitalize(data[3]));
                     registerRequest.setRole(Roles.USER);
                     registerRequests.add(registerRequest);
                 }
