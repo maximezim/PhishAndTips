@@ -9,6 +9,10 @@ import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -25,6 +29,7 @@ import org.springframework.http.HttpStatus;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -197,12 +202,33 @@ public class AuthenticationController {
     }
 
     @RolesAllowed("ADMIN")
+    @PostMapping("/update-user")
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserDTO userDTO) {
+        UserData user = userDataRepository.findByEmail(userDTO.getEmail())
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setPosition(userDTO.getPosition());
+        user.setRole(userDTO.getRole());
+        userDataRepository.save(user);
+
+        return ResponseEntity.ok("User updated successfully");
+    }
+
+    @RolesAllowed("ADMIN")
     @PostMapping("/delete-user")
     public ResponseEntity<?> deleteUser(@RequestBody String email) {
         UserData user = userDataRepository.findByEmail(email)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (Objects.equals(user.getEmail(), tokenEmail)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You cannot delete your own account");
+        }
 
         userDataRepository.delete(user);
 
@@ -292,21 +318,32 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setFirstName(user.getFirstName());
-        userDTO.setLastName(user.getLastName());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setPosition(user.getPosition());
-        userDTO.setRole(user.getRole());
+        UserDTO userDTO = new UserDTO(
+            user.getFirstName(),
+            user.getLastName(),
+            user.getEmail(),
+            user.getPosition(),
+            user.getRole()
+        );
         return ResponseEntity.ok(userDTO);
     }
 
     @RolesAllowed({"ADMIN"})
-    @GetMapping("/get-all-users")
-    public ResponseEntity<List<GophishUserDTO>> getAllUsers() {
+    @GetMapping("/get-all-gophish-users")
+    public ResponseEntity<List<GophishUserDTO>> getAllGophishUsers() {
         List<UserData> users = userDataRepository.findAll();
-        return ResponseEntity.ok(userUtilsService.convertToGophishUsersDTO(users));
+        List<GophishUserDTO> usersDTO = userExportService.convertToGophishUsersDTO(users);
+        return ResponseEntity.ok(usersDTO);
+    }
+
+    @RolesAllowed({"ADMIN"})
+    @GetMapping("/get-all-users")
+    public ResponseEntity<Page<UserDTO>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("lastName").ascending());
+        Page<UserDTO> usersDTO = userDataRepository.findAll(pageable).map(user -> new UserDTO(
+            user.getFirstName(), user.getLastName(), user.getEmail(), user.getPosition(), user.getRole()
+        ));
+        return ResponseEntity.ok(usersDTO);
     }
 
     // Endpoint for users to retrieve their own scan result using JWT extracted email
