@@ -299,6 +299,7 @@ public class AuthenticationController {
             try {
                 register(user);
             } catch (Exception e) {
+                logger.error("Error importing user", e);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error importing user" + user.getEmail());
             }
         }
@@ -318,11 +319,13 @@ public class AuthenticationController {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setEmail(request.getEmail());
-        user.setRole(request.getRole());
+        user.setRole(Roles.USER);
         user.setPosition(request.getPosition());
         user.setPasswordHash(passwordEncoder.encode(password));
         user.setChangePassword(true);
         userDataRepository.save(user);
+
+        logger.info("User registered: {}", user.getEmail());
 
         EmailSender emailSender = new EmailSender(mailSender);
 
@@ -331,6 +334,7 @@ public class AuthenticationController {
 
         try {
             emailSender.sendEmail(request.getEmail(), subject, emailContent);
+            logger.info("Email sent to: {}", request.getEmail());
         } catch (Exception e) {
             logger.error("Error sending email", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");

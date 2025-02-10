@@ -68,11 +68,10 @@ public class UserUtilsService {
                 String[] data = line.split(",");
                 if (data.length == 4) {
                     RegisterRequest registerRequest = new RegisterRequest();
-                    registerRequest.setFirstName(StringUtils.capitalize(data[0]));
-                    registerRequest.setLastName(StringUtils.capitalize(data[1]));
-                    registerRequest.setEmail(data[2]);
-                    registerRequest.setPosition(StringUtils.capitalize(data[3]));
-                    registerRequest.setRole(Roles.USER);
+                    registerRequest.setFirstName(StringUtils.capitalize(data[0].trim()));
+                    registerRequest.setLastName(StringUtils.capitalize(data[1].trim()));
+                    registerRequest.setEmail(data[2].trim());
+                    registerRequest.setPosition(StringUtils.capitalize(data[3].trim()));
                     registerRequests.add(registerRequest);
                 }
             }
