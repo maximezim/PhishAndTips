@@ -1,17 +1,65 @@
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
-  import ScoringDiv from '$lib/components/custom/scoring/ScoringDiv.svelte';
-  import Separator from "$lib/components/custom/Separator.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
-	import { onMount } from "svelte";
 	import type { User } from "$types/users";
+	import ScoringCard from "$lib/components/custom/scoring/ScoringCard.svelte";
+	import FormationCard from "$lib/components/custom/./formation/FormationCard.svelte";
+	import ScoringBadgesCarousel from "$lib/components/custom/scoring/ScoringBadgesCarousel.svelte";
+	import ScoringOsintCard from "$lib/components/custom/./scoring/ScoringOsintCard.svelte";
+	import ScoringPhishingCard from "$lib/components/custom/scoring/ScoringPhishingCard.svelte";
   
-  export let email: string = "";
-  let user: User;
+  export let user: User = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    position: ""
+  };
 
-  async function getUser() {
+  let userOsintScore: number = 0;
+  let userPhishingScore: number = 0;
+  let userFormationScore: number = 0;
+  let userTotalScore: number = 0;
+
+  async function getUserPhishingScore() {
     try {
-      user = await fetch(`/api/db/user?email=${email}`).then(res => res.json());
+      userPhishingScore = await fetch("/api/scoring/phishing").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte de score phishing: ', e);
+    }
+  }
+
+  async function getUserOsintScore() {
+    try {
+      userOsintScore = await fetch("/api/scoring/osint").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
+    }
+  }  
+
+  async function getUserFormationScore() {
+    try {
+      userFormationScore = await fetch("/api/scoring/formation").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte de score formation: ', e);
+    }
+  }
+
+  async function getUserTotalScore() {
+    try {
+      userTotalScore = await fetch("/api/scoring").then(res => res.json());
+    } catch(e) {
+      console.error('Erreur lors de l\'appel de l\'API svelte du score total: ', e);
+    }
+  }
+
+  async function getUserScore() {
+    try {
+      await Promise.all([
+        getUserPhishingScore(),
+        getUserOsintScore(),
+        getUserFormationScore(),
+        getUserTotalScore(),
+      ]);
     } catch(e) {
       console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
     }
@@ -20,17 +68,30 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class={"bg-accent"} builders={[builder]} on:click={getUser}>
+    <Button class={"bg-accent"} builders={[builder]} on:click={getUserScore}>
       Voir le détail
     </Button>
   </AlertDialog.Trigger>
-  <AlertDialog.Content class="max-w-5xl flex flex-col">
+  <AlertDialog.Content class="max-w-[90vw] flex flex-col">
     <AlertDialog.Header>
-      <AlertDialog.Title>Détail du score de vulnérabilité</AlertDialog.Title>
+      <AlertDialog.Title>{user.firstName} {user.lastName} ({user.email})</AlertDialog.Title>
     </AlertDialog.Header>
-    <p>
-      {email} {user.email} {user.last_name} {user.first_name} 
-    </p>
+    <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-12 w-full">
+      <!-- Scoring Card ($lib/components/custom/scoring/ScoringCard.svelte) -->
+      <ScoringCard totalScore={userTotalScore} osintScore={userOsintScore} phishingScore={userPhishingScore} formationScore={userFormationScore} />
+      
+      <!-- Formation Card ($lib/components/custom/formation/FormationCard.svelte) -->
+      <FormationCard />
+
+      <!-- Osint scoring Card ($lib/components/custom/scoring/ScoringOsintCard.svelte) -->
+      <ScoringOsintCard />
+
+      <!-- Scoring badges carousel ($lib/components/custom/scoring/ScoringBadgesCarousel.svelte) -->
+      <ScoringBadgesCarousel />
+
+      <!-- Phishing scoring Card ($lib/components/custom/scoring/ScoringPhishingCard.svelte) -->
+      <ScoringPhishingCard />
+    </div>
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
     </AlertDialog.Footer>

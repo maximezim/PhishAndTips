@@ -12,8 +12,8 @@ class DbService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
+
 			// TODO: handle pagination
-			console.log(response.data.content);
 			return response.data.content;
 		} catch (error: any) {
 			console.error('Erreur lors de la récupération des utilisateurs:', error.message);
