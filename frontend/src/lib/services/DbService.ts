@@ -86,8 +86,7 @@ class DbService {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.get(`${GATEWAY_URL}/get-all-users`, {
 				headers: {
-					Authorization: `Bearer ${jwt}`,
-					'Content-Type': 'text/csv'
+					Authorization: `Bearer ${jwt}`
 				}
 			});
 
@@ -101,17 +100,18 @@ class DbService {
 	}
 
 	// Import CSV
-	public static async importUser(cookies: any, user: any): Promise<any[]> {
+	public static async importCSV(cookies: any, users: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/create-user`, user, {
+			const response = await axios.post(`${GATEWAY_URL}/import-users`, users, {
 				headers: {
-					Authorization: `Bearer ${jwt}`
+					Authorization: `Bearer ${jwt}`,
+					'Content-Type': 'text/csv'
 				}
 			});
 			return response.data;
 		} catch (error: any) {
-			console.error('Error while creating user:', error.message);
+			console.error('Error while importing users CSV file:', error.message);
 			console.error(error);
 			return [];
 		}
