@@ -52,7 +52,7 @@
 
   async function updatePage() {
     if (!validateForm()){
-      console.log(errors);
+      console.error(errors);
       return;
     } 
 

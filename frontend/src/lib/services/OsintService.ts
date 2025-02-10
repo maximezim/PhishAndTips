@@ -16,7 +16,6 @@ class OsintService {
 					}
 				}
 			);
-			console.log('OSINT SERVICE : ', response, response.data);
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while fetching my scan:', error);

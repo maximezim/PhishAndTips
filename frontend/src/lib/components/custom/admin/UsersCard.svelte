@@ -8,6 +8,9 @@
   import Separator from '$lib/components/custom/Separator.svelte';
 	import UserPopup from './UserPopup.svelte';
 	import UserEditPopup from './UserEditPopup.svelte';
+	import ConfirmPopup from '../ConfirmPopup.svelte';
+	import UserAddPopup from './UserAddPopup.svelte';
+	import UserImportPopup from './UserImportPopup.svelte';
 
   let currentPage = 1;
   const rowsPerPageUser = 10;
@@ -21,6 +24,26 @@
     } catch(e) {
       console.error('Error while fetching users: ', e);
     }
+  }
+
+  async function deleteUser(user: User) {
+    try {
+      await fetch('/api/db/user', {
+			method: 'DELETE',
+			body: JSON.stringify(user),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+    } catch(e) {
+      console.error('Error while fetching users: ', e);
+    } finally {
+      closeAlertDialog();
+    }
+  }
+
+  function closeAlertDialog() {
+    window.location.reload();
   }
 
   // Dynamincally update totalPagesUser
@@ -46,7 +69,12 @@
   <Card.Header class="flex flex-col gap-3 space-y-0">
     <Card.Title class="text-lg font-semibold flex items-center gap-3 justify-between">
       <span>Utilisateurs</span>
-      <iconify-icon class="text-3xl text-accent" icon="mingcute:group-3-fill"></iconify-icon>
+      <div class="flex flex-row gap-2 align-middle">
+        <UserAddPopup />
+        <UserImportPopup />
+        <iconify-icon class="text-3xl text-accent flex flex-col align-middle" icon="mingcute:group-3-fill"></iconify-icon>
+      </div>
+      
     </Card.Title>
   </Card.Header>
   <Card.Content class="flex flex-col gap-6">
@@ -68,7 +96,7 @@
             <Table.Cell>{user.firstName}</Table.Cell>
             <Table.Cell>{user.email}</Table.Cell>
             <Table.Cell>{user.position}</Table.Cell>
-            <Table.Cell><UserPopup user={user} /><UserEditPopup user={user} /></Table.Cell>
+            <Table.Cell class="flex flex-row align-middle gap-2"><UserPopup user={user} /><UserEditPopup user={user} /><ConfirmPopup description="Suppression de l'utilisateur" icon="mingcute:delete-2-fill" style="bg-red-500 hover:bg-red-700 text-xl text-white py-0 px-3" functionToCall={() => deleteUser(user)} /></Table.Cell>
           </Table.Row>
         {/each}
       </Table.Body>

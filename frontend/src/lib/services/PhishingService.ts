@@ -139,7 +139,6 @@ class PhishingService {
 
 	public static async createTemplate(cookies: any, template: any) {
 		try {
-			console.log(template);
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${API_URL}/api/templates/?api_key=${API_KEY}`, template, {
 				headers: {

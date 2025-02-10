@@ -12,22 +12,21 @@ class DbService {
 	public static async createUser(cookies: any, user: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${GATEWAY_URL}/get-all-users`, {
+			const response = await axios.post(`${GATEWAY_URL}/create-user`, user, {
 				headers: {
 					Authorization: `Bearer ${jwt}`,
 					'Content-Type': 'application/json'
 				}
 			});
-
-			// TODO: handle pagination
-			return response.data.content;
+			return response.data;
 		} catch (error: any) {
-			console.error('Erreur lors de la récupération des utilisateurs:', error.message);
+			console.error('Error while creating user:', error.message);
 			console.error(error);
 			return [];
 		}
 	}
 
+	// Read
 	public static async getUser(cookies: any, userEmail: string): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
@@ -117,6 +116,10 @@ class DbService {
 		}
 	}
 
+	/*
+	 * Roles
+	 * Get
+	 */
 	/*
 	 * Roles
 	 * Get
