@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -57,23 +58,26 @@ public class UserUtilsService {
         }).toList();
     }
 
-    public void importUsersFromCsv(MultipartFile file) {
+    public List<RegisterRequest> importUsersFromCsv(MultipartFile file) {
 
+        List<RegisterRequest> registerRequests = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 if (data.length == 4) {
-                    UserData userData = new UserData();
-                    userData.setFirstName(data[0]);
-                    userData.setLastName(data[1]);
-                    userData.setEmail(data[2]);
-                    userData.setPosition(data[3]);
-                    userDataRepository.save(userData);
+                    RegisterRequest registerRequest = new RegisterRequest();
+                    registerRequest.setFirstName(data[0]);
+                    registerRequest.setLastName(data[1]);
+                    registerRequest.setEmail(data[2]);
+                    registerRequest.setPosition(data[3]);
+                    registerRequest.setRole(Roles.USER);
+                    registerRequests.add(registerRequest);
                 }
             }
         } catch (IOException e) {
             logger.error("Error importing users from CSV file", e);
         }
+        return registerRequests;
     }
 }

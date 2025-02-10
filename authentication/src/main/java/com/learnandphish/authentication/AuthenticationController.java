@@ -267,7 +267,11 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body("File must be a CSV");
         }
 
-        userUtilsService.importUsersFromCsv(file);
+        List<RegisterRequest> usersToRegister = userUtilsService.importUsersFromCsv(file);
+
+        for (RegisterRequest user : usersToRegister) {
+            register(user);
+        }
 
         return ResponseEntity.ok("Users imported successfully");
     }
