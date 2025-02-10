@@ -18,6 +18,7 @@
     export let pwd_bg;
     export let phishing_text;
     export let phishing_bg;
+    export let className = '';
 
     let sidebar = true;
     let sidebar_width = 'w-60';
@@ -35,7 +36,7 @@
 
 </script>
 
-<aside class={`h-full flex flex-col bg-secondary ${sidebar_width} justify-between`}>
+<aside class={`h-full flex flex-col bg-secondary ${sidebar_width} justify-between ${className}`}>
     <div class="sidebar-up flex flex-col items-center gap-16">
         <div class={`sidebar-header h-32 flex flex-col items-center gap-3`}>
             <img src={logo_svg} alt="logo" class={`logo ${style_logo}`} />

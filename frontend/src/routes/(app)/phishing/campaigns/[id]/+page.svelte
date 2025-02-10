@@ -241,7 +241,7 @@
 {#if !loading_data}
 <div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
   <div class="header flex items-center gap-4">
-    <h1 class="text-2xl font-semibold">Informations sur la campagne</h1>
+    <h1 class="text-xl font-semibold">Informations sur la campagne</h1>
   </div>
   <div class="grid grid-cols-3 gap-6 my-6">
     <div class="col-span-3 lg:col-span-1 flex flex-col gap-2 bg-muted rounded p-5 shadow">

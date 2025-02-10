@@ -8,6 +8,7 @@
   import Checkbox from "$lib/components/ui/checkbox/checkbox.svelte";
   import type { DateValue } from "@internationalized/date";
   import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
+	import Separator from "../Separator.svelte";
 
   type Group = { name: string; date: string; status: string; nb: number };
   type Page = { id: number; name: string; html: string; capture_credentials: boolean; capture_passwords: boolean; modified_date: string; redirect_url: string };
@@ -127,24 +128,27 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class="bg-accent" builders={[builder]}>Créer une campagne</Button>
+    <Button class="bg-accent w-full sm:w-auto" builders={[builder]}>Créer une campagne</Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-4xl flex flex-col max-h-[90vh] overflow-y-auto">
     <AlertDialog.Header>
-      <AlertDialog.Title>Créer une nouvelle campagne {getFormattedDate(launch_date)}</AlertDialog.Title>
+      <AlertDialog.Title>Créer une nouvelle campagne</AlertDialog.Title>
       <AlertDialog.Description>
         Remplissez les informations nécessaires pour créer une nouvelle campagne de phishing.
       </AlertDialog.Description>
-      <div class="grid grid-cols-2 w-full gap-x-8 gap-y-4 pt-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 w-full gap-x-8 gap-y-4">
+        <div class="col-span-2">
+          <Separator width={'w-full'} margin_top={'mt-2'} margin_bottom={'mb-1'} height={'h-px'}/>
+        </div>
         <div class="name flex flex-col gap-2">
-          <p class="text-sm">Choisir un nom</p>
+          <p class="text-sm text-left">Choisir un nom</p>
           <Input type="text" bind:value={campaignName} placeholder="Nom de la campagne" class="w-full" />
           {#if errors.campaignName}
-            <p class="text-red-500 text-sm">{errors.campaignName}</p>
+            <p class="text-red-500 text-sm text-left">{errors.campaignName}</p>
           {/if}
         </div>
         <div class="group flex flex-col gap-2">
-          <p class="text-sm">Choisir un groupe</p>
+          <p class="text-sm text-left">Choisir un groupe</p>
           <Select.Root onSelectedChange={(value) => (selectedGroup = value?.value as Group)}>
             <Select.Trigger>
               <Select.Value placeholder="Groupe" />
@@ -156,11 +160,11 @@
             </Select.Content>
           </Select.Root>
           {#if errors.selectedGroup}
-            <p class="text-red-500 text-sm">{errors.selectedGroup}</p>
+            <p class="text-red-500 text-sm text-left">{errors.selectedGroup}</p>
           {/if}
         </div>
         <div class="mail flex flex-col gap-2">
-          <p class="text-sm">Choisir un mail</p>
+          <p class="text-sm text-left">Choisir un mail</p>
           <Select.Root onSelectedChange={(value) => (selectedTemplate = value?.value as Template)}>
             <Select.Trigger>
               <Select.Value placeholder="Mail" />
@@ -172,11 +176,11 @@
             </Select.Content>
           </Select.Root>
           {#if errors.selectedTemplate}
-            <p class="text-red-500 text-sm">{errors.selectedTemplate}</p>
+            <p class="text-red-500 text-sm text-left">{errors.selectedTemplate}</p>
           {/if}
         </div>
         <div class="template flex flex-col gap-2">
-          <p class="text-sm">Choisir un template</p>
+          <p class="text-sm text-left">Choisir un template</p>
           <Select.Root onSelectedChange={(value) => (selectedPage = value?.value as Page)}>
             <Select.Trigger>
               <Select.Value placeholder="Template" />
@@ -188,7 +192,7 @@
             </Select.Content>
           </Select.Root>
           {#if errors.selectedPage}
-            <p class="text-red-500 text-sm">{errors.selectedPage}</p>
+            <p class="text-red-500 text-sm text-left">{errors.selectedPage}</p>
           {/if}
         </div>
         <div class="relative preview_mail h-48">
@@ -206,26 +210,26 @@
           </span>
         </div>
         <div class="date flex flex-col gap-2">
-          <p class="text-sm">Choisir la date de lancement</p>
+          <p class="text-sm text-left">Choisir la date de lancement</p>
           <DataPicker disabled={isChecked} bind:value={launch_date} />
           <div class="now ms-1 mt-1 flex justify-start items-center gap-2">
             <Checkbox id="nowCheck" bind:checked={isChecked} />
             <Label for="nowCheck">Envoyer maintenant</Label>
           </div>
           {#if errors.launchDate}
-            <p class="text-red-500 text-sm">{errors.launchDate}</p>
+            <p class="text-red-500 text-sm text-left">{errors.launchDate}</p>
           {/if}
         </div>
         <div class="date flex flex-col gap-2">
-          <p class="text-sm">Choisir la date de fin des envois (optionnel)</p>
+          <p class="text-sm text-left">Choisir la date de fin des envois (optionnel)</p>
           <DataPicker bind:value={endDate} />
           {#if errors.endDate}
-            <p class="text-red-500 text-sm">{errors.endDate}</p>
+            <p class="text-red-500 text-sm text-left">{errors.endDate}</p>
           {/if}
         </div>
       </div>
     </AlertDialog.Header>
-    <AlertDialog.Footer>
+    <AlertDialog.Footer class="mt-5 sm:mt-0">
       <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
       <ConfirmPopup description="Création de la campagne" name="Lancer" style="bg-accent" functionToCall={createCampaign} />
     </AlertDialog.Footer>
