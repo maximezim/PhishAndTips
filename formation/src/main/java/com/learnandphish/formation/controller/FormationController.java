@@ -7,6 +7,7 @@ import com.learnandphish.formation.service.FormationService;
 import com.learnandphish.formation.service.QuizService;
 import com.learnandphish.formation.service.VideoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +32,9 @@ public class FormationController {
 
     // Get a formation by id
     @GetMapping("/{formationId}")
-    public ResponseEntity<Formation> getFormationById(@PathVariable Integer formationId) {
+    public ResponseEntity<?> getFormationById(@PathVariable Integer formationId) {
         Formation formation = formationService.getFormationById(formationId);
-        return formation != null ? ResponseEntity.ok(formation) : ResponseEntity.notFound().build();
+        return formation != null ? ResponseEntity.ok(formation) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Formation not found");
     }
 
     // Get all quizzes
@@ -46,15 +47,33 @@ public class FormationController {
 
     // Get a quiz by id
     @GetMapping("/quiz/{quizId}")
-    public ResponseEntity<Quiz> getQuizById(@PathVariable Integer quizId) {
+    public ResponseEntity<?> getQuizById(@PathVariable Integer quizId) {
         Quiz quiz = quizService.getQuizById(quizId);
-        return quiz != null ? ResponseEntity.ok(quiz) : ResponseEntity.notFound().build();
+        return quiz != null ? ResponseEntity.ok(quiz) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quiz not found");
     }
 
     // Get all videos
     @GetMapping("/videos")
     public ResponseEntity<List<Video>> getAllVideos() {
         List<Video> videos = videoService.getAllVideos();
+        return ResponseEntity.ok(videos);
+    }
+
+    // Set isWatched to true for a user and a video
+    @PostMapping("/video/watched/{videoId}")
+    public ResponseEntity<String> setIsWatched(@RequestHeader("email") String email, @PathVariable Integer videoId){
+        Video video = videoService.getVideoById(videoId);
+        if (video == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video not found");
+        }
+        videoService.setIsWatched(email, videoId);
+        return ResponseEntity.ok("Video watched");
+    }
+
+    // Get all videos watched by a user
+    @GetMapping("/videos/watched")
+    public ResponseEntity<List<Video>> getVideosWatchedByUser(@RequestHeader("email") String email){
+        List<Video> videos = videoService.getVideosWatchedByUser(email);
         return ResponseEntity.ok(videos);
     }
 
@@ -91,19 +110,19 @@ public class FormationController {
 
     // Get user score for a quiz
     @GetMapping("/quiz/score/{quiz_id}")
-    public ResponseEntity<Float> getUserScoreForQuiz(@RequestHeader("email") String email, @PathVariable Integer quiz_id){
+    public ResponseEntity<?> getUserScoreForQuiz(@RequestHeader("email") String email, @PathVariable Integer quiz_id){
         Float score = quizService.getUserScoreForQuiz(email, quiz_id);
         if (score == null) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Score not found");
         }
         return ResponseEntity.ok(score);
     }
 
     @PostMapping("/badge/claim/{badgeId}")
-    public ResponseEntity<Badge> claimBadge(@PathVariable Integer badgeId, @RequestHeader("email") String email){
+    public ResponseEntity<?> claimBadge(@PathVariable Integer badgeId, @RequestHeader("email") String email){
         Badge badge = badgeService.claimBadge(badgeId, email);
         if (badge == null){
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Badge not found");
         }
         return ResponseEntity.ok(badge);
     }
@@ -115,8 +134,8 @@ public class FormationController {
     }
 
     @GetMapping("/badge/{badgeId}")
-    public ResponseEntity<Badge> getBadgeById(@PathVariable Integer badgeId){
+    public ResponseEntity<?> getBadgeById(@PathVariable Integer badgeId){
         Badge badge = badgeService.getBadgeById(badgeId);
-        return badge != null ? ResponseEntity.ok(badge) : ResponseEntity.notFound().build();
+        return badge != null ? ResponseEntity.ok(badge) : ResponseEntity.status(HttpStatus.NOT_FOUND).body("Badge not found");
     }
 }
