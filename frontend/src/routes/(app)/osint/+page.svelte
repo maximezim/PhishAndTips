@@ -230,7 +230,63 @@
 
     let color = getScoreColor(score);
     let rgb_color = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
-    console.log(`Couleur pour ${color}% : ${rgb_color}`);
+    
+    const typeTranslations = new Map<string, string>([
+      ["PGP_KEY", "Clé PGP"],
+      ["MALICIOUS_EMAILADDR", "Adresse email malveillante"],
+      ["USERNAME", "Nom d'utilisateur"],
+      ["ROOT", "Adresse email principale"],
+      ["EMAILADDR", "Adresse email"],
+      ["EMAILADDR_COMPROMISED", "Adresse email compromise"],
+      ["IP_ADDRESS", "Adresse IP"],
+      ["DOMAIN_NAME", "Nom de domaine"],
+      ["PHONE_NUMBER", "Numéro de téléphone"],
+      ["SOCIAL_MEDIA", "Compte de réseau social"],
+      ["LEAKED_CREDENTIAL", "Identifiant compromis"],
+      ["HASH", "Hash (empreinte numérique)"],
+      ["URL", "URL (adresse web)"],
+      ["HOSTNAME", "Nom d'hôte"],
+      ["SSL_CERTIFICATE", "Certificat SSL"],
+      ["WHOIS", "Informations WHOIS"],
+      ["DNS_RECORD", "Enregistrement DNS"],
+      ["GEOLOCATION", "Géolocalisation"],
+      ["COMPANY_NAME", "Nom de l'entreprise"],
+      ["BREACH", "Violation de données"],
+      ["VULNERABILITY", "Vulnérabilité"],
+      ["AFFILIATE", "Affilié"],
+      ["AFFILIATION", "Affiliation"],
+      ["SUBDOMAIN", "Sous-domaine"],
+      ["NETBLOCK", "Bloc réseau"],
+      ["ASN", "Numéro de système autonome (ASN)"],
+      ["PORT", "Port"],
+      ["SERVICE", "Service"],
+      ["TECHNOLOGY", "Technologie"],
+      ["EMAIL_DOMAIN", "Domaine de l'email"],
+      ["PASSWORD", "Mot de passe"],
+      ["CVE", "Identifiant de vulnérabilité (CVE)"],
+      ["CERTIFICATE", "Certificat"],
+      ["REGISTRAR", "Bureau d'enregistrement"],
+      ["REGISTRANT", "Enregistrant"],
+      ["ORG", "Organisation"],
+      ["ADDRESS", "Adresse physique"],
+      ["PERSON", "Personne"],
+      ["BANNER", "Bannière de service"],
+      ["SPF_RECORD", "Enregistrement SPF"],
+      ["DMARC_RECORD", "Enregistrement DMARC"],
+      ["MX_RECORD", "Enregistrement MX"],
+      ["TXT_RECORD", "Enregistrement TXT"],
+      ["A_RECORD", "Enregistrement A"],
+      ["AAAA_RECORD", "Enregistrement AAAA"],
+      ["CNAME_RECORD", "Enregistrement CNAME"],
+      ["PTR_RECORD", "Enregistrement PTR"],
+      ["NS_RECORD", "Enregistrement NS"],
+      ["SOA_RECORD", "Enregistrement SOA"],
+      ["SRV_RECORD", "Enregistrement SRV"]
+    ]);
+
+    function getTypeTranslation(type: string): string {
+      return typeTranslations.get(type) || type;
+    }
 
   </script>
 
@@ -266,7 +322,7 @@
             {#if scanResult}
               {#each scanResult.parsed_data.results as result, index}
                 <div class="result flex flex-col gap-2 p-4 bg-white shadow overflow-auto">
-                  <p class="text-medium font-semibold">{result.Type}</p>
+                  <p class="text-medium font-semibold">{getTypeTranslation(result.Type)}</p>
                   <p class="text-sm italic text-gray-600">{result.Data}</p>
                 </div>
               {/each}
@@ -345,7 +401,7 @@
                           <div class="h-[50vh] overflow-y-auto px-6">
                             {#each parseScanResult(user.scan.result).parsed_data.results as result, index}
                               <div class="result flex flex-col mt-2 gap-2 p-4 bg-gray-50 shadow overflow-auto">
-                                <p class="text-medium font-semibold">{result.Type}</p>
+                                <p class="text-medium font-semibold">{getTypeTranslation(result.Type)}</p>
                                 <p class="text-sm italic text-gray-600">{result.Data}</p>
                               </div>
                             {/each}
