@@ -173,7 +173,6 @@ public class AuthenticationController {
 
         EmailSender emailSender = new EmailSender(mailSender);
 
-        //TODO: Fix content, use emailTemplate
         String subject = "[Phish&Tips] Réinitialisation de votre mot de passe";
         String emailContent = MailTemplates.loadPasswordResetTemplate(password);
 
