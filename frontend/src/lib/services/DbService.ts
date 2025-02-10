@@ -99,10 +99,11 @@ class DbService {
 	}
 
 	// Import CSV
-	public static async importCSV(cookies: any, users: any): Promise<any[]> {
+	public static async importCSV(cookies: any, usersFormData: any): Promise<any[]> {
+		console.log('SERVER : ', usersFormData);
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/import-users`, users, {
+			const response = await axios.post(`${GATEWAY_URL}/import-users`, usersFormData, {
 				headers: {
 					Authorization: `Bearer ${jwt}`,
 					'Content-Type': 'text/csv'
@@ -111,7 +112,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while importing users CSV file:', error.message);
-			console.error(error);
+			// console.error(error);
 			return [];
 		}
 	}

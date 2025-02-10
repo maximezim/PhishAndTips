@@ -31,8 +31,21 @@ export async function GET({ cookies }) {
  */
 export async function POST({ cookies, request }) {
 	try {
-		const response = await DbService.importCSV(cookies, request);
-		if (response != null) {
+		const formData = await request.formData();
+		const file = formData.get('file');
+
+		if (!file || !(file instanceof Blob)) {
+			return new Response(JSON.stringify({ error: 'No valid CSV file provided' }), {
+				status: 400
+			});
+		}
+
+		const newFormData = new FormData();
+		newFormData.append('file', file);
+
+		const response = await DbService.importCSV(cookies, newFormData);
+
+		if (response) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
 			console.error('Error while importing users CSV file.');
@@ -41,6 +54,7 @@ export async function POST({ cookies, request }) {
 			});
 		}
 	} catch (e) {
-		console.error(e);
+		console.error('API Error:', e);
+		return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
 	}
 }
