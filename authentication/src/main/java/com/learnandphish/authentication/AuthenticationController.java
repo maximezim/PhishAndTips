@@ -135,7 +135,11 @@ public class AuthenticationController {
         UserData user = userDataRepository.findByEmail(email)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
 
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Current password is incorrect");
@@ -153,11 +157,15 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestBody String email) {
+    public ResponseEntity<?> resetPassword(@RequestParam String email) {
         UserData user = userDataRepository.findByEmail(email)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
 
         String password = generatePassword();
         user.setPasswordHash(passwordEncoder.encode(password));
@@ -191,14 +199,18 @@ public class AuthenticationController {
 
     @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/need-change-password")
-    public ResponseEntity<Boolean> needChangePassword() {
+    public ResponseEntity<?> needChangePassword() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
 
         UserData user = userDataRepository.findByEmail(email)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
 
         return ResponseEntity.ok(user.getChangePassword());
     }
@@ -226,7 +238,11 @@ public class AuthenticationController {
         UserData user = userDataRepository.findByEmail(email)
                 .stream()
                 .findFirst()
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElse(null);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
 
         if (Objects.equals(user.getEmail(), tokenEmail)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You cannot delete your own account");
@@ -307,7 +323,7 @@ public class AuthenticationController {
 
     @RolesAllowed({"USER", "ADMIN"})
     @GetMapping("/get-user")
-    public ResponseEntity<UserDTO> getUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> getUser(@RequestHeader("Authorization") String token) {
         String extractedToken = token.substring(7);
         String email = jwtUtil.extractUsername(extractedToken);
         UserData user = userDataRepository.findByEmail(email)
@@ -316,7 +332,7 @@ public class AuthenticationController {
             .orElse(null);
 
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         UserDTO userDTO = new UserDTO(

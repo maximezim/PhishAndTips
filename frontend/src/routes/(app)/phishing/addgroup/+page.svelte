@@ -83,9 +83,10 @@
 <AlertDialog.Root open={!loading_data} on:close={closeAlertDialog}>
     <AlertDialog.Content class="max-w-4xl flex flex-col">
         <AlertDialog.Header>
-            <AlertDialog.Title>Créer un groupe</AlertDialog.Title>
+            <AlertDialog.Title class="text-left">Créer un groupe</AlertDialog.Title>
         </AlertDialog.Header>
         <div class="flex flex-col gap-6">
+            <Separator width={'w-full'} height={'h-px'}/>
             <div class="nom flex flex-col gap-3">
                 <Label for="name">Nom du groupe</Label>
                 <Input id="name" type="text" bind:value={group_name} />
