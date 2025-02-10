@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,19 +53,27 @@ public class GophishActionService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", gophishApiKey);
         HttpEntity<Void> reqEntity = new HttpEntity<>(headers);
-        ResponseEntity<JsonNode> response = restTemplate.exchange(GOPHISH_API_URL, HttpMethod.GET, reqEntity, JsonNode.class);
-        JsonNode body = response.getBody();
-        if(body == null) return Collections.emptyList();
 
-        List<JsonNode> filteredEvents = new ArrayList<>();
-        body.forEach(campaign -> {
-            JsonNode timeline = campaign.path("timeline");
-            if (timeline.isArray()) {
-                StreamSupport.stream(timeline.spliterator(), false)
-                    .filter(event -> event.path("email").asText().equalsIgnoreCase(email))
-                    .forEach(filteredEvents::add);
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.exchange(GOPHISH_API_URL, HttpMethod.GET, reqEntity, JsonNode.class);
+            JsonNode body = response.getBody();
+            if(body == null) return Collections.emptyList();
+
+            List<JsonNode> filteredEvents = new ArrayList<>();
+            body.forEach(campaign -> {
+                JsonNode timeline = campaign.path("timeline");
+                if (timeline.isArray()) {
+                    StreamSupport.stream(timeline.spliterator(), false)
+                        .filter(event -> event.path("email").asText().equalsIgnoreCase(email))
+                        .forEach(filteredEvents::add);
+                }
+            });
+            return filteredEvents;
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+                throw new ResponseStatusException(HttpStatus.EXPECTATION_FAILED, "Invalid Gophish API key provided", e);
             }
-        });
-        return filteredEvents;
+            throw new ResponseStatusException(e.getStatusCode(), "Error calling Gophish API: " + e.getMessage(), e);
+        }
     }
 }
