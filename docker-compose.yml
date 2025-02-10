@@ -143,7 +143,7 @@ services:
       - gophish-data:/opt/gophish
       - ./gophish/config.json:/opt/gophish/config.json
     environment:
-      - GOPHISH_INITIAL_ADMIN_API_TOKEN=9e4537166e25f0d6f8187ada15c6134e80db62f34773e08bf50aba45abcf3fdf
+      - GOPHISH_INITIAL_ADMIN_API_TOKEN=${GOPHISH_API_KEY}
     ports:
       - "3333:3333" # Remove in prod
       - "80:80"
@@ -220,12 +220,12 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/authentication_db
       - SPRING_DATASOURCE_USERNAME=${AUTH_PG_USER}
       - SPRING_DATASOURCE_PASSWORD=${AUTH_PG_PASSWORD}
+      - GOPHISH_API_KEY=${GOPHISH_API_KEY}
     networks:
       - backend
     profiles:
       - prod
       - dev
-
 
   spiderfoot:
     container_name: spiderfoot
@@ -279,8 +279,6 @@ services:
   s3:
     image: minio/minio:latest
     container_name: s3
-    ports:
-        - "9000:9000"
     env_file:
       - .env
     environment:
@@ -295,7 +293,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://minio:9000/minio/health/live" ]
+      test: [ "CMD", "curl", "-f", "http://s3:9000/minio/health/live" ]
       interval: 30s
       timeout: 20s
       retries: 3

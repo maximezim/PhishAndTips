@@ -1,4 +1,4 @@
-import AuthService from '$lib/services/AuthService.js';
+import AuthService from '$lib/services/AuthService';
 
 /*
  * API endpoint : /api/auth/get-user

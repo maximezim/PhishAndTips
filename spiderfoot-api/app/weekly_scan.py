@@ -11,7 +11,7 @@ def run_weekly_scan():
 
     for email in users:
         payload = {"target": email}
-        response = requests.post("http://localhost:8000/internal/spiderfoot/scan", json=payload)
+        response = requests.post("http://localhost:8001/internal/spiderfoot/scan", json=payload)
         print(f"Triggered scan for {email}: {response.status_code}")
 
 if __name__ == "__main__":

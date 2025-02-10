@@ -60,13 +60,15 @@ public class FormationController {
 
     // Save user score
     @PostMapping("/quiz/score")
-    public ResponseEntity<String> saveUserScore(@RequestBody UserQuizScoreDTO userQuizScoreDTO) {
-        try {
-            quizService.saveUserScore(userQuizScoreDTO.getUserEmail(), userQuizScoreDTO.getQuizId(), userQuizScoreDTO.getScore());
-            return ResponseEntity.ok("Score saved successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error saving score");
+    public ResponseEntity<String> saveUserScore(@RequestBody UserQuizScoreDTO userQuizScoreDTO){
+        if (userQuizScoreDTO.getUser_email() == null || userQuizScoreDTO.getQuiz_id() == null || userQuizScoreDTO.getScore() == null){
+            return ResponseEntity.badRequest().body("Invalid request");
         }
+        if (userQuizScoreDTO.getScore() < 0 || userQuizScoreDTO.getScore() > 1){
+            return ResponseEntity.badRequest().body("Score must be between 0 and 1");
+        }
+        quizService.saveUserScore(userQuizScoreDTO.getUser_email(), userQuizScoreDTO.getQuiz_id(), userQuizScoreDTO.getScore());
+        return ResponseEntity.ok("Score saved successfully");
     }
 
     // Get user scores for all quizzes
