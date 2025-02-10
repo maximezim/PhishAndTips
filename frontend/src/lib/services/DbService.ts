@@ -37,6 +37,22 @@ class DbService {
 			return [];
 		}
 	}
+
+	public static async getRoles(cookies: any): Promise<any[]> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(`${GATEWAY_URL}/get-roles`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Erreur lors de la récupération des utilisateurs:', error.message);
+			console.error(error);
+			return [];
+		}
+	}
 }
 
 export default DbService;
