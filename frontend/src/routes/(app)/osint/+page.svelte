@@ -54,6 +54,7 @@
     interface User {
       target: Target;
       scan: MyScan | null;
+      groupedResults: Map<string, ParsedResult[]> | null;
     }
 
     let myScan: MyScan | [];
@@ -69,6 +70,7 @@
     let status = "";
     let nbResults = "";
     let score = 7;
+    let groupedResults = new Map<string, ParsedResult[]>();
 
     let currentPageUser = 1;
     const rowsPerPageUser = 10;
@@ -93,7 +95,8 @@
             }).then(res => res.json());
             return {
               target: user,
-              scan: scan
+              scan: scan,
+              groupedResults: scan ? groupResultsByType(JSON.parse(scan.result).parsed_data.results) : null
             };
           }));
         }
@@ -119,6 +122,7 @@
               status = "Terminé";
               dateScan = "Fin du scan : "+date.toLocaleDateString("fr-FR", options);
               if (scanResult && scanResult.parsed_data.results.length > 0) {
+                groupedResults = groupResultsByType(scanResult.parsed_data.results);
                 nbResults = " - " + scanResult.parsed_data.results.length + " résultat(s) exporté(s)";
               }
               break;
@@ -136,6 +140,7 @@
           }
           if(isAdmin){
             totalPagesUser = Math.ceil(users.length / rowsPerPageUser);
+
           }
         }else{
           status = "Inexistant";
@@ -288,6 +293,23 @@
       return typeTranslations.get(type) || type;
     }
 
+    function extractSite(data: string): string {
+      const match = data.match(/\[(.*?)\]/);
+      return match ? match[1] : data;
+    }
+
+    function groupResultsByType(results: ParsedResult[]) {
+      const groupedResults = new Map<string, ParsedResult[]>();
+      results.forEach(result => {
+        if (!groupedResults.has(result.Type)) {
+          groupedResults.set(result.Type, []);
+        }
+        const data = result.Data.includes('[') && result.Data.includes(']') ? extractSite(result.Data) : result.Data;
+        groupedResults.get(result.Type)?.push({ ...result, Data: data });
+      });
+      return groupedResults;
+    }
+
   </script>
 
   <div class="relative z-10 flex flex-1 flex-col flex-grow gap-4 p-4 md:gap-2 md:p-8">
@@ -319,14 +341,14 @@
     
         {#if status === "Terminé"}
         <div class="results grid grid-cols-1 sm:grid-cols-2 gap-1 bg-white mt-1">
-            {#if scanResult}
-              {#each scanResult.parsed_data.results as result, index}
-                <div class="result flex flex-col gap-2 p-4 bg-white shadow overflow-auto">
-                  <p class="text-medium font-semibold">{getTypeTranslation(result.Type)}</p>
-                  <p class="text-sm italic text-gray-600">{result.Data}</p>
-                </div>
+          {#each Array.from(groupedResults.entries()) as [type, results]}
+            <div class="result-group flex flex-col gap-2 p-4 bg-white shadow overflow-scroll">
+              <p class="text-medium font-semibold">{getTypeTranslation(type)}</p>
+              {#each results as result}
+                <p class="text-sm italic text-gray-600">{result.Data}</p>
               {/each}
-            {/if}
+            </div>
+          {/each}
         </div>
 
         <div class="analyse w-full p-6 light-bg flex items-center mt-6">
@@ -364,7 +386,7 @@
             {:else}
             {#each getCurrentPageRowsUser() as user}
               <Table.Row class="hover:bg-gray-50 bg-white">
-                  <Table.Cell><span class="flex w-4 h-4 rounded-full bg-green-400"></span></Table.Cell>
+                  <Table.Cell><span class="flex w-8 h-3 rounded-full bg-green-400"></span></Table.Cell>
                   <Table.Cell>{user.target.last_name}</Table.Cell>
                   <Table.Cell>{user.target.first_name}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.target.email}</Table.Cell>
@@ -389,7 +411,7 @@
                             </div>
                           </div> 
                           <div class="right">
-                            <span class="shadow flex w-10 h-10 rounded-full bg-green-400"></span>
+                            <span class="shadow flex w-10 h-10 rounded-full" style='background-color: {rgb_color}'></span>
                           </div>
 
                         </div>
@@ -399,12 +421,16 @@
                             <Button class="w-full sm:w-auto bg-accent" on:click={() => {}}>Nouveau scan</Button>
                           </AlertDialog.Header>
                           <div class="h-[50vh] overflow-y-auto px-6">
-                            {#each parseScanResult(user.scan.result).parsed_data.results as result, index}
-                              <div class="result flex flex-col mt-2 gap-2 p-4 bg-gray-50 shadow overflow-auto">
-                                <p class="text-medium font-semibold">{getTypeTranslation(result.Type)}</p>
-                                <p class="text-sm italic text-gray-600">{result.Data}</p>
-                              </div>
-                            {/each}
+                            {#if user.groupedResults}
+                              {#each Array.from(user.groupedResults.entries()) as [type, results]}
+                                <div class="result-group flex flex-col mt-2 gap-2 p-4 bg-gray-50 shadow overflow-auto">
+                                  <p class="text-medium font-semibold">{getTypeTranslation(type)}</p>
+                                  {#each results as result}
+                                    <p class="text-sm italic text-gray-600">{result.Data}</p>
+                                  {/each}
+                                </div>
+                              {/each}
+                            {/if}
                             <div class="w-full mt-2 p-5 bg-accent/[0.07] shadow rounded h-[60svh] overflow-y-auto">
                                 <iframe srcdoc={formatHtmlContent(user.scan.result)} class="w-full h-full rounded-shadow" title="Redirection Model"></iframe>
                             </div>
@@ -461,10 +487,12 @@
     {#if status === "Terminé"}
     <div class="results grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white">
       {#if scanResult}
-        {#each scanResult.parsed_data.results as result, index}
-          <div class="result flex flex-col gap-2 p-4 bg-white shadow overflow-auto">
-            <p class="text-medium font-semibold">{result.Type}</p>
-            <p class="text-sm italic text-gray-600">{result.Data}</p>
+        {#each Array.from(groupedResults.entries()) as [type, results]}
+          <div class="result-group flex flex-col max-h-48 gap-2 p-4 bg-white shadow overflow-scroll">
+            <p class="text-medium font-semibold">{getTypeTranslation(type)}</p>
+            {#each results as result}
+              <p class="text-sm italic text-gray-600">{result.Data}</p>
+            {/each}
           </div>
         {/each}
       {/if}
