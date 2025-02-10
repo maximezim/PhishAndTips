@@ -1,6 +1,7 @@
 package com.learnandphish.authentication;
 
 import com.learnandphish.authentication.jwt.JWTUtil;
+import com.learnandphish.authentication.mail.EmailSender;
 import com.learnandphish.authentication.mail.MailTemplates;
 import com.learnandphish.authentication.user.ScanResult;
 import com.learnandphish.authentication.jwt.JwtRequest;
