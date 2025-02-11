@@ -355,7 +355,7 @@
         {#if status === "Terminé"}
         <div class="results grid grid-cols-1 sm:grid-cols-2 gap-1 bg-white mt-1">
           {#each Array.from(groupedResults.entries()) as [type, results]}
-            <div class="result-group flex flex-col gap-2 p-4 bg-white shadow overflow-scroll">
+            <div class="result-group flex flex-col gap-2 p-4 bg-white shadow overflow-auto">
               <p class="text-medium font-semibold">{getTypeTranslation(type)}</p>
               {#each results as result}
                 <p class="text-sm italic text-gray-600">{result.Data}</p>
