@@ -9,6 +9,7 @@ import com.learnandphish.authentication.jwt.JwtResponse;
 import com.learnandphish.authentication.jwt.JwtUserDetailsService;
 import com.learnandphish.authentication.user.*;
 import jakarta.annotation.security.RolesAllowed;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Objects;
@@ -295,12 +297,19 @@ public class AuthenticationController {
 
         List<RegisterRequest> usersToRegister = userUtilsService.importUsersFromCsv(file);
 
+        if (usersToRegister.isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid CSV file format");
+        }
+
         for (RegisterRequest user : usersToRegister) {
             try {
-                register(user);
+                ResponseEntity<?> response = register(user);
+                if (response.getStatusCode() != HttpStatus.OK) {
+                    return response;
+                }
             } catch (Exception e) {
                 logger.error("Error importing user", e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error importing user" + user.getEmail());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error importing users");
             }
         }
         return ResponseEntity.ok("Users imported successfully");
@@ -310,6 +319,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
         if (!userDataRepository.findByEmail(request.getEmail()).isEmpty()) {
+            logger.error("User already exists: {}", request.getEmail());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
         }
 
@@ -335,7 +345,7 @@ public class AuthenticationController {
         try {
             emailSender.sendEmail(request.getEmail(), subject, emailContent);
             logger.info("Email sent to: {}", request.getEmail());
-        } catch (Exception e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             logger.error("Error sending email", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email");
         }

@@ -1,14 +1,14 @@
 package com.learnandphish.authentication.user;
 
+import com.opencsv.CSVReader;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,23 +60,29 @@ public class UserUtilsService {
     }
 
     public List<RegisterRequest> importUsersFromCsv(MultipartFile file) {
-
         List<RegisterRequest> registerRequests = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data.length == 4) {
-                    RegisterRequest registerRequest = new RegisterRequest();
-                    registerRequest.setFirstName(StringUtils.capitalize(data[0].trim()));
-                    registerRequest.setLastName(StringUtils.capitalize(data[1].trim()));
-                    registerRequest.setEmail(data[2].trim());
-                    registerRequest.setPosition(StringUtils.capitalize(data[3].trim()));
-                    registerRequests.add(registerRequest);
+        try (CSVReader csvReader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
+            String[] values;
+            while ((values = csvReader.readNext()) != null) {
+                if (values.length != 4) {
+                    logger.error("Missing fields in CSV file: {}", (Object) values);
+                    logger.info("Make sure the separator is a comma and the file is not corrupted");
+                    throw new IllegalArgumentException("CSV file has missing fields");
                 }
+                if (!values[2].matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) { // Check if email is valid, if not skip (header check)
+                    logger.warn("Invalid email format: {}", values[2]);
+                    continue;
+                }
+                RegisterRequest registerRequest = new RegisterRequest();
+                registerRequest.setFirstName(StringUtils.capitalize(values[0].trim()));
+                registerRequest.setLastName(StringUtils.capitalize(values[1].trim()));
+                registerRequest.setEmail(values[2].trim());
+                registerRequest.setPosition(StringUtils.capitalize(values[3].trim()));
+                registerRequests.add(registerRequest);
             }
         } catch (IOException e) {
-            logger.error("Error importing users from CSV file", e);
+            logger.error("Error while reading CSV file", e);
+            throw new RuntimeException("Error while reading CSV file", e);
         }
         return registerRequests;
     }
