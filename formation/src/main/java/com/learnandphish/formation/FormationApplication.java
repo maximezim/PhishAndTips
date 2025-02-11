@@ -1,6 +1,6 @@
 package com.learnandphish.formation;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.learnandphish.formation.model.Badge;
 import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.model.Quiz;
@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @SpringBootApplication
@@ -44,29 +46,55 @@ public class FormationApplication {
     @Autowired
     private MinioService minioService;
 
-    // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database
+    // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database and upload images to S3 then change the image links in the quiz json
     @Bean
     public CommandLineRunner initializeQuiz() {
         return args -> {
             File folder = new File("/var/formation/data/quiz");
             if (folder.exists() && folder.isDirectory()) {
-                File[] listOfFiles = folder.listFiles();
+                File[] listOfFiles = folder.listFiles(File::isFile);
                 if (listOfFiles != null && listOfFiles.length > 0) {
                     Gson gson = new Gson();
                     for (File file : listOfFiles) {
                         String quizId = file.getName().split("_")[0];
                         // Make sure the file's name is a number
                         if (!quizId.matches("\\d+")) {
-                            log.error("File name is not a number");
-                        }else {
+                            log.error("Invalid quiz file name: {}", file.getName());
+                        } else {
                             Quiz quiz = quizRepository.findById(Integer.parseInt(quizId)).orElse(new Quiz());
                             // If the quiz doesn't already exist in the db, read the content of the file and create a quiz
                             if (quiz.getId() == null) {
                                 String content = Files.readString(file.toPath());
-                                String json = gson.toJson(new GsonJsonParser().parseMap(content));
+                                JsonObject jsonObject = JsonParser.parseString(content).getAsJsonObject();
+
+                                // Upload logo
+                                if (jsonObject.has("logo")) {
+                                    String logoPath = jsonObject.get("logo").getAsString();
+                                    String logoUrl = minioService.uploadFile(new File(logoPath));
+                                    if (logoUrl != null) {
+                                        jsonObject.addProperty("logo", logoUrl);
+                                    } else {
+                                        throw new Exception("Logo upload failed for quiz: " + quizId);
+                                    }
+                                }
+
+                                // Upload image links
+                                List<String> imageLinks = extractImageLinks(jsonObject);
+                                for (String imageLink : imageLinks) {
+                                    String imageUrl = minioService.uploadFile(new File(imageLink));
+                                    if (imageUrl != null) {
+                                        replaceImageLink(jsonObject, imageLink, imageUrl);
+                                    } else {
+                                        throw new Exception("Image upload failed for quiz: " + quizId);
+                                    }
+                                }
+
+                                String updatedJson = gson.toJson(jsonObject);
                                 quiz.setId(Integer.parseInt(quizId));
-                                quiz.setJson(json);
+                                quiz.setJson(updatedJson);
                                 quizRepository.save(quiz);
+                            } else {
+                                log.info("Quiz with id {} already exists", quizId);
                             }
                         }
                     }
@@ -77,6 +105,51 @@ public class FormationApplication {
                 log.error("Folder data/quiz does not exist or is not a directory");
             }
         };
+    }
+
+    // Extract image links from a json object
+    private List<String> extractImageLinks(JsonElement element) {
+        List<String> imageLinks = new ArrayList<>();
+        extractImageLinksRecursive(element, imageLinks);
+        return imageLinks;
+    }
+
+    // Recursively extract image links from a json object
+    private void extractImageLinksRecursive(JsonElement element, List<String> imageLinks) {
+        if (element.isJsonObject()) {
+            JsonObject jsonObject = element.getAsJsonObject();
+            for (String key : jsonObject.keySet()) {
+                if (key.equals("imageLink")) {
+                    imageLinks.add(jsonObject.get(key).getAsString());
+                } else {
+                    extractImageLinksRecursive(jsonObject.get(key), imageLinks);
+                }
+            }
+        } else if (element.isJsonArray()) {
+            JsonArray jsonArray = element.getAsJsonArray();
+            for (JsonElement arrayElement : jsonArray) {
+                extractImageLinksRecursive(arrayElement, imageLinks);
+            }
+        }
+    }
+
+    // Replace image links in a json object
+    private void replaceImageLink(JsonElement element, String oldLink, String newLink) {
+        if (element.isJsonObject()) {
+            JsonObject jsonObject = element.getAsJsonObject();
+            for (String key : jsonObject.keySet()) {
+                if (key.equals("imageLink") && jsonObject.get(key).getAsString().equals(oldLink)) {
+                    jsonObject.addProperty(key, newLink);
+                } else {
+                    replaceImageLink(jsonObject.get(key), oldLink, newLink);
+                }
+            }
+        } else if (element.isJsonArray()) {
+            JsonArray jsonArray = element.getAsJsonArray();
+            for (JsonElement arrayElement : jsonArray) {
+                replaceImageLink(arrayElement, oldLink, newLink);
+            }
+        }
     }
 
     // For each object in data/formations/formations.json, create a formation if id does not exist in database
