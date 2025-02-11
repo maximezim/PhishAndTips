@@ -84,22 +84,22 @@
               {
                 "value": "Item 1",
                 "text": "Mail livraison GLS",
-                "imageLink": "/var/formation/data/quiz/img/gls_officiel.jpg",
+                "imageLink": "/var/formation/data/quiz/img/GLS_mail.png"
               },
               {
                 "value": "Item 2",
                 "text": "Mail réservation Ouigo",
-                "imageLink": "/var/formation/data/quiz/img/TGV_Ouigo_logo.png",
+                "imageLink": "/var/formation/data/quiz/img/Ouigo_mail.png"
               },
               {
                 "value": "Item 3",
                 "text": "Mail jeu concours Vinci",
-                "imageLink": "/var/formation/data/quiz/img/vinci_autoroute_logo.png",
+                "imageLink": "/var/formation/data/quiz/img/Vinci_autoroutes_mail.png"
               },
               {
                 "value": "Item 4",
                 "text": "Mail offre Boursobank",
-                "imageLink": "/var/formation/data/quiz/img/Boursobank_logo.jpeg",
+                "imageLink": "/var/formation/data/quiz/img/Boursobank_mail.png"
               }
             ],
             "choicesOrder": "random",
@@ -125,7 +125,7 @@
           {
             "type": "image",
             "name": "video3",
-            "imageLink": "/var/formation/data/quiz/img/openspace_simulator.mp4",
+            "imageLink": "/var/formation/data/quiz/vid/openspace_simulator.mp4",
             "contentMode": "video",
             "imageFit": "cover",
             "imageHeight": "auto",

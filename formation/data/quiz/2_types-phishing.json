@@ -11,7 +11,7 @@
           {
             "type": "image",
             "name": "image1",
-            "imageLink": "/var/formation/data/quiz/img/arnaque_amelie.png",
+            "imageLink": "/var/formation/data/quiz/img/arnaque_ameli.png",
             "contentMode": "image",
             "imageHeight": "auto",
             "imageWidth": "25%"
