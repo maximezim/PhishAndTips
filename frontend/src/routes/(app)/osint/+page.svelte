@@ -48,6 +48,8 @@
       target: User;
       scan: MyScan | null;
       groupedResults: Map<string, ParsedResult[]> | null;
+      score: number;
+      scoreColor: string;
     }
 
     let myScan: MyScan | [];
@@ -75,7 +77,6 @@
         isAdmin = await fetch("/api/can-access/can-get-all-users").then(res => res.json());
         myScan = await fetch("/api/osint/user").then(res => res.json());
         myScore = await fetch("/api/scoring/osint").then(res => res.json());
-        console.log(myScore);
         if(isAdmin){
           usersFromDb = await fetch("/api/db/users").then(res => res.json());
           users = await Promise.all(usersFromDb.map(async (user: User) => {
@@ -89,16 +90,34 @@
                   'Content-Type': 'application/json'
                 }
             }).then(res => res.json());
+
+            let userScore = await fetch(`/api/scoring/admin/osint`, {
+                method: 'POST',
+                body: JSON.stringify(groupJson),
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+            }).then(res => res.json());
+            let userScoreColor = getScoreColor(userScore);
+
+            let groupedResults = null;
+            console.log("SCAN U: ",scan.result);
+            if(scan && scan.result){
+              groupedResults = groupResultsByType(JSON.parse(scan.result).parsed_data.results);
+            }
             return {
               target: user,
               scan: scan,
-              groupedResults: scan ? groupResultsByType(JSON.parse(scan.result).parsed_data.results) : null
+              groupedResults: groupedResults,
+              score: userScore,
+              scoreColor: "rgb(" + userScoreColor.r + ", " + userScoreColor.g + ", " + userScoreColor.b + ")",
             };
           }));
         }
       } catch (error) {
         console.error("Erreur : ", error);
       } finally {
+        console.log(users);
         let color = getScoreColor(myScore);
         myScoreColor = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
         if(myScan && !Array.isArray(myScan)){
@@ -363,7 +382,6 @@
         <Table.Root class="w-full">
           <Table.Header class="bg-violet-50">
               <Table.Row>
-                  <Table.Head>Risque</Table.Head>
                   <Table.Head>Nom</Table.Head>
                   <Table.Head>Prénom</Table.Head>
                   <Table.Head class="hidden lg:table-cell">Email</Table.Head>
@@ -380,7 +398,6 @@
             {:else}
             {#each getCurrentPageRowsUser() as user}
               <Table.Row class="hover:bg-gray-50 bg-white">
-                  <Table.Cell><span class="flex w-8 h-3 rounded-full bg-green-400"></span></Table.Cell>
                   <Table.Cell>{user.target.lastName}</Table.Cell>
                   <Table.Cell>{user.target.firstName}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.target.email}</Table.Cell>
@@ -405,7 +422,7 @@
                             </div>
                           </div> 
                           <div class="right">
-                            <span class="shadow flex w-10 h-10 rounded-full" style='background-color: {myScoreColor}'></span>
+                            <span class="shadow flex w-10 h-10 rounded-full border-2 border-accent" style='background-color: {user.scoreColor}'></span>
                           </div>
 
                         </div>
