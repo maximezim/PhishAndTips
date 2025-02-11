@@ -52,7 +52,7 @@
 
   async function getPhishingDetails() {
     try {
-      phishingDetails = await fetch('/api/scoring/admin/phishing/details', {
+      phishingDetails = await fetch('/api/scoring/phishing/details', {
         method: 'GET',
       }).then(res => res.json());
     } catch(e) {

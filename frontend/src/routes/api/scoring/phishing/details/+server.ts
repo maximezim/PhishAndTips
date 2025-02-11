@@ -11,7 +11,6 @@ export async function GET({ cookies }) {
 	try {
 		const response = await ScoringService.getPhishingDetails(cookies);
 		if (response != null) {
-            console.log(response);
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
 			console.error('Error while fetching phishing details (Svelte API to Service).');

@@ -12,7 +12,6 @@ export async function POST({ cookies, request }) {
 		const data = await request.json();
 		const response = await ScoringService.getAdminPhishingDetails(cookies, data.email);
 		if (response != null) {
-            console.log(response);
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
 			console.error('Error while fetching user phishing details (Svelte API to Service).');
