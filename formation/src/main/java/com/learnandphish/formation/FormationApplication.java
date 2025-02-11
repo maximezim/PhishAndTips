@@ -54,7 +54,7 @@ public class FormationApplication {
                 if (listOfFiles != null && listOfFiles.length > 0) {
                     Gson gson = new Gson();
                     for (File file : listOfFiles) {
-                        String quizId = file.getName();
+                        String quizId = file.getName().split("_")[0];
                         // Make sure the file's name is a number
                         if (!quizId.matches("\\d+")) {
                             log.error("File name is not a number");

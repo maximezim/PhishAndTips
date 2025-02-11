@@ -9,14 +9,7 @@
 	import Separator from "$lib/components/custom/Separator.svelte";
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
     import { goto } from "$app/navigation";
-    import AuthService from "$lib/services/AuthService";
-
-    interface Target {
-        first_name: string;
-        last_name: string;
-        email: string;
-        position: string;
-    }
+    import type { User } from '$types/users';
 
     let group_name= "";
     let loading_data = true;
@@ -24,8 +17,8 @@
     const rowsPerPageUser = 4;
     let totalPagesUser = 1;
 
-    let selectedUsers : Target[] = [];
-    let usersFromDb : Target[] = [];
+    let selectedUsers : User[] = [];
+    let usersFromDb : User[] = [];
 
     onMount(async () => {
       try {
@@ -50,7 +43,7 @@
         return usersFromDb.slice(start, end);
     }
 
-    function isUserSelected(user: Target) {
+    function isUserSelected(user: User) {
         return selectedUsers.some(selectedUser => selectedUser.email === user.email);
     }
   
@@ -61,7 +54,7 @@
     async function createGroup(){
         const groupJson = {
             name: group_name,
-            targets: selectedUsers,
+            Users: selectedUsers,
         };
         await fetch(`/api/phishing/groups`, {
             method: 'POST',
@@ -107,8 +100,8 @@
                     <Table.Body>
                         {#each getCurrentPageRowsUser() as user}
                         <Table.Row>
-                            <Table.Cell>{user.last_name}</Table.Cell>
-                            <Table.Cell>{user.first_name}</Table.Cell>
+                            <Table.Cell>{user.lastName}</Table.Cell>
+                            <Table.Cell>{user.firstName}</Table.Cell>
                             <Table.Cell>{user.email}</Table.Cell>
                             <Table.Cell>{user.position}</Table.Cell>
                             <Table.Cell>
