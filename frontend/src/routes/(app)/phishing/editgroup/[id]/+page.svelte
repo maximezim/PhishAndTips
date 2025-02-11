@@ -79,6 +79,17 @@
         goto("/phishing");
     }
 
+    function userToGophishUser(){
+        return selectedUsers.map(user => {
+            return {
+                first_name: user.firstName,
+                last_name: user.lastName,
+                email: user.email,
+                position: user.position
+            }
+        });
+    }
+
     async function saveAndClose() {
         const groupID = Number(group.id);
         const modifiedDate = new Date().toISOString();
@@ -86,7 +97,7 @@
             id: groupID,
             name: group.name,
             modified_date: modifiedDate,
-            Users: selectedUsers,
+            targets: selectedUsers
         };
         await fetch(`/api/phishing/groups`, {
             method: 'PUT',

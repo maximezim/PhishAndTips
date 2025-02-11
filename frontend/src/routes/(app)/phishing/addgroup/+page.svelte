@@ -54,7 +54,7 @@
     async function createGroup(){
         const groupJson = {
             name: group_name,
-            Users: selectedUsers,
+            targets: selectedUsers,
         };
         await fetch(`/api/phishing/groups`, {
             method: 'POST',
