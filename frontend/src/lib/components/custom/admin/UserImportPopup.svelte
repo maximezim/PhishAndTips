@@ -35,8 +35,6 @@
       return;
     }
 
-    console.log("I'm here");
-
     await fetch('/api/db/users', {
 			method: 'POST',
 			body: formData,

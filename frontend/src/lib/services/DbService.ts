@@ -63,15 +63,20 @@ class DbService {
 	}
 
 	// Delete
-	public static async deleteUser(cookies: any, user: any): Promise<any[]> {
+	public static async deleteUser(cookies: any, userEmail: any): Promise<any[]> {
 		try {
+			console.log(JSON.stringify({ email: userEmail }));
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/delete-user`, user, {
-				headers: {
-					Authorization: `Bearer ${jwt}`,
-					'Content-Type': 'application/json'
+			const response = await axios.post(
+				`${GATEWAY_URL}/delete-user`,
+				JSON.stringify({ email: userEmail }),
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						'Content-Type': 'application/json'
+					}
 				}
-			});
+			);
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while deleting user:', error.message);
