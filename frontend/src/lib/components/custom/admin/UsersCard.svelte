@@ -30,7 +30,7 @@
     try {
       await fetch('/api/db/user', {
 			method: 'DELETE',
-			body: JSON.stringify(user),
+			body: JSON.stringify(user.email),
 			headers: {
 				'Content-Type': 'application/json'
 			}

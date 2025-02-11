@@ -49,6 +49,31 @@ public class GophishActionService {
         return avgScore;
     }
 
+    public Map<String, String> getUserActionCounts(String email) {
+        List<JsonNode> actions = getUserActions(email);
+        long totalSent = actions.stream()
+            .filter(event -> "Email Sent".equalsIgnoreCase(event.get("message").asText()))
+            .count();
+            
+        Map<String, Long> counts = actions.stream()
+            .filter(event -> {
+                String msg = event.get("message").asText();
+                return "Submitted Data".equalsIgnoreCase(msg)
+                    || "Clicked Link".equalsIgnoreCase(msg)
+                    || "Email Opened".equalsIgnoreCase(msg);
+            })
+            .collect(Collectors.groupingBy(
+                event -> event.get("message").asText(),
+                Collectors.counting()
+            ));
+
+        Map<String, String> result = new HashMap<>();
+        result.put("Submitted Data", counts.getOrDefault("Submitted Data", 0L) + "/" + totalSent);
+        result.put("Clicked Link", counts.getOrDefault("Clicked Link", 0L) + "/" + totalSent);
+        result.put("Email Opened", counts.getOrDefault("Email Opened", 0L) + "/" + totalSent);
+        return result;
+    }
+
     public List<JsonNode> getUserActions(String email) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", gophishApiKey);

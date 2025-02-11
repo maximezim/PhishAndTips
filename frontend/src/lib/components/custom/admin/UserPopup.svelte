@@ -20,36 +20,63 @@
   let userPhishingScore: number = 0;
   let userFormationScore: number = 0;
   let userTotalScore: number = 0;
+  let userPhishingDetails: any = {};
 
   async function getUserPhishingScore() {
     try {
-      userPhishingScore = await fetch("/api/scoring/phishing").then(res => res.json());
+      userPhishingScore = await fetch('/api/scoring/admin/phishing', {
+        method: 'POST',
+        body: JSON.stringify({email: user.email}),
+      }).then(res => res.json());
+      userPhishingScore *= 10;
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte de score phishing: ', e);
+      console.error('Error while calling svelte phishing score API: ', e);
     }
   }
 
   async function getUserOsintScore() {
     try {
-      userOsintScore = await fetch("/api/scoring/osint").then(res => res.json());
+      userOsintScore = await fetch('/api/scoring/admin/osint', {
+        method: 'POST',
+        body: JSON.stringify({email: user.email}),
+      }).then(res => res.json());
+      userOsintScore *= 10;
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
+      console.error('Error while calling svelte osint score API: ', e);
     }
   }  
 
   async function getUserFormationScore() {
     try {
-      userFormationScore = await fetch("/api/scoring/formation").then(res => res.json());
+      userFormationScore = await fetch('/api/scoring/admin/formation', {
+        method: 'POST',
+        body: JSON.stringify({email: user.email}),
+      }).then(res => res.json());
+      userFormationScore = (10 - userFormationScore) * 10;
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte de score formation: ', e);
+      console.error('Error while calling svelte formation score API: ', e);
     }
   }
 
   async function getUserTotalScore() {
     try {
-      userTotalScore = await fetch("/api/scoring").then(res => res.json());
+      userTotalScore = await fetch('/api/scoring/admin/total', {
+        method: 'POST',
+        body: JSON.stringify({email: user.email}),
+      }).then(res => res.json());
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte du score total: ', e);
+      console.error('Error while calling svelte total score API: ', e);
+    }
+  }
+
+  async function getPhishingDetails() {
+    try {
+      userPhishingDetails = await fetch('/api/scoring/admin/phishing/details', {
+        method: 'POST',
+        body: JSON.stringify({email: user.email}),
+      }).then(res => res.json());
+    } catch(e) {
+      console.error('Error while calling svelte phishing details API: ', e);
     }
   }
 
@@ -60,9 +87,10 @@
         getUserOsintScore(),
         getUserFormationScore(),
         getUserTotalScore(),
+        getPhishingDetails(),
       ]);
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
+      console.error('Error while calling scoring svelte API: ', e);
     }
   }
 </script>
@@ -91,7 +119,7 @@
       <ScoringBadgesCarousel />
 
       <!-- Phishing scoring Card ($lib/components/custom/scoring/ScoringPhishingCard.svelte) -->
-      <ScoringPhishingCard />
+      <ScoringPhishingCard phishingDetails={userPhishingDetails} />
     </div>
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
