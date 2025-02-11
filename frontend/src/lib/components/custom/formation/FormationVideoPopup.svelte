@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { Button } from '$lib/components/ui/button';
   import * as AlertDialog from '$lib/components/ui/alert-dialog';
   import type { Video } from '$types/formation';
   import { AspectRatio } from '$lib/components/ui/aspect-ratio';
+  import Plyr from 'plyr';
 
   export let video: Video = {
     id: 0,
@@ -12,6 +14,21 @@
     captionUrl: "",
     thumbnailUrl: "",
   };
+
+  let videoElement: HTMLVideoElement;
+  let player: Plyr;
+
+  onMount(() => {
+    if (videoElement) {
+      player = new Plyr(videoElement, {
+        controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+      });
+
+      player.on('ended', () => {
+        console.log("fini");
+      });
+    }
+  });
 </script>
 
 <AlertDialog.Root>
@@ -20,12 +37,11 @@
       <AspectRatio ratio={16/9} class="bg-muted  overflow-hidden">
         <img src={video.thumbnailUrl} alt={video.title} class="w-full h-full object-cover" />
       </AspectRatio>
-      <div class="flex flex-col gap-1 py-2 px-5 justify-start items-start">
-        <h3 class="text-lg text-left text-black font-semibold">{video.title}</h3>
-        <p class="text-sm text-left text-black">{video.description}</p>
+      <div class="flex flex-col gap-1 py-2 px-5 justify-start items-start w-full">
+        <h3 class="text-lg text-left text-black font-semibold truncate w-full">{video.title}</h3>
+        <p class="text-sm text-left text-black truncate w-full">{video.description}</p>
       </div>
     </Button>
-      
   </AlertDialog.Trigger>
 
   <AlertDialog.Content class="max-w-5xl flex flex-col">
@@ -38,10 +54,9 @@
       </div>
       <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
     </AlertDialog.Header>
-    <video id="player" playsinline controls data-poster={video.thumbnailUrl}>
+    <video bind:this={videoElement} playsinline controls data-poster={video.thumbnailUrl}>
       <source src={video.videoUrl} type="video/mp4" />
-
-      <track kind="captions" label="French captions" src="{video.captionUrl}" srclang="fr" default />
+      <track kind="captions" label="Français" src={video.captionUrl} srclang="fr" default />
     </video>
   </AlertDialog.Content>
 </AlertDialog.Root>

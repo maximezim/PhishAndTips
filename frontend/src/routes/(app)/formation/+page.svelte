@@ -3,10 +3,11 @@
   import { onMount } from 'svelte';
 	import FormationUserTab from '$lib/components/custom/formation/FormationUserTab.svelte';
 	import FormationVideosCard from '$lib/components/custom/formation/FormationVideosCard.svelte';
+	import type { Video, Quiz } from '$types/formation';
 
   let canGetAllUsers: boolean = false;
-  let videos: any[] = [];
-  let quiz: any[] = [];
+  let videos: Video[] = [];
+  let quizzes: Quiz[] = [];
   let loading_data = true;
 
   onMount(async () => {
@@ -22,7 +23,15 @@
         return video;
       });
 
-      quiz = await fetch("/api/formation/quiz").then(res => res.json());
+      const fetchedQuizzes = await fetch("/api/formation/quiz").then(res => res.json());
+
+      quizzes = fetchedQuizzes.map((quiz: any) => {
+        quiz.id = fetchedQuizzes.id;
+        quiz.title = `/api/formation/asset?assetURL=${JSON.parse(quiz.json['title'])}`;
+        quiz.description = `/api/formation/asset?assetURL=${JSON.parse(quiz.json['description'])}`;
+        quiz.videoUrl = `/api/formation/asset?assetURL=${quiz.json}`;
+        return video;
+      });
     } catch (error) {
       console.error("Erreur lors de la récupération des vidéos et quiz:", error);
     } finally {

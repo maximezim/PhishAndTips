@@ -6,3 +6,10 @@ export type Video = {
 	captionUrl: string;
 	thumbnailUrl: string;
 };
+
+export type Quiz = {
+	id: number;
+	title: string;
+	description: string;
+	json: string;
+};
