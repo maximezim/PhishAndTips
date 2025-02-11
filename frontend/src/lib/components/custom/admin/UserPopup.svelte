@@ -113,7 +113,7 @@
       <FormationCard />
 
       <!-- Osint scoring Card ($lib/components/custom/scoring/ScoringOsintCard.svelte) -->
-      <ScoringOsintCard />
+      <ScoringOsintCard admin={true} userEmail={user.email}/>
 
       <!-- Scoring badges carousel ($lib/components/custom/scoring/ScoringBadgesCarousel.svelte) -->
       <ScoringBadgesCarousel />

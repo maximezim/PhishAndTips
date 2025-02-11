@@ -135,6 +135,24 @@ class DbService {
 			return [];
 		}
 	}
+
+	public static async resetUserPassword(cookies: any, email: string): Promise<any> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.post(`${GATEWAY_URL}/reset-password`, { email: email }, {
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					'Content-Type': 'application/json'
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while resetting user password:', error.message);
+			console.error(error);
+			return;
+		}
+	}
+
 }
 
 export default DbService;
