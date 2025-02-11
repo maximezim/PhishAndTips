@@ -35,7 +35,7 @@
 
 </script>
 
-<div class="app flex w-full h-screen">
+<div class="app flex w-full h-screen overflow-auto">
 	<Sidebar 
 		className="hidden md:flex"
 		dash_text={$page.data?.dash_text}
@@ -51,9 +51,9 @@
 		phishing_text= {$page.data?.phishing_text}
 		phishing_bg= {$page.data?.phishing_bg}
 	/>
-	<main class="relative w-full h-full overflow-scroll flex flex-col">
+	<main class="relative w-full h-full flex flex-col overflow-auto">
 		<Header title={$page.data?.title || 'Phish&Tips'} firstName={firstName} lastName={lastName} position={position} email={email} isSubPage={$isSubPage} />
-		<div class="relative flex-grow w-full overflow-scroll pb-[60px] sm:pb-0 ">
+		<div class="relative flex-grow w-full pb-[60px] sm:pb-0 overflow-auto">
 			<DotPage />
 			<slot></slot>
 		</div>

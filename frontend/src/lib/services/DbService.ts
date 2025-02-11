@@ -45,7 +45,7 @@ class DbService {
 	}
 
 	// Update
-	public static async updateUser(cookies: any, user: any): Promise<any[]> {
+	public static async updateUser(cookies: any, user: any): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/update-user`, user, {
@@ -58,13 +58,14 @@ class DbService {
 		} catch (error: any) {
 			console.error('Error while updating user:', error.message);
 			console.error(error);
-			return [];
+			return;
 		}
 	}
 
 	// Delete
-	public static async deleteUser(cookies: any, userEmail: any): Promise<any[]> {
+	public static async deleteUser(cookies: any, userEmail: any): Promise<any> {
 		try {
+			console.log(JSON.stringify({ email: userEmail }));
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/delete-user`, userEmail, {
 				headers: {
@@ -76,7 +77,7 @@ class DbService {
 		} catch (error: any) {
 			console.error('Error while deleting user:', error.message);
 			console.error(error);
-			return [];
+			return;
 		}
 	}
 
