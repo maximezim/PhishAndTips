@@ -1,6 +1,7 @@
 package com.learnandphish.scoring.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.learnandphish.scoring.dto.GophishLandingPageDTO;
 import com.learnandphish.scoring.dto.QuizScoreDTO;
 import com.learnandphish.scoring.service.FormationService;
 import com.learnandphish.scoring.service.GophishActionService;
@@ -96,5 +97,10 @@ public class ScoringController {
         String email = request.get("email");
         double score = osintScoringService.getOsintScore(email);
         return Map.of("email", email, "osintScore", score);
+    }
+
+    @GetMapping("/admin/get-gophish-landing-pages")
+    public List<GophishLandingPageDTO> getGophishTemplates() {
+        return gophishActionService.getGophishLandingPages();
     }
 }

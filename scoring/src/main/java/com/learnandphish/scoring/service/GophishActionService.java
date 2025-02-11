@@ -1,13 +1,16 @@
 package com.learnandphish.scoring.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.learnandphish.scoring.dto.GophishLandingPageDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -45,8 +48,7 @@ public class GophishActionService {
         
         // Compute average score per campaign (ratio out of 10)
         double totalScore = campaignScores.values().stream().mapToInt(Integer::intValue).sum();
-        double avgScore = totalScore / campaignScores.size();
-        return avgScore;
+        return totalScore / campaignScores.size();
     }
 
     public List<JsonNode> getUserActions(String email) {
@@ -75,5 +77,19 @@ public class GophishActionService {
             }
             throw new ResponseStatusException(e.getStatusCode(), "Error calling Gophish API: " + e.getMessage(), e);
         }
+    }
+
+    public List<GophishLandingPageDTO> getGophishLandingPages(){
+            File folder = new File("/var/gophish/landing-pages");
+            File[] listOfFiles = folder.listFiles();
+            if(listOfFiles == null) return Collections.emptyList();
+            return Arrays.stream(listOfFiles)
+                .map(file -> {
+                    GophishLandingPageDTO dto = new GophishLandingPageDTO();
+                    dto.setName(StringUtils.capitalize(file.getName()));
+                    dto.setUrl("http://"+System.getenv("GATEWAY_URL")+"/api/static/endpoint/"+file.getName());
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 }
