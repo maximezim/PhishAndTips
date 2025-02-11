@@ -47,11 +47,21 @@
 
   <Separator color="bg-accent" width="w-1/5" margin_top="mt-3"/>
   <div class="video_container w-full grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
-    {#each videos as video}
-      <AspectRatio ratio={20/9} class="bg-muted rounded shadow">
-        <img src={video.thumbnailUrl} alt={video.title} class="rounded-md object-contain" />
-      </AspectRatio>
-    {/each}
+    {#if loading_data}
+      {#each Array(6) as _}
+        <AspectRatio ratio={20/9} class="bg-muted rounded shadow animate-pulse" />
+      {/each}
+    {:else if videos.length === 0}
+      <div class="col-span-3 text-center py-8 text-gray-500">
+        No videos available
+      </div>
+    {:else}
+      {#each videos as video}
+        <AspectRatio ratio={20/9} class="bg-muted rounded shadow">
+          <img src={video.thumbnailUrl} alt={video.title} class="rounded-md object-contain" />
+        </AspectRatio>
+      {/each}
+    {/if}
   </div>
 
   <Button class="bg-accent w-full md:w-1/5 mx-auto mb-3">Voir tout</Button>
