@@ -46,7 +46,7 @@ public class FormationApplication {
     @Autowired
     private MinioService minioService;
 
-    // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database
+    // For each file in data/quiz folder, create a quiz if name of file (quiz id) does not exist in database and upload images to S3 then change the image links in the quiz json
     @Bean
     public CommandLineRunner initializeQuiz() {
         return args -> {
@@ -107,12 +107,14 @@ public class FormationApplication {
         };
     }
 
+    // Extract image links from a json object
     private List<String> extractImageLinks(JsonElement element) {
         List<String> imageLinks = new ArrayList<>();
         extractImageLinksRecursive(element, imageLinks);
         return imageLinks;
     }
 
+    // Recursively extract image links from a json object
     private void extractImageLinksRecursive(JsonElement element, List<String> imageLinks) {
         if (element.isJsonObject()) {
             JsonObject jsonObject = element.getAsJsonObject();
@@ -131,6 +133,7 @@ public class FormationApplication {
         }
     }
 
+    // Replace image links in a json object
     private void replaceImageLink(JsonElement element, String oldLink, String newLink) {
         if (element.isJsonObject()) {
             JsonObject jsonObject = element.getAsJsonObject();
