@@ -2,9 +2,9 @@
 .github/
 .idea/
 .vscode/
-/build/
-/minio/*
-/databases/*
-/nginx/certs/*
-!/databases/scripts/
+build/
+minio/*
+databases/*
+nginx/certs/*
+!databases/scripts/
 .env
