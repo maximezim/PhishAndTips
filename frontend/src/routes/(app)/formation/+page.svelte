@@ -1,15 +1,18 @@
 <script lang="ts">
-  import Separator from "$lib/components/custom/Separator.svelte";
-  import Button from "$lib/components/ui/button/button.svelte";
-  import { onMount } from "svelte";
-	import FormationVideoPopup from "$lib/components/custom/formation/FormationVideoPopup.svelte";
+  import * as Tabs from '$lib/components/ui/tabs';
+  import { onMount } from 'svelte';
+	import FormationUserTab from '$lib/components/custom/formation/FormationUserTab.svelte';
+	import VideoCard from '$lib/components/custom/admin/VideoCard.svelte';
+	import FormationVideosCard from '$lib/components/custom/formation/FormationVideosCard.svelte';
 
+  let canGetAllUsers: boolean = false;
   let videos: any[] = [];
   let quiz: any[] = [];
   let loading_data = true;
 
   onMount(async () => {
     try {
+      canGetAllUsers = await fetch("/api/can-access/can-get-all-users").then(res => res.json());
       const fetchedVideos = await fetch("/api/formation/videos").then(res => res.json());
 
       // Update thumbnail URLs to point to our proxy endpoint:
@@ -27,36 +30,29 @@
   });
 </script>
 
-<div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
-  <div class="flex items-center gap-1">
-    <iconify-icon class="me-2 text-2xl" icon="mingcute:video-camera-fill" style="color: #9082EC"></iconify-icon>
-    <h1 class="text-xl font-semibold">Nos vidéos</h1>
-  </div>
+<main class="relative z-10 flex flex-1 flex-col flex-grow gap-4 p-4 md:gap-8 md:p-8">
+  <Tabs.Root value="user">
+    <!-- If the user is Admin, it can see its data and access to admin panel -->
+    {#if canGetAllUsers}
+      <Tabs.List class="grid max-w-sm grid-cols-2">
+        <Tabs.Trigger value="user">Perso</Tabs.Trigger>
+        <Tabs.Trigger value="admin">Admin</Tabs.Trigger>
+      </Tabs.List>
+    {/if}
 
-  <Separator color="bg-accent" width="w-1/5" margin_top="mt-3"/>
-  <div class="video_container w-full grid grid-cols-1 md:grid-cols-3 gap-16 my-8">
-    {#each videos as video}
-      <FormationVideoPopup video={video} />
-    {/each}
-  </div>
+    <!-- User tab -->
+    <Tabs.Content value="user">
+      <FormationUserTab videos={videos} />
+    </Tabs.Content>
+  
+    <!-- Admin tab -->
+    <Tabs.Content value="admin" >
+      <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-10 w-full">
+        <FormationVideosCard videos={videos} canModify={true} />
+      </div>  
+    </Tabs.Content>
+  </Tabs.Root>
+  
+</main>
 
-  <!-- <Button class="bg-accent w-full md:w-1/5 mx-auto mb-3">Voir tout</Button> -->
-  <Separator color="bg-muted" width="w-full" margin_top="mt-6" margin_bottom="mb-6"/>
 
-  <div class="flex items-center gap-1">
-    <iconify-icon class="me-2 text-2xl" icon="mingcute:bookmark-fill" style="color: #9082EC"></iconify-icon>
-    <h1 class="text-xl font-semibold">Nos quiz</h1>
-  </div>
-
-  <div class="flex justify-end gap-3">
-    <Button class="bg-accent" href="formation/edit-quiz">Modifier un quiz</Button>
-  </div>
-
-  <Separator color="bg-accent" width="w-1/5" margin_top="mt-3"/>
-
-  <div class="quiz_container w-full overflow-x-auto flex flex-col flex-nowrap md:flex-row gap-6 my-8 p-2">
-    {#each quiz as q}
-      <div class="bg-muted min-w-[300px] h-[370px] rounded shadow"></div>
-    {/each}
-  </div>
-</div>
