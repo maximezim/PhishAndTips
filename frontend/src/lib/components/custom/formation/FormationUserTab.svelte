@@ -1,6 +1,7 @@
 <script lang="ts">
 	import FormationVideosCard from "$lib/components/custom/formation/FormationVideosCard.svelte";
 	import FormationQuizCard from "$lib/components/custom/formation/FormationQuizCard.svelte";
+	import FormationQuizPopup from "./FormationQuizPopup.svelte";
 
   export let videos: any[] = [];
   export let quizzes: any[] = [];
@@ -8,5 +9,6 @@
 
 <div class="relative z-10 flex flex-col w-full gap-6">
   <FormationVideosCard videos={videos} />
-  <FormationVideosCard videos={videos} />
+  <FormationQuizCard quizzes={quizzes} />
+  <FormationQuizPopup json={JSON.parse(quizzes[0].json)} />
 </div>

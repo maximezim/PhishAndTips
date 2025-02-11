@@ -1,10 +1,10 @@
 <script lang="ts">
   import * as Carousel from '$lib/components/ui/carousel';
   import * as Card from '$lib/components/ui/card';
-	import type { Video, Quiz } from '$types/formation';
+	import type { Quiz } from '$types/formation';
   import 'iconify-icon';
-	import FormationVideoPopup from '$lib/components/custom/formation/FormationVideoPopup.svelte';
 	import UserAddPopup from '../admin/UserAddPopup.svelte';
+	import FormationQuizPopup from './FormationQuizPopup.svelte';
 
   export let canModify: boolean = false;
   export let quizzes: Quiz[];
@@ -25,9 +25,9 @@
   <Card.Content class="flex flex-col gap-6 px-16">
     <Carousel.Root opts={{ align: "start" }} class="w-full h-full">
       <Carousel.Content class="h-full flex items-center">
-        {#each videos as video}
+        {#each quizzes as quiz}
           <Carousel.Item class="flex items-center justify-center md:basis-1/2 lg:basis-1/4 gap-10">
-            <FormationVideoPopup video={video} />
+            
           </Carousel.Item>
         {/each}
       </Carousel.Content>

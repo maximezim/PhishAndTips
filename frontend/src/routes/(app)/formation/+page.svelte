@@ -26,11 +26,11 @@
       const fetchedQuizzes = await fetch("/api/formation/quiz").then(res => res.json());
 
       quizzes = fetchedQuizzes.map((quiz: any) => {
-        quiz.id = fetchedQuizzes.id;
-        quiz.title = `/api/formation/asset?assetURL=${JSON.parse(quiz.json['title'])}`;
-        quiz.description = `/api/formation/asset?assetURL=${JSON.parse(quiz.json['description'])}`;
-        quiz.videoUrl = `/api/formation/asset?assetURL=${quiz.json}`;
-        return video;
+        quiz.id = quiz.id;
+        quiz.title = JSON.parse(quiz.json)['title'];
+        quiz.description = JSON.parse(quiz.json)['description'];
+        quiz.json = quiz.json;
+        return quiz;
       });
     } catch (error) {
       console.error("Erreur lors de la récupération des vidéos et quiz:", error);
@@ -52,7 +52,7 @@
 
     <!-- User tab -->
     <Tabs.Content value="user">
-      <FormationUserTab videos={videos} />
+      <FormationUserTab videos={videos} quizzes={quizzes} />
     </Tabs.Content>
   
     <!-- Admin tab -->
