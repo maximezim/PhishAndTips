@@ -57,7 +57,7 @@ public class FormationApplication {
                         String quizId = file.getName().split("_")[0];
                         // Make sure the file's name is a number
                         if (!quizId.matches("\\d+")) {
-                            log.error("File name is not a number");
+                            log.error("Invalid quiz file name: {}", file.getName());
                         }else {
                             Quiz quiz = quizRepository.findById(Integer.parseInt(quizId)).orElse(new Quiz());
                             // If the quiz doesn't already exist in the db, read the content of the file and create a quiz
