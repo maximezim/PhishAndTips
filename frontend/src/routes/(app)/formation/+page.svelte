@@ -14,13 +14,20 @@
     try {
       const fetchedVideos = await fetch("/api/formation/videos").then(res => res.json());
 
-      // Update thumbnail URLs to point to our proxy endpoint:
       videos = fetchedVideos.map((video: any) => {
-        const urlParts = video.thumbnailUrl.split('/');
-        const id = urlParts[urlParts.length - 1];
-        video.thumbnailUrl = `/api/formation/thumbnail/${id}`;
-        //video.thumbnailUrl = fetch(`/api/formation/thumbnail/${id}`).then(res => res.url);
-        return video;
+        try {
+          const urlParts = video.thumbnailUrl.split('/');
+          if (urlParts.length === 0) {
+            throw new Error('Invalid thumbnail URL');
+          }
+          const id = urlParts[urlParts.length - 1];
+          video.thumbnailUrl = `/api/formation/thumbnail/${id}`;
+          return video;
+        } catch (error) {
+          console.error(`Error processing thumbnail URL for video: ${video.title}`, error);
+          video.thumbnailUrl = '/placeholder-thumbnail.jpg';
+          return video;
+        }
       });
 
       quiz = await fetch("/api/formation/quiz").then(res => res.json());
