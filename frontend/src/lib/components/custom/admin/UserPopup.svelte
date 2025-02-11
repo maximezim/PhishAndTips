@@ -25,7 +25,7 @@
     try {
       userPhishingScore = await fetch('/api/scoring/admin/phishing', {
         method: 'POST',
-        body: JSON.stringify(user.email),
+        body: JSON.stringify({email: user.email}),
       }).then(res => res.json());
       userPhishingScore *= 10;
     } catch(e) {
@@ -37,7 +37,7 @@
     try {
       userOsintScore = await fetch('/api/scoring/admin/osint', {
         method: 'POST',
-        body: JSON.stringify(user.email),
+        body: JSON.stringify({email: user.email}),
       }).then(res => res.json());
       userOsintScore *= 10;
     } catch(e) {
@@ -49,7 +49,7 @@
     try {
       userFormationScore = await fetch('/api/scoring/admin/formation', {
         method: 'POST',
-        body: JSON.stringify(user.email),
+        body: JSON.stringify({email: user.email}),
       }).then(res => res.json());
       userFormationScore = (10 - userFormationScore) * 10;
     } catch(e) {
@@ -61,9 +61,8 @@
     try {
       userTotalScore = await fetch('/api/scoring/admin/total', {
         method: 'POST',
-        body: JSON.stringify(user.email),
+        body: JSON.stringify({email: user.email}),
       }).then(res => res.json());
-      console.log("TOTAL SCORE",userTotalScore)
     } catch(e) {
       console.error('Error while calling svelte total score API: ', e);
     }

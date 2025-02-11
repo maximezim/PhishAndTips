@@ -100,7 +100,6 @@ class DbService {
 
 	// Import CSV
 	public static async importCSV(cookies: any, usersFormData: any): Promise<any[]> {
-		console.log('SERVER : ', usersFormData);
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/import-users`, usersFormData, {

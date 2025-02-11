@@ -9,8 +9,8 @@ import ScoringService from '$lib/services/ScoringService';
  */
 export async function POST({ cookies, request }) {
 	try {
-		console.log(request);
-		const response = await ScoringService.getAdminPhishingScore(cookies, request);
+		const data = await request.json();
+		const response = await ScoringService.getAdminPhishingScore(cookies, data.email);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {

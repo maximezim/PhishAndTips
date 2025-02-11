@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AuthService from './AuthService';
+import { json } from '@sveltejs/kit';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL;
 
@@ -30,15 +31,16 @@ class ScoringService {
 	public static async getAdminPhishingScore(cookies: any, email: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
+			email = JSON.stringify({email: email});
 			const response = await axios.post(`${GATEWAY_URL}/scoring/admin/gophish-score`, email, {
 				headers: {
-					Authorization: `Bearer ${jwt}`
+					Authorization: `Bearer ${jwt}`,
+					"Content-type": "application/json"
 				}
 			});
-			console.log('PHISHING SCORE : ', response);
 			return response.data.score;
 		} catch (error: any) {
-			console.error('Error while getting user phishing score:', error);
+			console.error('Error while getting user phishing score:', error.message);
 			return [];
 		}
 	}
@@ -69,12 +71,13 @@ class ScoringService {
 	public static async getAdminOsintScore(cookies: any, email: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
+			email = JSON.stringify({email: email});
 			const response = await axios.post(`${GATEWAY_URL}/scoring/admin/osint-score`, email, {
 				headers: {
-					Authorization: `Bearer ${jwt}`
+					Authorization: `Bearer ${jwt}`,
+					"Content-type": "application/json"
 				}
 			});
-			console.log('OSINT SCORE : ', response);
 			return response.data.osintScore;
 		} catch (error: any) {
 			console.error('Error while getting user osint score:', error.message);
@@ -108,12 +111,13 @@ class ScoringService {
 	public static async getAdminFormationScore(cookies: any, email: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/scoring/admin/formation-average`, {
+			email = JSON.stringify({email: email});
+			const response = await axios.post(`${GATEWAY_URL}/scoring/admin/formation-average`, email, {
 				headers: {
-					Authorization: `Bearer ${jwt}`
+					Authorization: `Bearer ${jwt}`,
+					"Content-type": "application/json"
 				}
 			});
-			console.log('FORMATION SCORE : ', response);
 			return response.data.formationAverage;
 		} catch (error: any) {
 			console.error('Error while getting user formation score:', error.message);
@@ -148,12 +152,13 @@ class ScoringService {
 	public static async getAdminTotalScore(cookies: any, email: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
+			email = JSON.stringify({email: email});
 			const response = await axios.post(`${GATEWAY_URL}/scoring/admin/total-score`, email, {
 				headers: {
-					Authorization: `Bearer ${jwt}`
+					Authorization: `Bearer ${jwt}`,
+					"Content-type": "application/json"
 				}
 			});
-			console.log('TOTAL SCORE : ', response);
 			return response.data.totalScore;
 		} catch (error: any) {
 			console.error('Error while getting user total score:', error.message);
