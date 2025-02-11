@@ -20,7 +20,7 @@ public class FormationService {
     private final Logger logger = LoggerFactory.getLogger(FormationService.class);
 
     public List<QuizScoreDTO> getUserQuizScores(String email) {
-        String url = "http://formation-service:8089/formation/quiz/score";
+        String url = "http://formation-service:8089/formation/quizzes/scores";
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> httpEntity = new HttpEntity<>(null, headers);

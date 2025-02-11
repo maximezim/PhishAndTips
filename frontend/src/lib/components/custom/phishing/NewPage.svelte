@@ -46,7 +46,7 @@
 
   async function createpage() {
     if (!validateForm()){
-      console.log(errors);
+      console.error(errors);
       return;
     } 
 

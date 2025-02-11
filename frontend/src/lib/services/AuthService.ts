@@ -28,6 +28,7 @@ class AuthService {
 		}
 	}
 
+	// TODO : Remove every instance of getToken in the code
 	// Get token from client
 	public static async getToken(): Promise<string> {
 		if (Cookies.get('authToken')) {
@@ -69,13 +70,14 @@ class AuthService {
 		}
 	}
 
+	// TODO : Remove every instance of isLogged in the code
 	// Check if user is logged from client
 	public static async isLogged(): Promise<boolean> {
 		const token = await AuthService.getToken();
 		if (token) {
 			try {
-				const response = await fetch(GATEWAY_URL + '/test-user', {
-					method: 'GET',
+				const response = await fetch(GATEWAY_URL + '/scoring/osint-score', {
+					method: 'OPTIONS',
 					headers: {
 						Authorization: `Bearer ${token}`
 					}
@@ -99,8 +101,8 @@ class AuthService {
 		const token = await AuthService.getTokenFromServer(cookies);
 		if (token) {
 			try {
-				const response = await fetch(GATEWAY_URL + '/test-user', {
-					method: 'GET',
+				const response = await fetch(GATEWAY_URL + '/scoring/osint-score', {
+					method: 'OPTIONS',
 					headers: {
 						Authorization: `Bearer ${token}`
 					}
@@ -119,6 +121,7 @@ class AuthService {
 		return false;
 	}
 
+	// TODO : Remove every instance of deleteToken in the code
 	// Delete token from client
 	public static async deleteToken(): Promise<void> {
 		if (Cookies.get('authToken')) {
@@ -158,7 +161,6 @@ class AuthService {
 		newPassword: string
 	): Promise<any> {
 		const token = await AuthService.getTokenFromServer(cookies);
-		console.log('Token:', token);
 		try {
 			const response = await fetch(GATEWAY_URL + '/change-password', {
 				method: 'POST',
@@ -168,7 +170,6 @@ class AuthService {
 				},
 				body: JSON.stringify({ currentPassword, newPassword })
 			});
-			console.log('Réponse changement de mot de passe:', response);
 			if (response.ok) {
 				AuthService.deleteTokenFromServer(cookies);
 				return true;
@@ -195,6 +196,21 @@ class AuthService {
 		return false;
 	}
 
+	public static async canGetAllUsers(cookies: any): Promise<boolean> {
+		const token = await AuthService.getTokenFromServer(cookies);
+		if (token) {
+			const response = await fetch(GATEWAY_URL + '/get-all-users', {
+				method: 'HEAD',
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			});
+			if (response.status === 200) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 export default AuthService;
