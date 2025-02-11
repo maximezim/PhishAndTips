@@ -23,32 +23,35 @@
 
   async function getUserPhishingScore() {
     try {
-      userPhishingScore = await fetch('/api/scoring/admin/gophish-score', {
+      userPhishingScore = await fetch('/api/scoring/admin/phishing', {
         method: 'POST',
-        body: user.email,
+        body: JSON.stringify(user.email),
       }).then(res => res.json());
+      userPhishingScore *= 10;
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte de score phishing: ', e);
+      console.error('Error while calling svelte phishing score API: ', e);
     }
   }
 
   async function getUserOsintScore() {
     try {
-      userOsintScore = await fetch('/api/scoring/admin/osint-score', {
+      userOsintScore = await fetch('/api/scoring/admin/osint', {
         method: 'POST',
-        body: user.email,
+        body: JSON.stringify(user.email),
       }).then(res => res.json());
+      userOsintScore *= 10;
     } catch(e) {
-      console.error('Error while calling svelte osint API: ', e);
+      console.error('Error while calling svelte osint score API: ', e);
     }
   }  
 
   async function getUserFormationScore() {
     try {
-      userFormationScore = await fetch('/api/scoring/admin/formation-score', {
+      userFormationScore = await fetch('/api/scoring/admin/formation', {
         method: 'POST',
-        body: user.email,
+        body: JSON.stringify(user.email),
       }).then(res => res.json());
+      userFormationScore = (10 - userFormationScore) * 10;
     } catch(e) {
       console.error('Error while calling svelte formation score API: ', e);
     }
@@ -56,10 +59,11 @@
 
   async function getUserTotalScore() {
     try {
-      userTotalScore = await fetch('/api/scoring/admin/total-score', {
+      userTotalScore = await fetch('/api/scoring/admin/total', {
         method: 'POST',
-        body: user.email,
+        body: JSON.stringify(user.email),
       }).then(res => res.json());
+      console.log("TOTAL SCORE",userTotalScore)
     } catch(e) {
       console.error('Error while calling svelte total score API: ', e);
     }

@@ -35,9 +35,10 @@ class ScoringService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
+			console.log('PHISHING SCORE : ', response);
 			return response.data.score;
 		} catch (error: any) {
-			console.error('Error while getting the user phishing score:', error.message);
+			console.error('Error while getting user phishing score:', error);
 			return [];
 		}
 	}
@@ -73,6 +74,7 @@ class ScoringService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
+			console.log('OSINT SCORE : ', response);
 			return response.data.osintScore;
 		} catch (error: any) {
 			console.error('Error while getting user osint score:', error.message);
@@ -111,6 +113,7 @@ class ScoringService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
+			console.log('FORMATION SCORE : ', response);
 			return response.data.formationAverage;
 		} catch (error: any) {
 			console.error('Error while getting user formation score:', error.message);
@@ -130,6 +133,7 @@ class ScoringService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
+
 			return response.data.totalScore;
 		} catch (error: any) {
 			console.error('Error while getting total score:', error.message);
@@ -149,6 +153,7 @@ class ScoringService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
+			console.log('TOTAL SCORE : ', response);
 			return response.data.totalScore;
 		} catch (error: any) {
 			console.error('Error while getting user total score:', error.message);
