@@ -62,7 +62,15 @@
       <!-- CSV File -->
       <div class="name flex flex-col gap-2">
         <p class="text-sm">Format accepté : CSV</p>
-        <Input accept=".csv" type="file" bind:value={usersCSV} class="w-full" />
+        <Input
+          type="file"
+          accept=".csv"
+          class="w-full"
+          on:change="{(e) => {
+            usersCSV = (e.target! as HTMLInputElement).files![0];
+          }}"
+        />
+
         {#if errors.usersCSV}
           <p class="text-red-500 text-sm">{errors.usersCSV}</p>
         {/if}

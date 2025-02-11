@@ -76,14 +76,14 @@ export async function PUT({ request, cookies }) {
 /*
  * API endpoint : /api/db/user
  * Method : DELETE
- * Request : a user id
+ * Request : a user email
  * Response : a success message
  * Description : Delete an existing user
  */
 export async function DELETE({ request, cookies }) {
-	const userId = await request.json();
+	const userEmail = await request.json();
 	try {
-		const response = await DbService.deleteUser(cookies, userId);
+		const response = await DbService.deleteUser(cookies, userEmail);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
