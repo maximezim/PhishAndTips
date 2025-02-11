@@ -7,7 +7,14 @@
 
     let objectUrl: string = "";
 
-    onMount(async () => {
+    let loading = true;
+    let error: Error | null = null;
+    let retries = 0;
+    const MAX_RETRIES = 3;
+
+    async function loadImage() {
+        loading = true;
+        error = null;
         try {
             const response = await fetch(src, {
                 headers: {
@@ -19,10 +26,18 @@
             }
             const blob = await response.blob();
             objectUrl = URL.createObjectURL(blob);
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            error = err as Error;
+            if (retries < MAX_RETRIES) {
+                retries++;
+                setTimeout(loadImage, 1000 * retries);
+            }
+        } finally {
+            loading = false;
         }
-    });
+    }
+
+    onMount(loadImage);
 
     onDestroy(() => {
         if (objectUrl) {
