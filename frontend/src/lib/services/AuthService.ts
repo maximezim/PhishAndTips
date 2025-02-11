@@ -161,7 +161,6 @@ class AuthService {
 		newPassword: string
 	): Promise<any> {
 		const token = await AuthService.getTokenFromServer(cookies);
-		console.log('Token:', token);
 		try {
 			const response = await fetch(GATEWAY_URL + '/change-password', {
 				method: 'POST',
@@ -171,7 +170,6 @@ class AuthService {
 				},
 				body: JSON.stringify({ currentPassword, newPassword })
 			});
-			console.log('Réponse changement de mot de passe:', response);
 			if (response.ok) {
 				AuthService.deleteTokenFromServer(cookies);
 				return true;

@@ -16,7 +16,7 @@ class ScoringService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
-			return response.data;
+			return response.data.score;
 		} catch (error: any) {
 			console.error('Error while getting phishing score:', error.message);
 			return [];
@@ -54,7 +54,7 @@ class ScoringService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
-			return response.data;
+			return response.data.formationAverage;
 		} catch (error: any) {
 			console.error('Error while getting formation score:', error.message);
 			return [];
@@ -73,7 +73,7 @@ class ScoringService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
-			return response.data;
+			return response.data.totalScore;
 		} catch (error: any) {
 			console.error('Error while getting total score:', error.message);
 			return [];

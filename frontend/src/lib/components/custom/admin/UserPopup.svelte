@@ -69,8 +69,8 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class={"bg-transparent hover:bg-slate-200"} builders={[builder]} on:click={getUserScore}>
-      <iconify-icon class="icon-custom" icon="mingcute:eye-fill" style={`color: hsl(var(--accent))`}></iconify-icon>
+    <Button class={"bg-accent text-xl py-0 px-3"} builders={[builder]} on:click={getUserScore}>
+      <iconify-icon class="icon-custom" icon="mingcute:eye-fill" style={`color: hsl(var(--accent-foreground))`}></iconify-icon>
     </Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-[90vw] max-h-[90vh] flex flex-col" >

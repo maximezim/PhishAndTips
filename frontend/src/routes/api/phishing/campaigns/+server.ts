@@ -35,7 +35,7 @@ export async function POST({ request, cookies }) {
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.log('Error: No data found');
+			console.error('Error: No data found');
 			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
@@ -58,7 +58,7 @@ export async function PUT({ request, cookies }) {
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.log('Error: No data found');
+			console.error('Error: No data found');
 			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
@@ -81,7 +81,7 @@ export async function DELETE({ request, cookies }) {
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.log('Error: No data found');
+			console.error('Error: No data found');
 			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {
