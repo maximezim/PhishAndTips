@@ -1,10 +1,11 @@
-<script>
+<script lang="ts">
 	import Button from "../ui/button/button.svelte";
     import ChevronsLeft from "lucide-svelte/icons/chevrons-left";
     import ChevronsRight from "lucide-svelte/icons/chevrons-right";
     import 'iconify-icon';
     import fish_svg from '$lib/assets/images/fish.svg';
     import logo_svg from '$lib/assets/images/pl_logo.svg';
+	import { onMount } from "svelte";
 
     export let dash_text;
     export let dash_bg;
@@ -33,6 +34,11 @@
         style_logo = sidebar ? 'w-12 h-12 mt-7' : 'w-8 h-8 mt-5';
     }
 
+    let canGetAllUsers: boolean = false;
+
+    onMount(async () => {
+        canGetAllUsers = await fetch("/api/can-access/can-get-all-users").then(res => res.json());
+    });
 
 </script>
 
@@ -53,15 +59,17 @@
                     {/if}
                 </li>
             </a>
-
-            <a href="/phishing" class={`bg-${phishing_bg} ${style_link}`}>
-                <li class={`flex items-center gap-4 ${style_li}`}>
-                    <img src={fish_svg} alt="fish" class="w-5 h-5 ms-1 fish" style={`filter: invert(${phishing_text === 'white' ? 1 : 0});`}  />
-                    {#if sidebar}
-                        <span class={`text-${phishing_text} text-base font-semibold`}>Phishing</span>
-                    {/if}
-                </li>
-            </a>
+            {#if canGetAllUsers}
+                <a href="/phishing" class={`bg-${phishing_bg} ${style_link}`}>
+                    <li class={`flex items-center gap-4 ${style_li}`}>
+                        <img src={fish_svg} alt="fish" class="w-5 h-5 ms-1 fish" style={`filter: invert(${phishing_text === 'white' ? 1 : 0});`}  />
+                        {#if sidebar}
+                            <span class={`text-${phishing_text} text-base font-semibold`}>Phishing</span>
+                        {/if}
+                    </li>
+                </a>
+            {/if}
+            
 
             <a href="/osint" class={`bg-${osint_bg} ${style_link}`}>
                 <li class={`flex items-center gap-4 ${style_li}`}>

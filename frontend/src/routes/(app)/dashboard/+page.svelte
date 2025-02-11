@@ -17,6 +17,7 @@
   async function getPhishingScore() {
     try {
       phishingScore = await fetch("/api/scoring/phishing").then(res => res.json());
+      phishingScore = phishingScore * 10;
     } catch(e) {
       console.error('Erreur lors de l\'appel de l\'API svelte de score phishing: ', e);
     }
@@ -25,6 +26,7 @@
   async function getOsintScore() {
     try {
       osintScore = await fetch("/api/scoring/osint").then(res => res.json());
+      osintScore = osintScore * 10;
     } catch(e) {
       console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
     }
@@ -33,6 +35,7 @@
   async function getFormationScore() {
     try {
       formationScore = await fetch("/api/scoring/formation").then(res => res.json());
+      formationScore = (10 -  formationScore) * 10;
     } catch(e) {
       console.error('Erreur lors de l\'appel de l\'API svelte de score formation: ', e);
     }
