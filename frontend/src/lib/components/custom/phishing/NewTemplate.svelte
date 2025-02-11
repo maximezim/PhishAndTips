@@ -46,7 +46,7 @@
 
   async function createTemplate() {
     if (!validateForm()){
-      console.log(errors);
+      console.error(errors);
       return;
     } 
 
