@@ -1,5 +1,6 @@
 package com.learnandphish.authentication;
 
+import com.learnandphish.authentication.mail.EmailSender;
 import com.learnandphish.authentication.user.Roles;
 import com.learnandphish.authentication.user.UserData;
 import com.learnandphish.authentication.user.UserDataRepository;
@@ -9,6 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,9 @@ public class AuthenticationApplication {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private JavaMailSender mailSender;
 
 	final Logger logger = LoggerFactory.getLogger(AuthenticationApplication.class);
 
@@ -91,6 +96,18 @@ public class AuthenticationApplication {
 				logger.info("Karine user user created.");
 			} else {
 				logger.info("Karine user already exists.");
+			}
+		};
+	}
+
+	@Bean
+	public CommandLineRunner checkSMTPStatus() {
+		return args -> {
+			EmailSender emailSender = new EmailSender(mailSender);
+			if (emailSender.isSmtpAvailable()) {
+				logger.info("SMTP server is up and running.");
+			} else {
+				logger.error("SMTP server is down.");
 			}
 		};
 	}
