@@ -23,7 +23,10 @@
 
   async function getUserPhishingScore() {
     try {
-      userPhishingScore = await fetch("/api/scoring/phishing").then(res => res.json());
+      userPhishingScore = await fetch('/api/scoring/admin/gophish-score', {
+        method: 'POST',
+        body: user.email,
+      }).then(res => res.json());
     } catch(e) {
       console.error('Erreur lors de l\'appel de l\'API svelte de score phishing: ', e);
     }
@@ -31,25 +34,34 @@
 
   async function getUserOsintScore() {
     try {
-      userOsintScore = await fetch("/api/scoring/osint").then(res => res.json());
+      userOsintScore = await fetch('/api/scoring/admin/osint-score', {
+        method: 'POST',
+        body: user.email,
+      }).then(res => res.json());
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
+      console.error('Error while calling svelte osint API: ', e);
     }
   }  
 
   async function getUserFormationScore() {
     try {
-      userFormationScore = await fetch("/api/scoring/formation").then(res => res.json());
+      userFormationScore = await fetch('/api/scoring/admin/formation-score', {
+        method: 'POST',
+        body: user.email,
+      }).then(res => res.json());
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte de score formation: ', e);
+      console.error('Error while calling svelte formation score API: ', e);
     }
   }
 
   async function getUserTotalScore() {
     try {
-      userTotalScore = await fetch("/api/scoring").then(res => res.json());
+      userTotalScore = await fetch('/api/scoring/admin/total-score', {
+        method: 'POST',
+        body: user.email,
+      }).then(res => res.json());
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte du score total: ', e);
+      console.error('Error while calling svelte total score API: ', e);
     }
   }
 
@@ -62,7 +74,7 @@
         getUserTotalScore(),
       ]);
     } catch(e) {
-      console.error('Erreur lors de l\'appel de l\'API svelte de score osint: ', e);
+      console.error('Error while calling scoring svelte API: ', e);
     }
   }
 </script>
