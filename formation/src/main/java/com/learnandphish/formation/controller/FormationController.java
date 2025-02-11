@@ -51,6 +51,16 @@ public class FormationController {
         return ResponseEntity.ok(quiz != null ? quiz : new Quiz());
     }
 
+    // Update a quiz
+    @PutMapping("/quiz/{quizId}")
+    public ResponseEntity<?> updateQuiz(@PathVariable Integer quizId, @RequestBody Quiz quiz) {
+        Quiz updatedQuiz = quizService.updateQuiz(quizId, quiz);
+        if (updatedQuiz == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quiz not found");
+        }
+        return ResponseEntity.ok().build();
+    }
+
     // Get all videos
     @GetMapping("/videos")
     public ResponseEntity<List<Video>> getAllVideos() {

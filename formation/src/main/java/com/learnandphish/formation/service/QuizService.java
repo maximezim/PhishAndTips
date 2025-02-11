@@ -27,6 +27,16 @@ public class QuizService {
         return quizRepository.findAll();
     }
 
+    // Update a quiz
+    public Quiz updateQuiz(Integer quizId, Quiz quiz) {
+        Quiz updatedQuiz = quizRepository.findById(quizId).orElse(null);
+        if (updatedQuiz != null) {
+            updatedQuiz.setJson(quiz.getJson());
+            quizRepository.save(updatedQuiz);
+        }
+        return updatedQuiz;
+    }
+
     // Save user score
     public void saveUserScore(String userEmail, Integer quizId, Float score) {
         UserQuizScore userQuizScore = quizScoreRepository.findById(new UserQuizId(userEmail, quizId)).orElse(new UserQuizScore());
