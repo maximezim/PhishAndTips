@@ -4,8 +4,8 @@
     import * as Tabs from "$lib/components/ui/tabs";
     import * as Table from "$lib/components/ui/table";
     import * as AlertDialog from "$lib/components/ui/alert-dialog";
+    import type { User } from '$types/users';
     import { onMount } from 'svelte';
-	import { run } from "svelte/legacy";
 
     interface ParsedResult {
       Data: string;
@@ -44,15 +44,8 @@
       updatedAt: string;
     }
 
-    interface Target {
-      first_name: string;
-      last_name: string;
-      email: string;
-      position: string;
-    }
-    
-    interface User {
-      target: Target;
+    interface UserScan {
+      target: User;
       scan: MyScan | null;
       groupedResults: Map<string, ParsedResult[]> | null;
     }
@@ -60,8 +53,8 @@
     let myScan: MyScan | [];
     let scanResult: ScanResult | null = null;
     let isAdmin: boolean = false;
-    let usersFromDb : Target[] = [];
-    let users: User[] = [];
+    let usersFromDb : User[] = [];
+    let users: UserScan[] = [];
 
     let loading = true;	
     let canScan = true;
@@ -69,7 +62,8 @@
     let dateScan = "";
     let status = "";
     let nbResults = "";
-    let score = 7;
+    let myScore = 0;
+    let myScoreColor = "";
     let groupedResults = new Map<string, ParsedResult[]>();
 
     let currentPageUser = 1;
@@ -78,11 +72,13 @@
 
     onMount(async () => {
       try {
-        isAdmin = await fetch("/api/auth/admin").then(res => res.json());
+        isAdmin = await fetch("/api/can-access/can-get-all-users").then(res => res.json());
         myScan = await fetch("/api/osint/user").then(res => res.json());
+        myScore = await fetch("/api/scoring/osint").then(res => res.json());
+        console.log(myScore);
         if(isAdmin){
           usersFromDb = await fetch("/api/db/users").then(res => res.json());
-          users = await Promise.all(usersFromDb.map(async (user: Target) => {
+          users = await Promise.all(usersFromDb.map(async (user: User) => {
             const groupJson = {
               email : user.email
             };
@@ -103,7 +99,8 @@
       } catch (error) {
         console.error("Erreur : ", error);
       } finally {
-        console.log(usersFromDb);
+        let color = getScoreColor(myScore);
+        myScoreColor = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
         if(myScan && !Array.isArray(myScan)){
           scanResult = JSON.parse(myScan.result);
           const dateStr = myScan.updatedAt;
@@ -212,7 +209,7 @@
     const gradientColors = [
       { r: 100, g: 255, b: 100 },  // Vert
       { r: 255, g: 255, b: 100 }, // Jaune
-      { r: 255, g: 100, b: 100 } // Rouge
+      { r: 255, g: 100, b: 100 }, // Rouge
     ];
     function interpolateColor(color1: { r: number, g: number, b: number }, color2: { r: number, g: number, b: number }, factor: number) {
       const result = {
@@ -224,17 +221,14 @@
     }
     function getScoreColor(percentage : number) {
       if (percentage <= 0) return gradientColors[0];
-      if (percentage >= 100) return gradientColors[gradientColors.length - 1];
+      if (percentage >= 10) return gradientColors[gradientColors.length - 1];
 
       const totalSegments = gradientColors.length - 1;
-      const segment = Math.floor((percentage / 100) * totalSegments);
-      const segmentPercentage = (percentage / 100) * totalSegments - segment;
+      const segment = Math.floor((percentage / 10) * totalSegments);
+      const segmentPercentage = (percentage / 10) * totalSegments - segment;
 
       return interpolateColor(gradientColors[segment], gradientColors[segment + 1], segmentPercentage);
     }
-
-    let color = getScoreColor(score);
-    let rgb_color = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
     
     const typeTranslations = new Map<string, string>([
       ["PGP_KEY", "Clé PGP"],
@@ -358,7 +352,7 @@
         </div>
         <div class="bg-white w-full p-6 border-2 border-t-0 border-gray-100">
           <div class="relative color-bar h-4 w-full rounded">
-            <div class="absolute h-7 w-0.5 top-[50%] translate-y-[-50%] bg-accent" style="right: {score}%"></div>
+            <div class="absolute h-7 w-0.5 top-[50%] translate-y-[-50%] bg-accent" style="left: {myScore*10}%"></div>
           </div>
         </div>
         {/if}
@@ -387,8 +381,8 @@
             {#each getCurrentPageRowsUser() as user}
               <Table.Row class="hover:bg-gray-50 bg-white">
                   <Table.Cell><span class="flex w-8 h-3 rounded-full bg-green-400"></span></Table.Cell>
-                  <Table.Cell>{user.target.last_name}</Table.Cell>
-                  <Table.Cell>{user.target.first_name}</Table.Cell>
+                  <Table.Cell>{user.target.lastName}</Table.Cell>
+                  <Table.Cell>{user.target.firstName}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.target.email}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.target.position}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.scan && Array.isArray(user.scan) && user.scan.length === 0 ? "-" : user.scan ? formatDate(user.scan.updatedAt) : "-"}</Table.Cell>
@@ -405,13 +399,13 @@
                           <div class="left flex gap-5">
                             <iconify-icon class="text-7xl p-2 pb-1 bg-white rounded-lg" icon="mingcute:face-fill"></iconify-icon>
                             <div class="flex flex-col justify-center">
-                              <p class="text-lg font-semibold">{user.target.first_name} {user.target.last_name}</p>
+                              <p class="text-lg font-semibold">{user.target.firstName} {user.target.lastName}</p>
                               <p class="text-medium">{user.target.email}</p>
                               <p class="text-medium">{user.target.position}</p>
                             </div>
                           </div> 
                           <div class="right">
-                            <span class="shadow flex w-10 h-10 rounded-full" style='background-color: {rgb_color}'></span>
+                            <span class="shadow flex w-10 h-10 rounded-full" style='background-color: {myScoreColor}'></span>
                           </div>
 
                         </div>
@@ -505,7 +499,7 @@
     </div>
     <div class="bg-white w-full p-6 border-2 border-t-0 border-gray-100">
       <div class="relative color-bar h-4 w-full rounded">
-        <div class="absolute h-7 w-0.5 top-[50%] translate-y-[-50%] bg-accent" style="right: {score}%"></div>
+        <div class="absolute h-7 w-0.5 top-[50%] translate-y-[-50%] bg-accent" style="left: {myScore*10}%"></div>
       </div>
     </div>
     {/if}
@@ -521,7 +515,7 @@
     background-color: #f4f2fd;
   }
   .color-bar {
-    background: linear-gradient(to right, rgb(255, 100, 100), rgb(255, 255, 100), rgb(100, 255, 100));
+    background: linear-gradient(to left, rgb(255, 100, 100), rgb(255, 255, 100), rgb(100, 255, 100));
   }
 </style>
    
