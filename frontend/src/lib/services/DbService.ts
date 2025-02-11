@@ -22,7 +22,7 @@ class DbService {
 			return response;
 		} catch (error: any) {
 			console.error('Error while creating user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -39,7 +39,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while fetching user data:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -57,7 +57,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while updating user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -65,7 +65,6 @@ class DbService {
 	// Delete
 	public static async deleteUser(cookies: any, userEmail: any): Promise<any> {
 		try {
-			console.log(JSON.stringify({ email: userEmail }));
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/delete-user`, userEmail, {
 				headers: {
@@ -76,7 +75,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while deleting user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -95,7 +94,7 @@ class DbService {
 			return response.data._embedded.userDTOList;
 		} catch (error: any) {
 			console.error('Error while fetching users data:', error.message);
-			console.error(error);
+
 			return [];
 		}
 	}
@@ -131,7 +130,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Erreur lors de la récupération des utilisateurs:', error.message);
-			console.error(error);
+
 			return [];
 		}
 	}

@@ -1,10 +1,8 @@
 <script lang="ts">
   import Separator from "$lib/components/custom/Separator.svelte";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { AspectRatio } from "$lib/components/ui/aspect-ratio";
-  import FormationService from '$lib/services/FormationService';
   import { onMount } from "svelte";
-  import Cookies from 'js-cookie';
+	import FormationVideoPopup from "$lib/components/custom/formation/FormationVideoPopup.svelte";
 
   let videos: any[] = [];
   let quiz: any[] = [];
@@ -16,10 +14,7 @@
 
       // Update thumbnail URLs to point to our proxy endpoint:
       videos = fetchedVideos.map((video: any) => {
-        const urlParts = video.thumbnailUrl.split('/');
-        const id = urlParts[urlParts.length - 1];
-        video.thumbnailUrl = `/api/formation/thumbnail/${id}`;
-        //video.thumbnailUrl = fetch(`/api/formation/thumbnail/${id}`).then(res => res.url);
+        video.thumbnailUrl = `/api/formation/asset?assetURL=${video.thumbnailUrl}`;
         return video;
       });
 
@@ -39,15 +34,13 @@
   </div>
 
   <Separator color="bg-accent" width="w-1/5" margin_top="mt-3"/>
-  <div class="video_container w-full grid grid-cols-1 md:grid-cols-3 gap-6 my-8">
+  <div class="video_container w-full grid grid-cols-1 md:grid-cols-3 gap-16 my-8">
     {#each videos as video}
-      <AspectRatio ratio={20/9} class="bg-muted rounded shadow">
-        <img src={video.thumbnailUrl} alt={video.title} class="rounded-md object-contain" />
-      </AspectRatio>
+      <FormationVideoPopup video={video} />
     {/each}
   </div>
 
-  <Button class="bg-accent w-full md:w-1/5 mx-auto mb-3">Voir tout</Button>
+  <!-- <Button class="bg-accent w-full md:w-1/5 mx-auto mb-3">Voir tout</Button> -->
   <Separator color="bg-muted" width="w-full" margin_top="mt-6" margin_bottom="mb-6"/>
 
   <div class="flex items-center gap-1">
