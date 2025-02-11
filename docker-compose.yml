@@ -1,4 +1,21 @@
 services:
+
+  nginx:
+    container_name: nginx
+    image: nginx:1-alpine
+    ports:
+      - "81:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/certs/key.pem:/root/ssl/key.pem
+      - ./nginx/certs/cert.pem:/root/ssl/cert.pem
+    depends_on:
+      - api-gateway
+    networks:
+      - backend
+    profiles:
+      - dev
+
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -144,6 +161,7 @@ services:
     volumes:
       - gophish-data:/opt/gophish
       - ./gophish/config.json:/opt/gophish/config.json
+      - ./gophish/landing-pages:/opt/gophish/static/endpoint
     environment:
       - GOPHISH_INITIAL_ADMIN_API_TOKEN=${GOPHISH_API_KEY}
     ports:
@@ -216,6 +234,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - ./gophish/landing-pages:/var/gophish/landing-pages
     env_file:
       - .env
     environment:
@@ -237,7 +257,6 @@ services:
       - backend
     profiles:
       - prod
-      - dev
   
   spiderfoot-api:
     container_name: spiderfoot-api
@@ -259,7 +278,6 @@ services:
       POSTGRES_HOST: postgres
     profiles:
       - prod
-      - dev
 
   frontend:
     container_name: frontend
