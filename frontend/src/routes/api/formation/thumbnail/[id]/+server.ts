@@ -21,8 +21,18 @@ export const GET: RequestHandler = async ({ params, cookies }) => {
   // Read the response as an array buffer
   const buffer = await res.arrayBuffer();
   const contentType = res.headers.get('Content-Type') || 'application/octet-stream';
-
+  
+  // Validate content type
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  if (!allowedTypes.includes(contentType)) {
+    return new Response('Invalid content type', { status: 415 });
+  }
+ 
   return new Response(buffer, {
-    headers: { 'Content-Type': contentType }
+    headers: {
+      'Content-Type': contentType,
+      'Cache-Control': 'public, max-age=3600',
+      'Content-Length': buffer.byteLength.toString()
+    }
   });
 };
