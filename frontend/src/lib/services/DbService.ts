@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AuthService from './AuthService';
+import type { UserWithoutRole } from '$types/users';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL;
 
@@ -9,25 +10,25 @@ class DbService {
 	 * CRUD, read-all and import CSV
 	 */
 	// Create
-	public static async createUser(cookies: any, user: any): Promise<any[]> {
+	public static async createUser(cookies: any, user: any): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/create-user`, user, {
+			const response = await axios.post(`${GATEWAY_URL}/register`, user, {
 				headers: {
 					Authorization: `Bearer ${jwt}`,
 					'Content-Type': 'application/json'
 				}
 			});
-			return response.data;
+			return response;
 		} catch (error: any) {
 			console.error('Error while creating user:', error.message);
 			console.error(error);
-			return [];
+			return;
 		}
 	}
 
 	// Read
-	public static async getUser(cookies: any, userEmail: string): Promise<any[]> {
+	public static async getUser(cookies: any, userEmail: string): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.get(`${GATEWAY_URL}/get-user?email=${userEmail}`, {
@@ -39,7 +40,7 @@ class DbService {
 		} catch (error: any) {
 			console.error('Error while fetching user data:', error.message);
 			console.error(error);
-			return [];
+			return;
 		}
 	}
 
@@ -104,22 +105,16 @@ class DbService {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/import-users`, usersFormData, {
 				headers: {
-					Authorization: `Bearer ${jwt}`,
-					'Content-Type': 'text/csv'
+					Authorization: `Bearer ${jwt}`
 				}
 			});
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while importing users CSV file:', error.message);
-			// console.error(error);
 			return [];
 		}
 	}
 
-	/*
-	 * Roles
-	 * Get
-	 */
 	/*
 	 * Roles
 	 * Get
