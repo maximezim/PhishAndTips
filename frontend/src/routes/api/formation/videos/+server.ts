@@ -17,5 +17,12 @@ export async function GET({ cookies }) {
 		}
 	} catch (e) {
 		console.error(e);
+		return new Response(
+			JSON.stringify({ 
+				error: 'Internal server error',
+				message: e instanceof Error ? e.message : 'Unknown error'
+			}), 
+			{ status: 500 }
+		);
 	}
 }
