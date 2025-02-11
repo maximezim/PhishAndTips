@@ -20,6 +20,7 @@
   let userPhishingScore: number = 0;
   let userFormationScore: number = 0;
   let userTotalScore: number = 0;
+  let userPhishingDetails: any = {};
 
   async function getUserPhishingScore() {
     try {
@@ -68,6 +69,17 @@
     }
   }
 
+  async function getPhishingDetails() {
+    try {
+      userPhishingDetails = await fetch('/api/scoring/admin/phishing/details', {
+        method: 'POST',
+        body: JSON.stringify({email: user.email}),
+      }).then(res => res.json());
+    } catch(e) {
+      console.error('Error while calling svelte phishing details API: ', e);
+    }
+  }
+
   async function getUserScore() {
     try {
       await Promise.all([
@@ -75,6 +87,7 @@
         getUserOsintScore(),
         getUserFormationScore(),
         getUserTotalScore(),
+        getPhishingDetails(),
       ]);
     } catch(e) {
       console.error('Error while calling scoring svelte API: ', e);
@@ -106,7 +119,7 @@
       <ScoringBadgesCarousel />
 
       <!-- Phishing scoring Card ($lib/components/custom/scoring/ScoringPhishingCard.svelte) -->
-      <ScoringPhishingCard />
+      <ScoringPhishingCard phishingDetails={userPhishingDetails} />
     </div>
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>

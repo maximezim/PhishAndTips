@@ -46,6 +46,47 @@ class ScoringService {
 	}
 
 	/*
+	* Phishing Details
+	* Get the phishing details of the user 
+	*/
+	public static async getPhishingDetails(cookies: any): Promise<any[]> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(`${GATEWAY_URL}/scoring/gophish-actions-count`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-type": "application/json"
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while getting phishing actions count:', error.message);
+			return [];
+		}
+	}
+
+	/*
+	* ADMIN Phishing Details
+	* Get the phishing score of the user of the given email
+	*/
+	public static async getAdminPhishingDetails(cookies: any, email: any): Promise<any[]> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			email = JSON.stringify({email: email});
+			const response = await axios.post(`${GATEWAY_URL}/scoring/admin/gophish-actions-count`, email, {
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					"Content-type": "application/json"
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while getting user phishing actions count:', error.message);
+			return [];
+		}
+	}
+
+	/*
 	 * Osint
 	 * Get the osint score of the user connected
 	 */

@@ -104,6 +104,12 @@ public class ScoringController {
         return gophishActionService.getUserActionCounts(email);
     }
 
+    @GetMapping("gophish-actions-count")
+    public Map<String, String> getGophishActionsCount(@RequestHeader("email") String email) {
+        return gophishActionService.getUserActionCounts(email);
+    }
+
+
     @PostMapping("admin/formation-average")
     public Map<String, Object> getFormationAverageScore(@RequestBody Map<String, String> request) {
         String email = request.get("email");

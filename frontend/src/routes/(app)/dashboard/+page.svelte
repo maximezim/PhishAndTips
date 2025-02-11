@@ -13,6 +13,7 @@
   let phishingScore: number = 0;
   let formationScore: number = 0;
   let totalScore: number = 0;
+  let phishingDetails: any = {};
 
   async function getPhishingScore() {
     try {
@@ -49,6 +50,16 @@
     }
   }
 
+  async function getPhishingDetails() {
+    try {
+      phishingDetails = await fetch('/api/scoring/admin/phishing/details', {
+        method: 'GET',
+      }).then(res => res.json());
+    } catch(e) {
+      console.error('Error while calling svelte phishing details API: ', e);
+    }
+  }
+
   onMount(async () => {
     canGetAllUsers = await fetch("/api/can-access/can-get-all-users").then(res => res.json());
     await Promise.all([
@@ -56,6 +67,7 @@
       getOsintScore(),
       getFormationScore(),
       getTotalScore(),
+      getPhishingDetails(),
     ]);
   });
 </script>
@@ -86,7 +98,7 @@
         <ScoringBadgesCarousel />
 
         <!-- Phishing scoring Card ($lib/components/custom/scoring/ScoringPhishingCard.svelte) -->
-        <ScoringPhishingCard />
+        <ScoringPhishingCard phishingDetails={phishingDetails} />
       </div>
     </Tabs.Content>
   
