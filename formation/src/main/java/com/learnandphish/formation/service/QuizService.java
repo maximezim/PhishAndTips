@@ -37,6 +37,15 @@ public class QuizService {
         return updatedQuiz;
     }
 
+    // Create a quiz
+    public Quiz createQuiz(Quiz quiz) {
+        Quiz existingQuiz = quizRepository.findById(quiz.getId()).orElse(null);
+        if (existingQuiz != null) {
+            return null;
+        }
+        return quizRepository.save(quiz);
+    }
+
     // Save user score
     public void saveUserScore(String userEmail, Integer quizId, Float score) {
         UserQuizScore userQuizScore = quizScoreRepository.findById(new UserQuizId(userEmail, quizId)).orElse(new UserQuizScore());

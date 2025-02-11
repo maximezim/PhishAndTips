@@ -61,6 +61,16 @@ public class FormationController {
         return ResponseEntity.ok().build();
     }
 
+    // Create a quiz
+    @PostMapping("/quiz")
+    public ResponseEntity<?> createQuiz(@RequestBody Quiz quiz) {
+        Quiz createdQuiz = quizService.createQuiz(quiz);
+        if (createdQuiz == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Quiz id already exists");
+        }
+        return ResponseEntity.ok().build();
+    }
+
     // Get all videos
     @GetMapping("/videos")
     public ResponseEntity<List<Video>> getAllVideos() {
