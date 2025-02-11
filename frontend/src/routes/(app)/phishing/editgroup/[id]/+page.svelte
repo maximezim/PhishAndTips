@@ -11,26 +11,20 @@
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
 	import { page } from "$app/stores";
     import { get } from "svelte/store";
-
-    interface Target {
-        first_name: string;
-        last_name: string;
-        email: string;
-        position: string;
-    }
+    import type { User } from '$types/users';
 
     interface Group {
         id: string;
         name: string;
         modified_date: string;
-        targets: Target[];
+        targets: User[];
     }
 
     let group : Group;
-    let users : Target[] = [];
-    let usersFromDb : Target[] = [];
+    let users : User[] = [];
+    let usersFromDb : User[] = [];
     let loading_data = true;
-    let selectedUsers : Target[] = [];
+    let selectedUsers : User[] = [];
 
     let currentPageUser = 1;
     const rowsPerPageUser = 4;
@@ -56,10 +50,11 @@
       } catch (error) {
         console.error("Erreur lors de la récupération du groupe:", error);
       } finally {
+        console.log(group);
         users = group.targets;
         let nbuser = usersFromDb.length;
         totalPagesUser = Math.ceil(nbuser / rowsPerPageUser);
-        selectedUsers = usersFromDb.filter(user => users.some(target => target.email === user.email));
+        selectedUsers = usersFromDb.filter(user => users.some(User => User.email === user.email));
         loading_data = false;
       }
     });
@@ -76,7 +71,7 @@
         return usersFromDb.slice(start, end);
     }
 
-    function isUserSelected(user: Target) {
+    function isUserSelected(user: User) {
         return selectedUsers.some(selectedUser => selectedUser.email === user.email);
     }
   
@@ -91,7 +86,7 @@
             id: groupID,
             name: group.name,
             modified_date: modifiedDate,
-            targets: selectedUsers,
+            Users: selectedUsers,
         };
         await fetch(`/api/phishing/groups`, {
             method: 'PUT',
@@ -149,8 +144,8 @@
                     <Table.Body>
                         {#each getCurrentPageRowsUser() as user}
                         <Table.Row>
-                            <Table.Cell>{user.last_name}</Table.Cell>
-                            <Table.Cell>{user.first_name}</Table.Cell>
+                            <Table.Cell>{user.lastName}</Table.Cell>
+                            <Table.Cell>{user.firstName}</Table.Cell>
                             <Table.Cell class="hidden sm:table-cell">{user.email}</Table.Cell>
                             <Table.Cell class="hidden sm:table-cell">{user.position}</Table.Cell>
                             <Table.Cell>
