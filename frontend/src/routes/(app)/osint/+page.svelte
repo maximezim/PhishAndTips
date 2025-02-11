@@ -499,7 +499,7 @@
     <div class="results grid grid-cols-1 sm:grid-cols-2 gap-2 bg-white">
       {#if scanResult}
         {#each Array.from(groupedResults.entries()) as [type, results]}
-          <div class="result-group flex flex-col max-h-48 gap-2 p-4 bg-white shadow overflow-scroll">
+          <div class="result-group flex flex-col max-h-48 gap-2 p-4 bg-white shadow overflow-auto">
             <p class="text-medium font-semibold">{getTypeTranslation(type)}</p>
             {#each results as result}
               <p class="text-sm italic text-gray-600">{result.Data}</p>
