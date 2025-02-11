@@ -2,7 +2,6 @@
   import * as Tabs from '$lib/components/ui/tabs';
   import { onMount } from 'svelte';
 	import FormationUserTab from '$lib/components/custom/formation/FormationUserTab.svelte';
-	import VideoCard from '$lib/components/custom/admin/VideoCard.svelte';
 	import FormationVideosCard from '$lib/components/custom/formation/FormationVideosCard.svelte';
 
   let canGetAllUsers: boolean = false;
@@ -18,6 +17,8 @@
       // Update thumbnail URLs to point to our proxy endpoint:
       videos = fetchedVideos.map((video: any) => {
         video.thumbnailUrl = `/api/formation/asset?assetURL=${video.thumbnailUrl}`;
+        video.captionUrl = `/api/formation/asset?assetURL=${video.captionUrl}`;
+        video.videoUrl = `/api/formation/asset?assetURL=${video.videoUrl}`;
         return video;
       });
 
