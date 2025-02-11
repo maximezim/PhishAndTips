@@ -97,4 +97,17 @@ public class ScoringController {
         double score = osintScoringService.getOsintScore(email);
         return Map.of("email", email, "osintScore", score);
     }
+
+    @PostMapping("admin/gophish-actions-count")
+    public Map<String, String> getGophishActionsCount(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        return gophishActionService.getUserActionCounts(email);
+    }
+
+    @PostMapping("admin/formation-average")
+    public Map<String, Object> getFormationAverageScore(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        double average = averageScoreService.getUserAverageScore(email);
+        return Map.of("email", email, "formationAverage", average);
+    }
 }
