@@ -79,8 +79,18 @@
   <Separator color="bg-accent" width="w-1/5" margin_top="mt-3"/>
 
   <div class="quiz_container w-full overflow-x-auto flex flex-col flex-nowrap md:flex-row gap-6 my-8 p-2">
-    {#each quiz as q}
-      <div class="bg-muted min-w-[300px] h-[370px] rounded shadow"></div>
-    {/each}
+    {#if loading_data}
+      {#each Array(3) as _}
+        <div class="bg-muted min-w-[300px] h-[370px] rounded shadow animate-pulse"></div>
+      {/each}
+    {:else if quiz.length === 0}
+      <div class="min-w-full text-center py-8 text-gray-500">
+        No quizzes available
+      </div>
+    {:else}
+      {#each quiz as q}
+        <div class="bg-muted min-w-[300px] h-[370px] rounded shadow"></div>
+      {/each}
+    {/if}
   </div>
 </div>
