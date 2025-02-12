@@ -13,6 +13,7 @@
     email: "",
     position: "",
     role: "",
+
   };
 
   let selected = { value: user.role, label: user.role };
@@ -113,12 +114,12 @@
     
     <AlertDialog.Header class="flex flex-row items-center justify-between">
       <AlertDialog.Title>{user.firstName} {user.lastName} ({user.email})</AlertDialog.Title>
-      <ConfirmPopup description="Réinitialisation du mot de passe" name="Réinitialiser" style="bg-accent" functionToCall={resetPassword}/>
+      
     </AlertDialog.Header>
 
-    <Separator />
+    <Separator width="w-full" />
 
-    <div class="grid grid-cols-1 w-full p-1 gap-x-8 gap-y-4 pt-5 overflow-auto">
+    <div class="grid grid-cols-1 w-full p-1 gap-x-8 gap-y-4 pb-4 overflow-auto">
       <!-- First Name -->
       <div class="name flex flex-col gap-2">
         <p class="text-sm">Entrer un prénom</p>
@@ -165,9 +166,13 @@
       </div>
     </div>
     
-    <AlertDialog.Footer>
-      <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
-      <ConfirmPopup description="Modification de l'utilisateur" name="Modifier" style="bg-accent" functionToCall={updateUser} />
+    <AlertDialog.Footer class="flex justify-between sm:justify-between">
+      <ConfirmPopup description="Réinitialisation du mot de passe" name="Réinitialiser le mot de passe" style="bg-accent" functionToCall={resetPassword}/>
+      <div class="flex gap-3">
+        <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
+        <ConfirmPopup description="Modification de l'utilisateur" name="Modifier" style="bg-accent" functionToCall={updateUser} />
+      </div>
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>
+
