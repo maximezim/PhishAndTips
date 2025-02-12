@@ -10,5 +10,4 @@
 <div class="relative z-10 flex flex-col w-full gap-6">
   <FormationVideosCard videos={videos} />
   <FormationQuizCard quizzes={quizzes} />
-  <FormationQuizPopup json={JSON.parse(quizzes[0].json)} />
 </div>

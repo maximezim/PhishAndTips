@@ -27,7 +27,7 @@
       <Carousel.Content class="h-full flex items-center">
         {#each quizzes as quiz}
           <Carousel.Item class="flex items-center justify-center md:basis-1/2 lg:basis-1/4 gap-10">
-            
+            <FormationQuizPopup quiz={quiz} />
           </Carousel.Item>
         {/each}
       </Carousel.Content>

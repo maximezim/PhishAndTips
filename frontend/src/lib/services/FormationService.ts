@@ -34,6 +34,21 @@ class FormationService {
 			return [];
 		}
 	}
+
+	public static async getQuizById(cookies: any, quizId: string): Promise<any> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(`${GATEWAY_URL}/formation/quiz/${quizId}`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while fetching quiz:', error.message);
+			return;
+		}
+	}
 }
 
 export default FormationService;
