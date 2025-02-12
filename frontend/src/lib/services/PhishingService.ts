@@ -67,7 +67,7 @@ class PhishingService {
 	public static async deleteCampaign(cookies: any, campaignId: number) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.delete(
+			const { data } = await axios.delete(
 				`${API_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
 				{
 					headers: {
@@ -75,9 +75,10 @@ class PhishingService {
 					}
 				}
 			);
-			return response.data;
+			return data;
 		} catch (error: any) {
 			console.error('Error while deleting the Gophish campaign:', error.message);
+			throw error;
 		}
 	}
 
@@ -114,6 +115,24 @@ class PhishingService {
 		} catch (error: any) {
 			console.error('Error while getting Gophish campaign summary:', error.message);
 			return [];
+		}
+	}
+
+	public static async completeCampaign(cookies: any, campaignId: number) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(
+				`${API_URL}/api/campaigns/${campaignId}/complete?api_key=${API_KEY}`,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
+				}
+			);
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while completing the Gophish campaign:', error.message);
+			throw error;
 		}
 	}
 
