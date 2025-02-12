@@ -87,7 +87,7 @@ public class GophishActionService {
                 .map(file -> {
                     GophishLandingPageDTO dto = new GophishLandingPageDTO();
                     dto.setName(StringUtils.capitalize(file.getName()));
-                    dto.setUrl("http://"+System.getenv("GATEWAY_URL")+"/api/static/endpoint/"+file.getName());
+                    dto.setUrl("http://api-gateway:8080/api/static/endpoint/"+file.getName());
                     return dto;
                 })
                 .collect(Collectors.toList());

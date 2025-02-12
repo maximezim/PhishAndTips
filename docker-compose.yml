@@ -11,7 +11,7 @@ services:
     env_file:
       - .env
     environment:
-      NGINX_HOST: ${DOMAIN:-localhost}
+      NGINX_HOST: ${DOMAIN_NAME:-localhost}
     depends_on:
       - api-gateway
 #      - frontend
@@ -36,7 +36,7 @@ services:
       - ./databases/authentication/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/authentication_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
+      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=${AUTH_PG_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -198,7 +198,7 @@ services:
       - ./databases/formation/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
+      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=${FORMATION_PG_USER}" ]
       interval: 10s
       timeout: 5s
       retries: 5
