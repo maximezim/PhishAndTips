@@ -84,7 +84,7 @@ public class FormationApplication {
                                 }
 
                                 String updatedJson = gson.toJson(jsonObject);
-                                quiz.setId(Integer.parseInt(quizId));
+                                quiz.setId(null);
                                 quiz.setJson(updatedJson);
                                 quizRepository.save(quiz);
                             } else {

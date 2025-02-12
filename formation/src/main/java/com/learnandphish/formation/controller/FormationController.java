@@ -43,17 +43,14 @@ public class FormationController {
         if (updatedQuiz == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Quiz not found");
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Quiz updated successfully");
     }
 
     // Create a quiz
     @PostMapping("/quiz")
     public ResponseEntity<?> createQuiz(@RequestBody Quiz quiz) {
-        Quiz createdQuiz = quizService.createQuiz(quiz);
-        if (createdQuiz == null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Quiz id already exists");
-        }
-        return ResponseEntity.ok().build();
+        quizService.createQuiz(quiz);
+        return ResponseEntity.ok("Quiz created successfully");
     }
 
     // Get all videos
@@ -83,7 +80,7 @@ public class FormationController {
             if (createdVideo == null) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating video");
             }
-            return ResponseEntity.ok(createdVideo);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading video");
         }
@@ -97,7 +94,7 @@ public class FormationController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video not found");
         }
         videoService.deleteVideo(videoId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Video deleted successfully");
     }
 
     // Set isWatched to true for a user and a video
@@ -105,7 +102,7 @@ public class FormationController {
     public ResponseEntity<String> setIsWatched(@RequestHeader("email") String email, @PathVariable Integer videoId){
         Video video = videoService.getVideoById(videoId);
         if (video == null){
-            return ResponseEntity.ok("");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video not found");
         }
         videoService.setIsWatched(email, videoId);
         return ResponseEntity.ok("Video watched");
