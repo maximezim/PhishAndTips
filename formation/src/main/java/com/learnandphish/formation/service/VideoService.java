@@ -153,4 +153,9 @@ public class VideoService {
         }
     }
 
+    public String sanitizeFileName(String originalFilename) {
+        // Remove or replace risky characters in the file name
+        return originalFilename.replaceAll("[\\\\/:*?\"<>|]", "_");
+    }
+
 }

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/formation")
 @RequiredArgsConstructor
 public class FormationController {
     private final QuizService quizService;
@@ -24,21 +23,21 @@ public class FormationController {
     private final BadgeService badgeService;
 
     // Get all quizzes
-    @GetMapping("/quizzes")
+    @GetMapping("/formation/quizzes")
     public ResponseEntity<List<Quiz>> getAllQuiz() {
         Iterable<Quiz> Quiz = quizService.getAllQuiz();
         return ResponseEntity.ok((List<Quiz>) Quiz);
     }
 
     // Get a quiz by id
-    @GetMapping("/quiz/{quizId}")
+    @GetMapping("/formation/quiz/{quizId}")
     public ResponseEntity<?> getQuizById(@PathVariable Integer quizId) {
         Quiz quiz = quizService.getQuizById(quizId);
         return ResponseEntity.ok(quiz != null ? quiz : new Quiz());
     }
 
     // Update a quiz
-    @PutMapping("/quiz/{quizId}")
+    @PutMapping("/admin/formation/quiz/{quizId}")
     public ResponseEntity<?> updateQuiz(@PathVariable Integer quizId, @RequestBody Quiz quiz) {
         Quiz updatedQuiz = quizService.updateQuiz(quizId, quiz);
         if (updatedQuiz == null) {
@@ -48,14 +47,14 @@ public class FormationController {
     }
 
     // Create a quiz
-    @PostMapping("/quiz")
+    @PostMapping("/admin/formation/quiz")
     public ResponseEntity<?> createQuiz(@RequestBody Quiz quiz) {
         quizService.createQuiz(quiz);
         return ResponseEntity.ok("Quiz created successfully");
     }
 
     // Get all videos
-    @GetMapping("/videos")
+    @GetMapping("/formation/videos")
     public ResponseEntity<List<Video>> getAllVideos() {
         List<Video> videos = videoService.getAllVideos();
         return ResponseEntity.ok(videos);
@@ -63,7 +62,7 @@ public class FormationController {
 
 
     // Create a video with file upload
-    @PostMapping("/video/upload")
+    @PostMapping("/admin/formation/video/upload")
     public ResponseEntity<?> uploadVideo(@RequestParam("videoFile") MultipartFile videoFile,
                                          @RequestParam("thumbnailFile") MultipartFile thumbnailFile,
                                          @RequestParam("captionFile") MultipartFile captionFile,
@@ -73,9 +72,9 @@ public class FormationController {
             Video video = new Video();
             video.setTitle(title);
             video.setDescription(description);
-            video.setVideoUrl(sanitizeFileName(Objects.requireNonNull(videoFile.getOriginalFilename())));
-            video.setThumbnailUrl(sanitizeFileName(Objects.requireNonNull(thumbnailFile.getOriginalFilename())));
-            video.setCaptionUrl(sanitizeFileName(Objects.requireNonNull(captionFile.getOriginalFilename())));
+            video.setVideoUrl(videoService.sanitizeFileName(Objects.requireNonNull(videoFile.getOriginalFilename())));
+            video.setThumbnailUrl(videoService.sanitizeFileName(Objects.requireNonNull(thumbnailFile.getOriginalFilename())));
+            video.setCaptionUrl(videoService.sanitizeFileName(Objects.requireNonNull(captionFile.getOriginalFilename())));
 
             Video createdVideo = videoService.createVideo(video, videoFile, thumbnailFile, captionFile);
             if (createdVideo == null) {
@@ -87,13 +86,9 @@ public class FormationController {
         }
     }
 
-    private String sanitizeFileName(String originalFilename) {
-        // Remove or replace risky characters in the file name
-        return originalFilename.replaceAll("[\\\\/:*?\"<>|]", "_");
-    }
 
     // Delete a video
-    @DeleteMapping("/video/{videoId}")
+    @DeleteMapping("/admin/formation/video/{videoId}")
     public ResponseEntity<?> deleteVideo(@PathVariable Integer videoId) {
         Video video = videoService.getVideoById(videoId);
         if (video == null) {
@@ -104,7 +99,7 @@ public class FormationController {
     }
 
     // Set isWatched to true for a user and a video
-    @PostMapping("/video/watched/{videoId}")
+    @PostMapping("/formation/video/watched/{videoId}")
     public ResponseEntity<String> setIsWatched(@RequestHeader("email") String email, @PathVariable Integer videoId){
         Video video = videoService.getVideoById(videoId);
         if (video == null){
@@ -115,14 +110,14 @@ public class FormationController {
     }
 
     // Get all videos watched by a user
-    @GetMapping("/videos/watched")
+    @GetMapping("/formation/videos/watched")
     public ResponseEntity<List<Video>> getVideosWatchedByUser(@RequestHeader("email") String email){
         List<Video> videos = videoService.getVideosWatchedByUser(email);
         return ResponseEntity.ok(videos);
     }
 
     // Save user score
-    @PostMapping("/quiz/score")
+    @PostMapping("/formation/quiz/score")
     public ResponseEntity<String> saveUserScore(@RequestBody UserQuizScoreDTO userQuizScoreDTO, @RequestHeader("email") String email){
         if (userQuizScoreDTO.getQuizId() == null || userQuizScoreDTO.getScore() == null || email == null){
             return ResponseEntity.badRequest().body("Invalid request");
@@ -135,7 +130,7 @@ public class FormationController {
     }
 
     // Get user scores for all quizzes
-    @GetMapping("/quizzes/scores")
+    @GetMapping("/formation/quizzes/scores")
     public ResponseEntity<List<UserQuizScoreDTO>> getUserScores(@RequestHeader("email") String email){
         ArrayList<UserQuizScoreDTO> userQuizScores = new ArrayList<>();
         try {
@@ -155,32 +150,32 @@ public class FormationController {
     }
 
     // Get user score for a quiz
-    @GetMapping("/quiz/score/{quiz_id}")
+    @GetMapping("/formation/quiz/score/{quiz_id}")
     public ResponseEntity<?> getUserScoreForQuiz(@RequestHeader("email") String email, @PathVariable Integer quiz_id){
         Float score = quizService.getUserScoreForQuiz(email, quiz_id);
         return ResponseEntity.ok(score != null ? score : 0.0f);
     }
 
-    @PostMapping("/badge/claim/{badgeId}")
+    @PostMapping("/formation/badge/claim/{badgeId}")
     public ResponseEntity<?> claimBadge(@PathVariable Integer badgeId, @RequestHeader("email") String email){
         Badge badge = badgeService.claimBadge(badgeId, email);
         return ResponseEntity.ok(badge != null ? badge : new Badge());
     }
 
-    @GetMapping("/badge/all")
+    @GetMapping("/formation/badge/all")
     public ResponseEntity<List<Badge>> getBadges(@RequestHeader("email") String email){
         List<Badge> badges = badgeService.getBadgesByUser(email);
         return ResponseEntity.ok(badges);
     }
 
-    @GetMapping("/badge/{badgeId}")
+    @GetMapping("/formation/badge/{badgeId}")
     public ResponseEntity<?> getBadgeById(@PathVariable Integer badgeId){
         Badge badge = badgeService.getBadgeById(badgeId);
         return ResponseEntity.ok(badge != null ? badge : new Badge());
     }
 
     // Upload a file
-    @PostMapping("/upload")
+    @PostMapping("/admin/formation/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             String fileUrl = videoService.uploadFile(file);
