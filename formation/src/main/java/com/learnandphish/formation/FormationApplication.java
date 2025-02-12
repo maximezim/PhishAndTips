@@ -2,10 +2,8 @@ package com.learnandphish.formation;
 
 import com.google.gson.*;
 import com.learnandphish.formation.model.Badge;
-import com.learnandphish.formation.model.Formation;
 import com.learnandphish.formation.model.Quiz;
 import com.learnandphish.formation.model.Video;
-import com.learnandphish.formation.repository.FormationRepository;
 import com.learnandphish.formation.repository.QuizRepository;
 import com.learnandphish.formation.repository.VideoRepository;
 import com.learnandphish.formation.repository.BadgeRepository;
@@ -32,9 +30,6 @@ public class FormationApplication {
 
     @Autowired
     private QuizRepository quizRepository;
-
-    @Autowired
-    private FormationRepository formationRepository;
 
     @Autowired
     private VideoRepository videoRepository;
@@ -151,26 +146,6 @@ public class FormationApplication {
         }
     }
 
-    // For each object in data/formations/formations.json, create a formation if id does not exist in database
-    @Bean
-    public CommandLineRunner initializeFormation(){
-        return args -> {
-           File file = new File("/var/formation/data/formations/formations.json");
-                if (file.exists() && file.isFile()) {
-                    String content = Files.readString(file.toPath());
-                    Gson gson = new Gson();
-                    Formation[] formations = gson.fromJson(content, Formation[].class);
-                    for (Formation formation : formations) {
-                        Formation existingFormation = formationRepository.findById(formation.getId()).orElse(new Formation());
-                        if (existingFormation.getId() == null) {
-                            formationRepository.save(formation);
-                        }
-                    }
-                } else {
-                    log.error("File formations.json does not exist or is not a file");
-                }
-        };
-    }
 
     // For each object in data/videos/videos.json, create a video if id does not exist in database
     @Bean

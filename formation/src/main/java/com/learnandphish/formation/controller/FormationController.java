@@ -3,7 +3,6 @@ package com.learnandphish.formation.controller;
 import com.learnandphish.formation.dto.UserQuizScoreDTO;
 import com.learnandphish.formation.model.*;
 import com.learnandphish.formation.service.BadgeService;
-import com.learnandphish.formation.service.FormationService;
 import com.learnandphish.formation.service.QuizService;
 import com.learnandphish.formation.service.VideoService;
 import lombok.RequiredArgsConstructor;
@@ -19,24 +18,9 @@ import java.util.List;
 @RequestMapping("/formation")
 @RequiredArgsConstructor
 public class FormationController {
-    private final FormationService formationService;
     private final QuizService quizService;
     private final VideoService videoService;
     private final BadgeService badgeService;
-
-    // Get all formations
-    @GetMapping("/formations")
-    public ResponseEntity<List<Formation>> getAllFormations() {
-        List<Formation> formations = formationService.getAllFormations();
-        return ResponseEntity.ok(formations);
-    }
-
-    // Get a formation by id
-    @GetMapping("/{formationId}")
-    public ResponseEntity<?> getFormationById(@PathVariable Integer formationId) {
-        Formation formation = formationService.getFormationById(formationId);
-        return ResponseEntity.ok(formation != null ? formation : new Formation());
-    }
 
     // Get all quizzes
     @GetMapping("/quizzes")
@@ -78,7 +62,7 @@ public class FormationController {
         List<Video> videos = videoService.getAllVideos();
         return ResponseEntity.ok(videos);
     }
-    
+
 
     // Create a video with file upload
     @PostMapping("/video/upload")
