@@ -6,7 +6,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template #change to http.conf in prod
+      - ./nginx/http.conf:/etc/nginx/templates/default.conf.template #change to http.conf in prod
       - ./nginx/certs:/root/ssl:ro
     env_file:
       - .env
@@ -14,7 +14,7 @@ services:
       NGINX_HOST: ${DOMAIN_NAME:-localhost}
     depends_on:
       - api-gateway
-#      - frontend
+      - frontend
     networks:
       - backend
     profiles:
@@ -33,7 +33,7 @@ services:
     networks:
       - backend
     volumes:
-      - ./databases/authentication/pgdata:/var/lib/postgresql/data
+      - ./volumes/authentication-db/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/authentication_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=${AUTH_PG_USER}" ]
@@ -153,7 +153,7 @@ services:
       - mailserver
     restart: unless-stopped
     volumes:
-      - webmail_data:/var/www/html
+      - ./volumes/webmail:/var/www/html
       - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
     networks:
       - backend
@@ -166,7 +166,7 @@ services:
     image: gophish/gophish:latest
     user: "0"
     volumes:
-      - gophish-data:/opt/gophish
+      - ./volumes/gophish:/opt/gophish
       - ./gophish/config.json:/opt/gophish/config.json
       - ./gophish/landing-pages:/opt/gophish/static/endpoint
     env_file:
@@ -175,6 +175,7 @@ services:
       - GOPHISH_INITIAL_ADMIN_API_TOKEN=${GOPHISH_API_KEY}
     ports:
       - "8081:8081"
+      - "3333:3333"
     restart: unless-stopped
     networks:
       - backend
@@ -196,7 +197,7 @@ services:
     networks:
       - backend
     volumes:
-      - ./databases/formation/pgdata:/var/lib/postgresql/data
+      - ./volumes/formation-db/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=${FORMATION_PG_USER}" ]
@@ -317,8 +318,8 @@ services:
       MINIO_DEFAULT_BUCKETS: ${S3_BUCKET:-assets}
     command: server --address ':9000' /data
     volumes:
-      - ./minio/data:/data
-      - ./minio/config:/root/.minio
+      - ./volumes/minio/data:/data
+      - ./volumes/minio/config:/root/.minio
     networks:
       - backend
     healthcheck:

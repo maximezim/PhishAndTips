@@ -15,16 +15,5 @@
     "filename": "gophish.log",
     "level": "info",
     "enable_colors": true
-  },
-  "smtp": {
-    "host": "mailserver",
-    "port": 25,
-    "username": "sender@example.com",
-    "password": "1234",
-    "from_address": "sender@example.com",
-    "from_name": "Gophish",
-    "ignore_cert_errors": true,
-    "use_tls": false
-  },
-  "admin_api_key": "9e4537166e25f0d6f8187ada15c6134e80db62f34773e08bf50aba45abcf3fdf"
+  }
 }
