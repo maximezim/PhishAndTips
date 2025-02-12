@@ -22,12 +22,14 @@
   let selectedPage: Page | undefined = undefined;
   let selectedTemplate: Template | undefined = undefined;
   let campaignName = "";
+  let campaignUrl = "";
   let launch_date: DateValue | undefined = undefined;
   let endDate: DateValue | undefined = undefined;
   let isChecked = false;
 
   let errors = {
     campaignName: "",
+    campaignUrl: "",
     selectedGroup: "",
     selectedPage: "",
     selectedTemplate: "",
@@ -43,6 +45,13 @@
       isValid = false;
     } else {
       errors.campaignName = "";
+    }
+
+    if (!campaignUrl.trim()) {
+      errors.campaignUrl = "L'URL est obligatoire.";
+      isValid = false;
+    } else {
+      errors.campaignUrl = "";
     }
 
     if (!selectedGroup) {
@@ -92,7 +101,7 @@
     const groupJson = {
       name: campaignName,
       template: { name: selectedTemplate?.name ?? "" },
-      url: "http://localhost",
+      url: campaignUrl,
       page: { name: selectedPage?.name ?? "" },
       smtp: { name: "smtp" },
       launch_date: getFormattedDate(launch_date),
@@ -140,6 +149,7 @@
         <div class="col-span-2">
           <Separator width={'w-full'} margin_top={'mt-2'} margin_bottom={'mb-1'} height={'h-px'}/>
         </div>
+        <!-- Row 1: Name and Group -->
         <div class="name flex flex-col gap-2">
           <p class="text-sm text-left">Choisir un nom</p>
           <Input type="text" bind:value={campaignName} placeholder="Nom de la campagne" class="w-full" />
@@ -163,6 +173,17 @@
             <p class="text-red-500 text-sm text-left">{errors.selectedGroup}</p>
           {/if}
         </div>
+        
+        <!-- Row 2: URL spanning full width -->
+        <div class="url flex flex-col gap-2 col-span-2">
+          <p class="text-sm text-left">Saisir l'URL</p>
+          <Input type="text" bind:value={campaignUrl} placeholder="http://exemple.com" class="w-full" />
+          {#if errors.campaignUrl}
+            <p class="text-red-500 text-sm text-left">{errors.campaignUrl}</p>
+          {/if}
+        </div>
+        
+        <!-- Row 3: Mail and Template selections -->
         <div class="mail flex flex-col gap-2">
           <p class="text-sm text-left">Choisir un mail</p>
           <Select.Root onSelectedChange={(value) => (selectedTemplate = value?.value as Template)}>
@@ -195,6 +216,8 @@
             <p class="text-red-500 text-sm text-left">{errors.selectedPage}</p>
           {/if}
         </div>
+        
+        <!-- Existing preview and date sections -->
         <div class="relative preview_mail h-48">
           <span class="flex w-full h-full rounded bg-accent/[0.1] justify-center items-center">
             {#if selectedTemplate}
