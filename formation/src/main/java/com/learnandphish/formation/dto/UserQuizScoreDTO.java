@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class UserQuizScoreDTO {
-    String userEmail;
     Integer quizId;
     Float score;
 }

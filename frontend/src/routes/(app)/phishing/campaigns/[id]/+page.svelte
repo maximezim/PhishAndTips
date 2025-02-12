@@ -9,71 +9,15 @@
   import { Badge } from '$lib/components/ui/badge';
   import Separator from '$lib/components/custom/Separator.svelte';
   import { Button } from '$lib/components/ui/button';
-
-  interface CampaignSummary {
-      id: string;
-      name: string;
-      created_date: string;
-      launch_date: string;
-      send_by_date: string;
-      completed_date: string;
-      status: string;
-      stats: {
-          total: number;
-          sent: number;
-          opened: number;
-          clicked: number;
-          submitted_data: number;
-          email_reported: number;
-          error: number;
-      };
-  }
-
-  interface Campaign{
-    id: number;
-    name: string;
-    created_date: string;
-    launch_date: string;
-    send_by_date: string;
-    completed_date: string;
-    template: {
-      id: number;
-      name: string;
-      subject: string;
-      text: string;
-      html: string;
-      modified_date: string;
-      attachments: any[];
-    };
-    page: {
-      id: number;
-      name: string;
-      html: string;
-      capture_credentials: boolean;
-      capture_passwords: boolean;
-      redirect_url: string;
-      modified_date: string;
-    };
-    status: string;
-    timeline: {
-      email: string;
-      time: string;
-      message: string;
-      details: string;
-    }[];
-  }
-
-  interface Target {
-      email: string;
-      first_name: string;
-      last_name: string;
-      position: string;
-  }
-
+  import ConfirmPopup from '$lib/components/custom/ConfirmPopup.svelte';
+  import { goto } from '$app/navigation';
+  import type { Campaign, CampaignSummary } from '$types/gophish';
+  import type { User } from '$types/users';
+  
   let campaign: Campaign;
   let campaignSummary: CampaignSummary;
-  let usersFromDb: Target[] = [];
-  let users: Target[] = [];
+  let usersFromDb: User[] = [];
+  let users: User[] = [];
   
   let timelineActions = {
     opened: new Set<string>(),
@@ -147,6 +91,45 @@
     }
   });
 
+  // Added deleteCampaign function
+  async function deleteCampaign() {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette campagne ?')) {
+      try {
+        const res = await fetch(`/api/phishing/campaigns?id=${encodeURIComponent(campaign.id)}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (res.ok) {
+          goto('/phishing/campaigns');
+        } else {
+          alert("Erreur lors de la suppression de la campagne");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la suppression :", error);
+        alert("Erreur lors de la suppression de la campagne");
+      }
+    }
+  }
+
+  // Added completeCampaign function
+  async function completeCampaign() {
+    if (confirm('Êtes-vous sûr de vouloir marquer cette campagne comme complétée ?')) {
+      try {
+        const res = await fetch(`/api/phishing/campaigns/${campaign.id}/complete`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (res.ok) {
+          location.reload();
+        } else {
+          alert("Erreur lors de la complétion de la campagne");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la complétion :", error);
+        alert("Erreur lors de la complétion de la campagne");
+      }
+    }
+  }
 
   function changePageUser(page: number) {
       if (page >= 1 && page <= totalPagesUser) {
@@ -236,12 +219,18 @@
     };
   }
 
-</script>
+  </script>
 
 {#if !loading_data}
 <div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
-  <div class="header flex items-center gap-4">
+  <div class="header flex items-center justify-between gap-4">
     <h1 class="text-xl font-semibold">Informations sur la campagne</h1>
+    <div class="flex gap-2">
+      {#if campaign.status !== "Completed"}
+        <ConfirmPopup name="Terminer la campagne" description="Fin de la campagne" style="bg-accent" functionToCall={completeCampaign} />
+      {/if}
+      <ConfirmPopup name="Supprimer la campagne" description="Suppression de la campagne" type="destructive" functionToCall={deleteCampaign} />
+    </div>
   </div>
   <div class="grid grid-cols-3 gap-6 my-6">
     <div class="col-span-3 lg:col-span-1 flex flex-col gap-2 bg-muted rounded p-5 shadow">
@@ -349,7 +338,7 @@
       </Card.Title>
   </Card.Header>
   <Card.Content class="flex flex-grow flex-col justify-between">
-      <Table.Root class="max-h-60">
+      <Table.Root class="max-h-60 bg-accent/[0.03]">
           <Table.Header>
             <Table.Row>
               <Table.Head>Utilisateur</Table.Head>
@@ -365,7 +354,7 @@
             {#each getCurrentPageRowsUser() as row}
               <Table.Row>
                 <Table.Cell>
-                  <div class="font-medium">{row.last_name} {row.first_name}</div>
+                  <div class="font-medium">{row.lastName} {row.firstName}</div>
                   <div class="text-muted-foreground hidden text-sm md:inline">{row.email}</div>
                 </Table.Cell>
                 <Table.Cell class="hidden sm:table-cell">
@@ -413,4 +402,4 @@
 </div>
 </div>
 
-{/if} 
+{/if}

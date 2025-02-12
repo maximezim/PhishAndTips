@@ -11,6 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Quiz {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     // Json of the SurveyJs quiz

@@ -15,6 +15,7 @@
   let totalScore: number = 0;
   let phishingDetails: any = {};
 
+
   async function getPhishingScore() {
     try {
       phishingScore = await fetch("/api/scoring/phishing").then(res => res.json());
@@ -67,7 +68,7 @@
       getOsintScore(),
       getFormationScore(),
       getTotalScore(),
-      getPhishingDetails(),
+      getPhishingDetails()
     ]);
   });
 </script>
@@ -92,7 +93,7 @@
         <FormationCard />
 
         <!-- Osint scoring Card ($lib/components/custom/scoring/ScoringOsintCard.svelte) -->
-        <ScoringOsintCard />
+        <ScoringOsintCard admin={false} />
 
         <!-- Scoring badges carousel ($lib/components/custom/scoring/ScoringBadgesCarousel.svelte) -->
         <ScoringBadgesCarousel />

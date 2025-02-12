@@ -38,12 +38,8 @@ public class QuizService {
     }
 
     // Create a quiz
-    public Quiz createQuiz(Quiz quiz) {
-        Quiz existingQuiz = quizRepository.findById(quiz.getId()).orElse(null);
-        if (existingQuiz != null) {
-            return null;
-        }
-        return quizRepository.save(quiz);
+    public void createQuiz(Quiz quiz) {
+        quizRepository.save(quiz);
     }
 
     // Save user score

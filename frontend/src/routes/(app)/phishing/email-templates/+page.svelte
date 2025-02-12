@@ -8,10 +8,14 @@
     let styleTemplate = "";
     let styleTemplateItem = "";
 
-    onMount(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        templates = JSON.parse(urlParams.get('templates') || '[]');
-        handleStyle();
+    onMount(async () => {
+        try{
+            templates = await fetch("/api/phishing/templates").then(res => res.json());
+        }catch(error){
+            console.error(error);
+        }finally{
+            handleStyle();
+        }
     });
 
     function handleStyle(){
