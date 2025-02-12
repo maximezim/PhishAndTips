@@ -94,8 +94,7 @@ class DbService {
 				page: response.data.page
 			}
 		} catch (error: any) {
-			console.error('Error while fetching users data:', error.message);
-			console.error(error);
+			console.error('Error while fetching users dataaaa:', error.message);
 			return [];
 		}
 	}

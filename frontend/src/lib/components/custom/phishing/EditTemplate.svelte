@@ -55,16 +55,23 @@
       return;
     } 
 
-    template.modified_date = new Date().toISOString().slice(0, 19) + "+00:00", // formatted date
+    template.modified_date = new Date().toISOString().slice(0, 19) + "+00:00";
     
-    await fetch('/api/phishing/templates', {
-			method: 'PUT',
-			body: JSON.stringify(template),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-    closeAlertDialog();
+    try{
+      await fetch('/api/phishing/templates', {
+        method: 'PUT',
+        body: JSON.stringify(template),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      sessionStorage.setItem("showSuccessToast", "Modèle de mail modifié avec succès");
+    } catch(e) {
+      console.error('Error while updating template: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la modification du modèle de mail");
+    } finally {
+      closeAlertDialog();
+    }
   }
 
   function closeAlertDialog() {

@@ -8,6 +8,8 @@
 	import { goto } from '$app/navigation';
 	import { derived } from 'svelte/store';
 	import TapBar from '$lib/components/custom/TapBar.svelte';
+	import { Toaster } from '$lib/components/ui/sonner';
+	import { showSuccessToast, showErrorToast } from "$lib/toast";
 
 	const mainPages = ['/about', '/dashboard', '/formation', '/osint', '/password', '/phishing'];
 
@@ -31,11 +33,25 @@
 		if (window.location.pathname === '/') {
 			goto('/dashboard');
 		}
+
+		const successMessage = sessionStorage.getItem("showSuccessToast");
+		const errorMessage = sessionStorage.getItem("showErrorToast");
+
+		if (successMessage) {
+			showSuccessToast(successMessage);
+			sessionStorage.removeItem("showSuccessToast");
+		}
+
+		if (errorMessage) {
+			showErrorToast(errorMessage);
+			sessionStorage.removeItem("showErrorToast");
+		}
 	});
 
 </script>
 
 <div class="app flex w-full h-screen overflow-auto">
+	<Toaster />
 	<Sidebar 
 		className="hidden md:flex"
 		dash_text={$page.data?.dash_text}
