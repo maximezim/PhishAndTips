@@ -9,72 +9,15 @@
   import { Badge } from '$lib/components/ui/badge';
   import Separator from '$lib/components/custom/Separator.svelte';
   import { Button } from '$lib/components/ui/button';
+  import ConfirmPopup from '$lib/components/custom/ConfirmPopup.svelte';
   import { goto } from '$app/navigation';
-
-  interface CampaignSummary {
-      id: string;
-      name: string;
-      created_date: string;
-      launch_date: string;
-      send_by_date: string;
-      completed_date: string;
-      status: string;
-      stats: {
-          total: number;
-          sent: number;
-          opened: number;
-          clicked: number;
-          submitted_data: number;
-          email_reported: number;
-          error: number;
-      };
-  }
-
-  interface Campaign{
-    id: number;
-    name: string;
-    created_date: string;
-    launch_date: string;
-    send_by_date: string;
-    completed_date: string;
-    template: {
-      id: number;
-      name: string;
-      subject: string;
-      text: string;
-      html: string;
-      modified_date: string;
-      attachments: any[];
-    };
-    page: {
-      id: number;
-      name: string;
-      html: string;
-      capture_credentials: boolean;
-      capture_passwords: boolean;
-      redirect_url: string;
-      modified_date: string;
-    };
-    status: string;
-    timeline: {
-      email: string;
-      time: string;
-      message: string;
-      details: string;
-    }[];
-  }
-
-  interface Target {
-      email: string;
-      first_name: string;
-      last_name: string;
-      position: string;
-  }
-
+  import type { Campaign, CampaignSummary } from '$types/gophish';
+  import type { User } from '$types/users';
+  
   let campaign: Campaign;
   let campaignSummary: CampaignSummary;
-  let usersFromDb: Target[] = [];
-  let users: Target[] = [];
+  let usersFromDb: User[] = [];
+  let users: User[] = [];
   
   let timelineActions = {
     opened: new Set<string>(),
@@ -283,10 +226,10 @@
   <div class="header flex items-center justify-between gap-4">
     <h1 class="text-xl font-semibold">Informations sur la campagne</h1>
     <div class="flex gap-2">
-      <!-- Existing delete button -->
-      <Button class="bg-accent" on:click={deleteCampaign}>Supprimer la campagne</Button>
-      <!-- New complete button -->
-      <Button class="bg-accent" on:click={completeCampaign}>Compléter la campagne</Button>
+      {#if campaign.status !== "Completed"}
+        <ConfirmPopup name="Terminer la campagne" description="Fin de la campagne" style="bg-accent" functionToCall={completeCampaign} />
+      {/if}
+      <ConfirmPopup name="Supprimer la campagne" description="Suppression de la campagne" type="destructive" functionToCall={deleteCampaign} />
     </div>
   </div>
   <div class="grid grid-cols-3 gap-6 my-6">
@@ -395,7 +338,7 @@
       </Card.Title>
   </Card.Header>
   <Card.Content class="flex flex-grow flex-col justify-between">
-      <Table.Root class="max-h-60">
+      <Table.Root class="max-h-60 bg-accent/[0.03]">
           <Table.Header>
             <Table.Row>
               <Table.Head>Utilisateur</Table.Head>
@@ -411,7 +354,7 @@
             {#each getCurrentPageRowsUser() as row}
               <Table.Row>
                 <Table.Cell>
-                  <div class="font-medium">{row.last_name} {row.first_name}</div>
+                  <div class="font-medium">{row.lastName} {row.firstName}</div>
                   <div class="text-muted-foreground hidden text-sm md:inline">{row.email}</div>
                 </Table.Cell>
                 <Table.Cell class="hidden sm:table-cell">
