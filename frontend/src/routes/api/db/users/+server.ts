@@ -6,14 +6,21 @@ import DbService from '$lib/services/DbService';
  * Response : list of users
  * Description : Get all users from db
  */
-export async function GET({ cookies }) {
+export async function GET({ cookies, url }) {
 	try {
-		const response = await DbService.getUsers(cookies);
-		if (response != null) {
-			return new Response(JSON.stringify(response), { status: 200 });
-		} else {
-			console.error('Error while fetching users.');
-			return new Response(JSON.stringify({ error: 'Error while fetching users.' }), {
+		const size = url.searchParams.get('size');
+        const page = url.searchParams.get('page');
+		if(size && page){
+		const response = await DbService.getUsers(cookies, Number(size), Number(page));
+			if (response != null) {
+				return new Response(JSON.stringify(response), { status: 200 });
+			} else {
+				return new Response(JSON.stringify({ error: 'Error while fetching users.' }), {
+					status: 500
+				});
+			}
+		}else{
+			return new Response(JSON.stringify({ error: 'Error with parameters while fetching users.' }), {
 				status: 500
 			});
 		}

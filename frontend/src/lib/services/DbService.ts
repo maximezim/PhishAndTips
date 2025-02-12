@@ -22,7 +22,7 @@ class DbService {
 			return response;
 		} catch (error: any) {
 			console.error('Error while creating user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -39,7 +39,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while fetching user data:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -57,7 +57,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while updating user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -65,7 +65,6 @@ class DbService {
 	// Delete
 	public static async deleteUser(cookies: any, userEmail: any): Promise<any> {
 		try {
-			console.log(JSON.stringify({ email: userEmail }));
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/delete-user`, userEmail, {
 				headers: {
@@ -76,26 +75,27 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while deleting user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
 
 	// Read-all
-	public static async getUsers(cookies: any): Promise<any[]> {
+	public static async getUsers(cookies: any, size: number, page: number): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${GATEWAY_URL}/get-all-users`, {
+			const response = await axios.get(`${GATEWAY_URL}/get-all-users?page=${page}&size=${size}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
-
-			// TODO: handle pagination
-			return response.data._embedded.userDTOList;
+			return {
+				users: response.data._embedded.userDTOList,
+				page: response.data.page
+			};
 		} catch (error: any) {
 			console.error('Error while fetching users data:', error.message);
-			console.error(error);
+
 			return [];
 		}
 	}
@@ -131,7 +131,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Erreur lors de la récupération des utilisateurs:', error.message);
-			console.error(error);
+
 			return [];
 		}
 	}
@@ -139,11 +139,15 @@ class DbService {
 	public static async resetUserPassword(cookies: any, email: string): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/reset-password?email=${email}`, {}, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
+			const response = await axios.post(
+				`${GATEWAY_URL}/reset-password?email=${email}`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
 				}
-			});
+			);
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while resetting user password:', error.message);
@@ -151,7 +155,6 @@ class DbService {
 			return;
 		}
 	}
-
 }
 
 export default DbService;

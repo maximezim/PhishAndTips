@@ -9,39 +9,46 @@
 	import Separator from "$lib/components/custom/Separator.svelte";
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
     import { goto } from "$app/navigation";
-    import type { User } from '$types/users';
+    import type { User, UserPagination } from '$types/users';
+    import { showSuccessToast, showErrorToast } from "$lib/toast";
 
     let group_name= "";
     let loading_data = true;
-    let currentPageUser = 1;
+    let currentPage = 0;
     const rowsPerPageUser = 4;
-    let totalPagesUser = 1;
+    let data: UserPagination = {users: [],page: {size: 0,totalElements: 0,totalPages: 0,number: 0}};
 
     let selectedUsers : User[] = [];
-    let usersFromDb : User[] = [];
 
     onMount(async () => {
       try {
-        usersFromDb = await fetch("/api/db/users").then(res => res.json());
+        data = await fetch(`/api/db/users?size=${rowsPerPageUser}&page=${currentPage}`).then(res => res.json());
       } catch (error) {
         console.error("Erreur lors de la récupération du groupe:", error);
       } finally {
-        totalPagesUser = Math.ceil(usersFromDb.length / rowsPerPageUser);
         loading_data = false;
       }
     });
 
-
-    function changePageUser(page: number) {
-        if (page >= 1 && page <= totalPagesUser) {
-            currentPageUser = page;
+    async function getUsers() {
+        try {
+        data = await fetch(`/api/db/users?size=${rowsPerPageUser}&page=${currentPage}`).then(res => res.json());
+        console.log(data.page.totalElements);
+        } catch(e) {
+        console.error('Error while fetching users: ', e);
         }
     }
-    function getCurrentPageRowsUser() {
-        const start = (currentPageUser - 1) * rowsPerPageUser;
-        const end = start + rowsPerPageUser;
-        return usersFromDb.slice(start, end);
+
+    async function nextPage(){
+        currentPage++;
+        await getUsers();
     }
+
+    async function prevPage(){
+        currentPage--;
+        await getUsers();
+    }
+
 
     function isUserSelected(user: User) {
         return selectedUsers.some(selectedUser => selectedUser.email === user.email);
@@ -56,14 +63,24 @@
             name: group_name,
             targets: selectedUsers,
         };
-        await fetch(`/api/phishing/groups`, {
-            method: 'POST',
-            body: JSON.stringify(groupJson),
-            headers: {
-                'Content-Type': 'application/json'
+        try{
+            let res = await fetch(`/api/phishing/groups`, {
+                method: 'POST',
+                body: JSON.stringify(groupJson),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }); 
+            if(res.status !== 200){
+                showErrorToast("Une erreur s'est produite lors de la création du groupe");
+            } else {
+                showSuccessToast("Groupe créé avec succès");
+                closeAlertDialog();
             }
-        });
-        closeAlertDialog();
+        } catch(e) {
+            console.error('Error while creating group: ', e);
+            showErrorToast("Une erreur s'est produite lors de la création du groupe");
+        }
     }
 
   </script>
@@ -85,6 +102,11 @@
                 <Input id="name" type="text" bind:value={group_name} />
             </div>
             <div class="users flex flex-col">
+                {#if loading_data}
+                    <div class="flex justify-center items-center h-full">
+                        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
+                    </div>
+                {:else}
                 <Label for="users">Utilisateurs</Label>
                 <div class="table-container h-64 mt-3">
                 <Table.Root class="bg-accent/[0.03] ">
@@ -98,7 +120,7 @@
                       </Table.Row>
                     </Table.Header>
                     <Table.Body>
-                        {#each getCurrentPageRowsUser() as user}
+                        {#each data.users as user}
                         <Table.Row>
                             <Table.Cell>{user.lastName}</Table.Cell>
                             <Table.Cell>{user.firstName}</Table.Cell>
@@ -106,7 +128,7 @@
                             <Table.Cell>{user.position}</Table.Cell>
                             <Table.Cell>
                                 <Checkbox 
-                                    checked={selectedUsers.includes(user)}
+                                    checked={isUserSelected(user)}
                                     on:click={() => {
                                         if (isUserSelected(user)) {
                                             selectedUsers = selectedUsers.filter(selectedUser => selectedUser.email !== user.email);
@@ -124,17 +146,18 @@
                 <div class="footer mt-2">
                     <div class="w-full flex items-center justify-between mt-4">
                         <div class="relative w-1/3">
-                            <Button class="bg-accent" on:click={() => changePageUser(currentPageUser - 1)} disabled={currentPageUser=== 1}>Précédent</Button>
-                        </div>
-                        <div class="relative w-1/3 flex justify-center">
-                            <span class="mx-2 text-sm italic">Page {currentPageUser} sur {totalPagesUser}</span>
-                        </div>
-                        <div class="relative w-1/3 flex justify-end">
-                            <Button class="bg-accent" on:click={() => changePageUser(currentPageUser + 1)} disabled={currentPageUser === totalPagesUser}>Suivant</Button>
-                        </div>
+                            <Button class="bg-accent" on:click={prevPage} disabled={currentPage === 0}>Précédent</Button>
+                          </div>
+                          <div class="relative w-1/3 flex justify-center">
+                            <span class="mx-2 text-sm italic">Page {currentPage+1} sur {data.page.totalPages}</span>
+                          </div>
+                          <div class="relative w-1/3 flex justify-end">
+                            <Button class="bg-accent" on:click={nextPage} disabled={currentPage+1 === data.page.totalPages}>Suivant</Button>
+                          </div>
                     </div>
                     <Separator width={'w-full'} margin_top={'mt-6'} margin_bottom={'mb-3'} height={'h-px'}/>
                 </div>
+                {/if}
             </div>
         </div>
         <AlertDialog.Footer>

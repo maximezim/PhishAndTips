@@ -68,14 +68,21 @@
       modified_date: new Date().toISOString().slice(0, 19) + "+00:00", // formatted date
     };
     
-    await fetch('/api/phishing/templates', {
-			method: 'POST',
-			body: JSON.stringify(templateJson),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-    closeAlertDialog();
+    try{
+      await fetch('/api/phishing/templates', {
+        method: 'POST',
+        body: JSON.stringify(templateJson),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      sessionStorage.setItem("showSuccessToast", "Modèle de mail créé avec succès");
+    } catch(e) {
+      console.error('Error while creating template: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la création du modèle de mail");
+    } finally {
+      closeAlertDialog();
+    }
   }
 
   function closeAlertDialog() {

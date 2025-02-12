@@ -38,7 +38,7 @@
     <Separator color='bg-accent' width='w-1/5' height="h-[2.5px]" margin_top="mt-3"/>
 
     <div class={stylePage}>
-        {#each pages as page}
+        {#each [...pages].reverse() as page}
             <TemplatePopup page={page} isHtmlPopup={true} styleElementItem={stylePageItem}/>
         {/each}
     </div>

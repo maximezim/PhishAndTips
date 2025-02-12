@@ -7,13 +7,15 @@
 	import ScoringOsintCard from '$lib/components/custom/scoring/ScoringOsintCard.svelte';
 	import ScoringPhishingCard from '$lib/components/custom/scoring/ScoringPhishingCard.svelte';
 	import UsersCard from '$lib/components/custom/admin/UsersCard.svelte';
+  import { toast } from "svelte-sonner";
+	import { Button } from '$lib/components/ui/button';
 
   let canGetAllUsers: boolean = false;
   let osintScore: number = 0;
   let phishingScore: number = 0;
   let formationScore: number = 0;
   let totalScore: number = 0;
-  let phishingDetails: any = {};
+  let phishingDetails: any = {}; 
 
 
   async function getPhishingScore() {

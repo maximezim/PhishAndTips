@@ -32,6 +32,36 @@
       return `${day} ${month} ${year}`;
     }
 
+    function getStatusColor(status: string){
+        switch (status.toLowerCase()) {
+        case "queued":
+            return "bg-blue-100";
+        case "in progress":
+            return "bg-yellow-100";
+        case "completed":
+            return "bg-green-100";
+        case "failed":
+            return "bg-red-100";
+        default:
+            return "bg-gray-100";
+        }
+    }
+
+    function getStatusText(status: string){
+        switch (status.toLowerCase()) {
+        case "queued":
+            return "En attente";
+        case "in progress":
+            return "En cours";
+        case "completed":
+            return "Terminée";
+        case "failed":
+            return "Echouée";
+        default:
+            return "Inconnu";
+        }
+    }
+
     function handleStyle(){
         if(campaigns.length > 1) {
             campaignStyle = "grid grid-cols-1 sm:grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-5 my-5";
@@ -52,10 +82,13 @@
     <Separator color='bg-accent' width='w-1/5' height="h-[2.5px]" margin_top="mt-3"/>
 
     <div class="{campaignStyle}">
-        {#each campaigns as campaign}
+        {#each [...campaigns].reverse() as campaign}
         <div class="campaign flex flex-col justify-between h-72 bg-white rounded shadow-lg relative overflow-hidden p-4 {campagneStyleItem}">
             <div class="w-full h-48 shadow rounded overflow-hidden">
-                <iframe srcdoc={campaign.page.html} class="w-full h-full rounded-shadow" title="Redirection Model"></iframe>
+                <iframe srcdoc={campaign.page.html} class="w-full h-full rounded-shadow pointer-events-none" title="Redirection Model"></iframe>
+                <span class="absolute rounded-full shadow top-6 right-6 px-5 py-2 {getStatusColor(campaign.status)}">
+                    <p class="text-sm font-semibold">{getStatusText(campaign.status)}</p>
+                  </span>
             </div>
             <div class="info flex justify-between items-center mt-2">
                 <div class="info flex flex-col">
