@@ -118,6 +118,24 @@ class PhishingService {
 		}
 	}
 
+	public static async completeCampaign(cookies: any, campaignId: number) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.get(
+				`${API_URL}/api/campaigns/${campaignId}/complete?api_key=${API_KEY}`,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
+				}
+			);
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while completing the Gophish campaign:', error.message);
+			throw error;
+		}
+	}
+
 	/*
 	 * =============================
 	 * Templates

@@ -168,6 +168,26 @@
     }
   }
 
+  // Added completeCampaign function
+  async function completeCampaign() {
+    if (confirm('Êtes-vous sûr de vouloir marquer cette campagne comme complétée ?')) {
+      try {
+        const res = await fetch(`/api/phishing/campaigns/${campaign.id}/complete`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (res.ok) {
+          location.reload();
+        } else {
+          alert("Erreur lors de la complétion de la campagne");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la complétion :", error);
+        alert("Erreur lors de la complétion de la campagne");
+      }
+    }
+  }
+
   function changePageUser(page: number) {
       if (page >= 1 && page <= totalPagesUser) {
           currentPageUser = page;
@@ -262,7 +282,12 @@
 <div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
   <div class="header flex items-center justify-between gap-4">
     <h1 class="text-xl font-semibold">Informations sur la campagne</h1>
-    <Button class="bg-accent" on:click={deleteCampaign}>Supprimer la campagne</Button>
+    <div class="flex gap-2">
+      <!-- Existing delete button -->
+      <Button class="bg-accent" on:click={deleteCampaign}>Supprimer la campagne</Button>
+      <!-- New complete button -->
+      <Button class="bg-accent" on:click={completeCampaign}>Compléter la campagne</Button>
+    </div>
   </div>
   <div class="grid grid-cols-3 gap-6 my-6">
     <div class="col-span-3 lg:col-span-1 flex flex-col gap-2 bg-muted rounded p-5 shadow">
