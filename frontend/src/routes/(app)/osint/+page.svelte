@@ -74,7 +74,6 @@
       } catch (error) {
         console.error("Erreur : ", error);
       } finally {
-        console.log(users);
         let color = getScoreColor(myScore);
         myScoreColor = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
         if(myScan && !Array.isArray(myScan)){
@@ -171,6 +170,8 @@
         });
       }catch(e){
         console.log(e);
+      } finally {
+        location.reload();
       }
     }
 

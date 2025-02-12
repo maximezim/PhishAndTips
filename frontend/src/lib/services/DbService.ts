@@ -65,7 +65,6 @@ class DbService {
 	// Delete
 	public static async deleteUser(cookies: any, userEmail: any): Promise<any> {
 		try {
-			console.log(JSON.stringify({ email: userEmail }));
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/delete-user`, userEmail, {
 				headers: {
