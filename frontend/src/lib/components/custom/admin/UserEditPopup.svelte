@@ -5,6 +5,7 @@
 	import type { User } from "$types/users";
 	import { Input } from "$lib/components/ui/input";
 	import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
+	import Separator from "../Separator.svelte";
   
   export let user: User = {
     firstName: "",
@@ -12,6 +13,7 @@
     email: "",
     position: "",
     role: "",
+
   };
 
   let selected = { value: user.role, label: user.role };
@@ -69,6 +71,18 @@
     return isValid;
   }
 
+  async function resetPassword(){
+    await fetch('/api/db/user/reset-password', {
+      method: 'POST',
+      body: JSON.stringify(user.email),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    closeAlertDialog();
+  }
+
   async function updateUser() {
     if (!validateForm()){
       console.error(errors);
@@ -97,10 +111,15 @@
     </Button>
   </AlertDialog.Trigger>
   <AlertDialog.Content class="max-w-full lg:max-w-[60vw] max-h-[90vh] flex flex-col overflow-auto">
-    <AlertDialog.Header>
+    
+    <AlertDialog.Header class="flex flex-row items-center justify-between">
       <AlertDialog.Title>{user.firstName} {user.lastName} ({user.email})</AlertDialog.Title>
+      
     </AlertDialog.Header>
-    <div class="grid grid-cols-1 w-full gap-x-8 gap-y-4 pt-5 overflow-auto">
+
+    <Separator width="w-full" />
+
+    <div class="grid grid-cols-1 w-full p-1 gap-x-8 gap-y-4 pb-4 overflow-auto">
       <!-- First Name -->
       <div class="name flex flex-col gap-2">
         <p class="text-sm">Entrer un prénom</p>
@@ -146,9 +165,14 @@
         {/if}
       </div>
     </div>
-    <AlertDialog.Footer>
-      <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
-      <ConfirmPopup description="Modification de l'utilisateur" name="Modifier" style="bg-accent" functionToCall={updateUser} />
+    
+    <AlertDialog.Footer class="flex justify-between sm:justify-between">
+      <ConfirmPopup description="Réinitialisation du mot de passe" name="Réinitialiser le mot de passe" style="bg-accent" functionToCall={resetPassword}/>
+      <div class="flex gap-3">
+        <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
+        <ConfirmPopup description="Modification de l'utilisateur" name="Modifier" style="bg-accent" functionToCall={updateUser} />
+      </div>
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>
+

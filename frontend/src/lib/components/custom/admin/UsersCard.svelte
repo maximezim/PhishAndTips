@@ -30,7 +30,7 @@
     try {
       await fetch('/api/db/user', {
 			method: 'DELETE',
-			body: JSON.stringify(user),
+			body: JSON.stringify(user.email),
 			headers: {
 				'Content-Type': 'application/json'
 			}
@@ -85,7 +85,7 @@
           <Table.Head>Prénom</Table.Head>
           <Table.Head>Email</Table.Head>
           <Table.Head>Position</Table.Head>
-          <Table.Head>Actions</Table.Head>
+          <Table.Head class="text-right">Actions</Table.Head>
         </Table.Row>
       </Table.Header>
 
@@ -96,7 +96,7 @@
             <Table.Cell>{user.firstName}</Table.Cell>
             <Table.Cell>{user.email}</Table.Cell>
             <Table.Cell>{user.position}</Table.Cell>
-            <Table.Cell class="flex flex-row align-middle gap-2"><UserPopup user={user} /><UserEditPopup user={user} /><ConfirmPopup description="Suppression de l'utilisateur" icon="mingcute:delete-2-fill" style="bg-red-500 hover:bg-red-700 text-xl text-white py-0 px-3" functionToCall={() => deleteUser(user)} /></Table.Cell>
+            <Table.Cell class="flex flex-row align-middle justify-end gap-2"><UserPopup user={user} /><UserEditPopup user={user} /><ConfirmPopup description="Suppression de l'utilisateur" icon="mingcute:delete-2-fill" style="bg-red-500 hover:bg-red-700 text-xl text-white py-0 px-3" functionToCall={() => deleteUser(user)} /></Table.Cell>
           </Table.Row>
         {/each}
       </Table.Body>

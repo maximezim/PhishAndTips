@@ -1,0 +1,150 @@
+{
+  "locale": "fr",
+  "title": "Détection d'adresses mail frauduleuses",
+  "description": "Quiz de détection d’adresses mail frauduleuses plus ou moins complexes afin d'éviter les arnaques liées à l'usurpation d'identité par mail.",
+  "logo": "/var/formation/data/quiz/img/Phishtips.png",
+  "logoWidth": "200px",
+  "logoFit": "contain",
+  "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+  "pages": [
+    {
+      "name": "page1",
+      "elements": [
+        {
+          "type": "boolean",
+          "name": "question1",
+          "title": "support@google.com est-elle une adresse mail valide ou frauduleuse ?",
+          "hideNumber": true,
+          "correctAnswer": true,
+          "isRequired": true,
+          "labelTrue": "Valide",
+          "labelFalse": "Frauduleuse"
+        },
+        {
+          "type": "expression",
+          "name": "info1",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "L’adresse appartient bien au domaine officiel \"google.com\", ce qui garantit son authenticité.",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page3",
+      "elements": [
+        {
+          "type": "boolean",
+          "name": "question2",
+          "title": "customer-service@amaz0n-help.com est-elle une adresse mail valide ou frauduleuse ?",
+          "hideNumber": true,
+          "correctAnswer": false,
+          "isRequired": true,
+          "labelTrue": "Valide",
+          "labelFalse": "Frauduleuse"
+        },
+        {
+          "type": "expression",
+          "name": "info2",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Le o de amaz0n est en fait un zéro. Les fraudeurs remplacent souvent certaines lettres par des chiffres pour imiter des adresses légitimes.",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page4",
+      "elements": [
+        {
+          "type": "boolean",
+          "name": "question3",
+          "title": "support@googIe.com est-elle une adresse mail valide ou frauduleuse ?",
+          "hideNumber": true,
+          "correctAnswer": false,
+          "isRequired": true,
+          "labelTrue": "Valide",
+          "labelFalse": "Frauduleuse"
+        },
+        {
+          "type": "expression",
+          "name": "info3",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Le l de google est en fait un i majuscule. La similitude visuelle entre certaines lettres et chiffres est une technique courante de phishing. La différence ici est quasi invisible : Il = iL\n",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page5",
+      "elements": [
+        {
+          "type": "boolean",
+          "name": "question4",
+          "title": "informatique@helpgowork.com est-elle une adresse mail valide ou frauduleuse ?",
+          "hideNumber": true,
+          "correctAnswer": false,
+          "isRequired": true,
+          "labelTrue": "Valide",
+          "labelFalse": "Frauduleuse"
+        },
+        {
+          "type": "expression",
+          "name": "info4",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Le nom de domaine est étrange et inconnu. Les entreprises utilisent généralement leurs propres noms de domaine, un domaine inconnu est suspect.\n",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page6",
+      "elements": [
+        {
+          "type": "boolean",
+          "name": "question5",
+          "title": "support@microsoft.fr est-elle une adresse mail valide ou frauduleuse ?",
+          "hideNumber": true,
+          "correctAnswer": true,
+          "isRequired": true,
+          "labelTrue": "Valide",
+          "labelFalse": "Frauduleuse"
+        },
+        {
+          "type": "expression",
+          "name": "info5",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Le domaine \"microsoft.fr\" appartient bien à Microsoft France, ce qui le rend fiable.",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page7",
+      "elements": [
+        {
+          "type": "boolean",
+          "name": "question6",
+          "title": "bouygues-telecom.entreprises@notificationabonnement.com est-elle une adresse mail valide ou frauduleuse ?",
+          "hideNumber": true,
+          "correctAnswer": false,
+          "isRequired": true,
+          "labelTrue": "Valide",
+          "labelFalse": "Frauduleuse"
+        },
+        {
+          "type": "expression",
+          "name": "info6",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Le nom de domaine est anormal. Un vrai mail de Bouygues Telecom utiliserait un domaine officiel et non un domaine générique.\r\n",
+          "hideNumber": true
+        }
+      ]
+    }
+  ],
+  "widthMode": "responsive"
+}

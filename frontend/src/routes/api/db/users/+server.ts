@@ -27,7 +27,7 @@ export async function GET({ cookies }) {
  * Method : POST
  * Request : CSV file with a list of users
  * Response : list of users
- * Description : Importn a CSV file with users
+ * Description : Import a CSV file with users
  */
 export async function POST({ cookies, request }) {
 	try {
@@ -35,6 +35,7 @@ export async function POST({ cookies, request }) {
 		const file = formData.get('file');
 
 		if (!file || !(file instanceof Blob)) {
+			console.error('No valid CSV file provided');
 			return new Response(JSON.stringify({ error: 'No valid CSV file provided' }), {
 				status: 400
 			});

@@ -8,10 +8,14 @@
     let stylePage = "";
     let stylePageItem = "";
 
-    onMount(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        pages = JSON.parse(urlParams.get('pages') || '[]');
-        handleStyle();
+    onMount(async () => {
+        try{
+            pages = await fetch("/api/phishing/pages").then(res => res.json());
+        }catch(error){
+            console.error(error);
+        }finally{
+            handleStyle();
+        }
     });
 
     function handleStyle(){
@@ -21,18 +25,6 @@
             stylePage = "grid grid-cols-1 sm:grid-cols-6 gap-5 my-5";
             stylePageItem = "col-span-1 sm:col-span-6 lg:col-span-3 xl:col-span-2";
         }
-    }
-
-    function formatDate(dateString: string): string {
-      const date = new Date(dateString);
-      const months = [
-        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
-      ];
-      const day = date.getDate();
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-      return `${day} ${month} ${year}`;
     }
 
 </script>

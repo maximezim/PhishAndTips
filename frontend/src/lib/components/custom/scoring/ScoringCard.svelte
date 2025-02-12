@@ -18,8 +18,7 @@
       <iconify-icon class="text-3xl text-accent" icon="mingcute:safe-alert-fill"></iconify-icon>
     </Card.Title>
   </Card.Header>
-  <Card.Content>
-    
+  <Card.Content class="mb-6">
     <ScoringGradientBar score={totalScore} />
   </Card.Content>
   <Card.Footer>

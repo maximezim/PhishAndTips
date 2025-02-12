@@ -27,6 +27,7 @@ public class RouteRoles {
         Map.entry("/get-all-gophish-users", List.of("ADMIN")),
         Map.entry("/get-all-users", List.of("ADMIN")),
         Map.entry("/get-roles", List.of("ADMIN")),
+        Map.entry("/admin/formation/**", List.of("ADMIN")),
         Map.entry("/formation/**", List.of("USER", "ADMIN")),
         Map.entry("/scoring/admin/**", List.of("ADMIN")),
         Map.entry("/scoring/**", List.of("USER", "ADMIN")),

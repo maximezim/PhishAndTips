@@ -1,0 +1,204 @@
+{
+    "title": "Choix de son mot de passe",
+    "description": "Quiz  de connaissances nécessaires pour la protection et le renforcement de son mot de passe.",
+    "logo": "/var/formation/data/quiz/img/Phishtips.png",
+    "logoWidth": "200px",
+    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+    "pages": [
+      {
+        "name": "page1",
+        "elements": [
+          {
+            "type": "rating",
+            "name": "question1",
+            "title": "A partir de combien de caractères considère-t-on un mot de passe robuste?\n",
+            "correctAnswer": 3,
+            "isRequired": true,
+            "autoGenerate": false,
+            "rateValues": [
+              {
+                "value": 1,
+                "text": "8"
+              },
+              {
+                "value": 2,
+                "text": "11"
+              },
+              {
+                "value": 3,
+                "text": "12"
+              },
+              {
+                "value": 4,
+                "text": "14"
+              },
+              {
+                "value": 5,
+                "text": "18"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info1",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Plus un mot de passe est long, plus il est difficile à deviner par une attaque brute-force. Les mots de passe sont considérés comme robustes à partir de 12 caractères mais suite à l’arrivée prochaine d’ordinateurs quantiques à forte capacité de calcul, nous vous conseillons des mots de passe à 14 caractères minimum pour l'instant.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "elements": [
+          {
+            "type": "boolean",
+            "name": "question2",
+            "title": "\"Chouquette1974\" est-il un bon mot de passe ?",
+            "hideNumber": true,
+            "correctAnswer": false,
+            "isRequired": true,
+            "labelTrue": "Oui",
+            "labelFalse": "Non"
+          },
+          {
+            "type": "checkbox",
+            "name": "question3",
+            "title": "Pourquoi ?\r\n",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 3",
+              "Item 2"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Le mot de passe contient des chiffres, des majuscules, des minuscules et des caractères spéciaux"
+              },
+              {
+                "value": "Item 2",
+                "text": "Le mot de passe est trop court"
+              },
+              {
+                "value": "Item 3",
+                "text": "Le mot de passe contient des informations personnelles"
+              },
+              {
+                "value": "Item 4",
+                "text": "Le mot de passe est suffisamment long"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info3",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Les mots de passe basés sur des mots courants, notamment tirés du dictionnaire, et des dates comme celles de naissance sont faciles à deviner par un cybercriminel.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "elements": [
+          {
+            "type": "boolean",
+            "name": "question4",
+            "title": "\"Chnep9tid&233*!ecbj\" est-il un bon mot de passe ?\r\n",
+            "hideNumber": true,
+            "correctAnswer": true,
+            "isRequired": true,
+            "labelTrue": "Oui",
+            "labelFalse": "Non"
+          },
+          {
+            "type": "checkbox",
+            "name": "question5",
+            "title": "Pourquoi ?\r\n",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 1",
+              "Item 4"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Le mot de passe contient des chiffres, des majuscules, des minuscules et des caractères spéciaux"
+              },
+              {
+                "value": "Item 2",
+                "text": "Le mot de passe est trop court"
+              },
+              {
+                "value": "Item 3",
+                "text": "Le mot de passe contient des informations personnelles"
+              },
+              {
+                "value": "Item 4",
+                "text": "Le mot de passe est suffisamment long"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info5",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Un bon mot de passe doit être complexe et imprévisible. Il doit être uniquement compréhensible par la personne qui l’a créé.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "elements": [
+          {
+            "type": "image",
+            "name": "image6",
+            "imageLink": "/var/formation/data/quiz/img/schéma_MFA.png",
+            "imageFit": "cover",
+            "imageHeight": "auto",
+            "imageWidth": "40%"
+          },
+          {
+            "type": "radiogroup",
+            "name": "question6",
+            "title": "Quel est le principe qui consiste à valider une connexion sur un site en proposant un email ou message de validation?",
+            "hideNumber": true,
+            "correctAnswer": "Item 2",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "NFC"
+              },
+              {
+                "value": "Item 2",
+                "text": "MFA"
+              },
+              {
+                "value": "Item 3",
+                "text": "KFC"
+              },
+              {
+                "value": "Item 4",
+                "text": "GAFA"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info6",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "L’authentification multi-facteurs (MFA) ajoute une couche de sécurité supplémentaire en demandant une validation externe.",
+            "hideNumber": true
+          }
+        ]
+      }
+    ],
+    "widthMode": "responsive"
+  }
