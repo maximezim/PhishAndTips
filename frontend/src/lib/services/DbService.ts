@@ -22,7 +22,7 @@ class DbService {
 			return response;
 		} catch (error: any) {
 			console.error('Error while creating user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -39,7 +39,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while fetching user data:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -57,7 +57,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while updating user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -75,7 +75,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while deleting user:', error.message);
-			console.error(error);
+
 			return;
 		}
 	}
@@ -92,9 +92,10 @@ class DbService {
 			return {
 				users: response.data._embedded.userDTOList,
 				page: response.data.page
-			}
+			};
 		} catch (error: any) {
-			console.error('Error while fetching users dataaaa:', error.message);
+			console.error('Error while fetching users data:', error.message);
+
 			return [];
 		}
 	}
@@ -130,7 +131,7 @@ class DbService {
 			return response.data;
 		} catch (error: any) {
 			console.error('Erreur lors de la récupération des utilisateurs:', error.message);
-			console.error(error);
+
 			return [];
 		}
 	}
@@ -138,11 +139,15 @@ class DbService {
 	public static async resetUserPassword(cookies: any, email: string): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/reset-password?email=${email}`, {}, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
+			const response = await axios.post(
+				`${GATEWAY_URL}/reset-password?email=${email}`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
 				}
-			});
+			);
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while resetting user password:', error.message);
@@ -150,7 +155,6 @@ class DbService {
 			return;
 		}
 	}
-
 }
 
 export default DbService;

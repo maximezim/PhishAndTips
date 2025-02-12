@@ -19,3 +19,54 @@ export async function GET({ cookies }) {
 		console.error(e);
 	}
 }
+
+/*
+ * API endpoint : /api/formation/videos
+ * Method : POST
+ * Response : String message
+ * Description : Create a video
+ */
+export async function POST({ request, cookies }) {
+	try {
+		// get formData from request
+		const formData = await request.formData();
+		const response = await FormationService.uploadVideo(cookies, formData);
+		console.log(response);
+		if (response != null) {
+			return new Response(JSON.stringify(response), { status: 200 });
+		} else {
+			console.error('Error while uploading video JE SUIS UN POTI BLAGUEUR.');
+			return new Response(JSON.stringify({ error: 'Internal server error.' }), {
+				status: 500
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		return new Response(JSON.stringify({ error: 'Server error.' }), { status: 500 });
+	}
+}
+
+/*
+ * API endpoint : /api/formation/videos
+ * Method : DELETE
+ * Request : a video id
+ * Response : a success message
+ * Description : Delete an existing video
+ */
+export async function DELETE({ request, cookies }) {
+	const videoId = await request.json();
+	try {
+		const response = await FormationService.deleteVideo(cookies, videoId);
+		if (response != null) {
+			return new Response(JSON.stringify(response), { status: 200 });
+		} else {
+			console.error('Error while deleting video.');
+			return new Response(JSON.stringify({ error: 'Error while deleting video.' }), {
+				status: 500
+			});
+		}
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
+}
