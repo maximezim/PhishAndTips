@@ -49,6 +49,45 @@ class FormationService {
 			return;
 		}
 	}
+
+	public static async setQuizScore(
+		cookies: any,
+		quizId: string,
+		userEmail: string,
+		score: string
+	): Promise<any> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const requestJson = JSON.stringify({ quizId: quizId, userEmail: userEmail, score: score });
+			const response = await axios.post(`${GATEWAY_URL}/formation/quiz/score`, requestJson, {
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					'Content-Type': 'application/json'
+				}
+			});
+			return response;
+		} catch (error: any) {
+			console.error('Error while setting score:', error.message);
+			return;
+		}
+	}
+
+	public static async createUser(cookies: any, user: any): Promise<any> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.post(`${GATEWAY_URL}/register`, user, {
+				headers: {
+					Authorization: `Bearer ${jwt}`,
+					'Content-Type': 'application/json'
+				}
+			});
+			return response;
+		} catch (error: any) {
+			console.error('Error while creating user:', error.message);
+
+			return;
+		}
+	}
 }
 
 export default FormationService;

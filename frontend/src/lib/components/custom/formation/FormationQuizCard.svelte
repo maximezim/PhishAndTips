@@ -4,7 +4,7 @@
 	import type { Quiz } from '$types/formation';
   import 'iconify-icon';
 	import UserAddPopup from '../admin/UserAddPopup.svelte';
-	import FormationQuizPopup from './FormationQuizPopup.svelte';
+	import FormationQuizButton from './FormationQuizButton.svelte';
 
   export let canModify: boolean = false;
   export let quizzes: Quiz[];
@@ -27,7 +27,7 @@
       <Carousel.Content class="h-full flex items-center">
         {#each quizzes as quiz}
           <Carousel.Item class="flex items-center justify-center md:basis-1/2 lg:basis-1/4 gap-10">
-            <FormationQuizPopup quiz={quiz} />
+            <FormationQuizButton quiz={quiz} />
           </Carousel.Item>
         {/each}
       </Carousel.Content>

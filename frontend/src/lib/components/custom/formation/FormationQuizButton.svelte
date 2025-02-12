@@ -14,8 +14,8 @@
 </script>
 
 <Button on:click={() => goto(`/formation/quiz/${quiz.id}`)} class="w-full h-full p-0 shadow bg-white cursor-pointer border-2 flex flex-col justify-start items-start text-left hover:bg-white hover:border-accent" >
-  <AspectRatio ratio={16/9} class="bg-muted overflow-hidden w-full">
-    <h3 class="text-lg text-left text-black font-semibold w-full break-words text-wrap">
+  <AspectRatio ratio={16/9} class="bg-muted flex flex-row overflow-hidden w-full items-center justify-center p-6">
+    <h3 class="text-xl text-center text-black font-semibold w-full break-words text-wrap">
       {quiz.title}
     </h3>
   </AspectRatio>
