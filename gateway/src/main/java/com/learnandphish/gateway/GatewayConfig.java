@@ -30,7 +30,7 @@ public class GatewayConfig {
                         .uri("http://authentication-service:8082"))
                 .route("auth-swagger", r -> r.path("/swagger-ui/**", "/api-docs/**", "/v3/api-docs/**")
                         .uri("http://authentication-service:8082"))
-                .route("formation-service", r -> r.path("/formation/**")
+                .route("formation-service", r -> r.path("/formation/**", "/admin/formation/**")
                         .filters(f -> f.filter(authFilter))
                         .uri("http://formation-service:8089"))
                 .route("scoring-service", r -> r.path("/scoring/**")
