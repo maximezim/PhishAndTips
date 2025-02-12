@@ -116,7 +116,7 @@ public class MinioService {
                                 .contentType(file.getContentType())
                                 .build());
                 log.info("File '{}' is successfully uploaded as object '{}' to bucket '{}'.", file.getOriginalFilename(), objectName, bucketName);
-                return endpoint + "/" + bucketName + "/" + objectName;
+                return "/" + bucketName + "/" + objectName;
             } catch (NoSuchAlgorithmException | InvalidKeyException e) {
                 throw new RuntimeException(e);
             }
