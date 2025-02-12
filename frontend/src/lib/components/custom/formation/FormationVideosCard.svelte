@@ -27,7 +27,7 @@
       <Carousel.Content class="h-full flex items-center">
         {#each videos as video}
           <Carousel.Item class="flex items-center justify-center md:basis-1/2 lg:basis-1/4 gap-10">
-            <FormationVideoPopup video={video} />
+            <FormationVideoPopup video={video} canDelVideo={canAddVideo} />
           </Carousel.Item>
         {/each}
       </Carousel.Content>

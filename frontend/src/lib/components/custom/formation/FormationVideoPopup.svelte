@@ -3,7 +3,9 @@
   import * as AlertDialog from '$lib/components/ui/alert-dialog';
   import type { Video } from '$types/formation';
   import { AspectRatio } from '$lib/components/ui/aspect-ratio';
+	import ConfirmPopup from '$lib/components/custom/ConfirmPopup.svelte';
 
+  export let canDelVideo: boolean = false;
   export let video: Video = {
     id: 0,
     title: "",
@@ -12,6 +14,17 @@
     captionUrl: "",
     thumbnailUrl: "",
   };
+
+  async function deleteVideo(): Promise<void> {
+    await fetch('/api/formation/videos', {
+    method: 'DELETE',
+    body: JSON.stringify(video.id),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+      window.location.reload();
+  }
 
   async function onVideoEnded() {
     await fetch('/api/formation/quiz', {
@@ -42,11 +55,15 @@
   <AlertDialog.Content class="max-w-5xl flex flex-col">
     <AlertDialog.Header class="flex flex-row justify-between gap-3">
       <div class="flex flex-col gap-2 text-left">
-        <AlertDialog.Title>{video.title}</AlertDialog.Title>
+        <AlertDialog.Title class="flex flex-row justify-between w-full">
+          {video.title}
+          
+        </AlertDialog.Title>
         <AlertDialog.Description>
           {video.description}
         </AlertDialog.Description>
       </div>
+      
       <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
     </AlertDialog.Header>
 
@@ -55,5 +72,8 @@
       <source src={video.videoUrl} type="video/mp4" />
       <track kind="captions" label="Français" src={video.captionUrl} srclang="fr" default />
     </video>
+    {#if canDelVideo}
+    <ConfirmPopup name={"Supprimer"} description={"Suppression de la vidéo"} style={"bg-red-500 hover:bg-red-700"} functionToCall={deleteVideo}/>
+    {/if}
   </AlertDialog.Content>
 </AlertDialog.Root>

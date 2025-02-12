@@ -1,9 +1,9 @@
 <script lang="ts">
   import * as AlertDialog from "$lib/components/ui/alert-dialog";
   import Button from "$lib/components/ui/button/button.svelte";
-	import type { Video } from "$types/formation";
-	import { Input } from "$lib/components/ui/input";
-	import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
+  import type { Video } from "$types/formation";
+  import { Input } from "$lib/components/ui/input";
+  import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
   
   let video: Video = {
     id: 0,
@@ -21,9 +21,9 @@
     thumbnailFile: "",
   };
 
-  let captionsFile: File|null = null;
-  let thumbnailFile: File|null = null;
-  let videoFile: File|null = null;
+  let captionsFile: File | null = null;
+  let thumbnailFile: File | null = null;
+  let videoFile: File | null = null;
 
   function validateForm(): boolean {
     let isValid = true;
@@ -59,19 +59,34 @@
     return isValid;
   }
 
-  async function createUser() {
+  async function uploadVideo() {
     if (!validateForm()){
       console.error(errors);
       return;
     }
 
-    await fetch('/api/formation/video', {
-			method: 'POST',
-			body: JSON.stringify(video),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
+    // Create a new FormData instance
+    const formData = new FormData();
+
+    // Assert that videoFile and thumbnailFile are not null (they have been validated)
+    formData.append('videoFile', videoFile!);
+    formData.append('thumbnailFile', thumbnailFile!);
+
+    // Append caption file only if it exists
+    if (captionsFile) {
+      formData.append('captionFile', captionsFile);
+    }
+    
+    formData.append('title', video.title);
+    formData.append('description', video.description);
+
+    // Send the formData as the request body. Do not JSON.stringify!
+    await fetch('/api/formation/videos', {
+      method: 'POST',
+      body: formData
+      // No need to set Content-Type header when using FormData
+    });
+
     closeAlertDialog();
   }
 
@@ -82,7 +97,7 @@
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
-    <Button class={"bg-accent py-0 px-3 text-accent-foreground flex flex-row align-middle gap-1"} builders={[builder]}>
+    <Button class="bg-accent py-0 px-3 text-accent-foreground flex flex-row align-middle gap-1" builders={[builder]}>
       Ajouter
       <iconify-icon class="icon-custom" icon="mingcute:add-circle-line"></iconify-icon>
     </Button>
@@ -118,7 +133,7 @@
           accept=".mp4"
           class="w-full"
           on:change="{(e) => {
-            videoFile = (e.target! as HTMLInputElement).files![0];
+            videoFile = (e.target as HTMLInputElement).files![0];
           }}"
         />
 
@@ -132,10 +147,10 @@
         <p class="text-sm">Miniature. Format accepté : png, jpg, jpeg</p>
         <Input
           type="file"
-          accept=".png .jpg .jpeg"
+          accept=".png,.jpg,.jpeg"
           class="w-full"
           on:change="{(e) => {
-            thumbnailFile = (e.target! as HTMLInputElement).files![0];
+            thumbnailFile = (e.target as HTMLInputElement).files![0];
           }}"
         />
 
@@ -149,22 +164,18 @@
         <p class="text-sm">Sous-titres. Format accepté : vtt</p>
         <Input
           type="file"
-          accept=".mp4"
+          accept=".vtt"
           class="w-full"
           on:change="{(e) => {
-            thumbnailFile = (e.target! as HTMLInputElement).files![0];
+            captionsFile = (e.target as HTMLInputElement).files![0];
           }}"
         />
-
-        {#if errors.thumbnailFile}
-          <p class="text-red-500 text-sm">{errors.thumbnailFile}</p>
-        {/if}
       </div>
       
     </div>
     <AlertDialog.Footer>
       <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
-      <ConfirmPopup description="Création de l'utilisateur" name="Ajouter" style="bg-accent" functionToCall={createUser} />
+      <ConfirmPopup description="Création de la vidéo" name="Ajouter" style="bg-accent" functionToCall={uploadVideo} />
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>

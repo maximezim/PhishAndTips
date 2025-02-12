@@ -39,6 +39,45 @@ class FormationService {
 		}
 	}
 
+	/**
+	 * Create a video
+	 */
+	public static async uploadVideo(cookies: any, formData: FormData) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			console.log("I'm here");
+			const response = await axios.post(`${GATEWAY_URL}/admin/formation/video/upload`, formData, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			console.log(response);
+
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while uploading video UGVFVI:', error.message);
+			return null;
+		}
+	}
+
+	/**
+	 * Delete a video
+	 */
+	public static async deleteVideo(cookies: any, videoId: number) {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			console.log('Video ID : ', videoId);
+			const response = await axios.delete(`${GATEWAY_URL}/admin/formation/video/${videoId}`, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while deleting the video:', error.message);
+		}
+	}
+
 	public static async getQuizzes(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
