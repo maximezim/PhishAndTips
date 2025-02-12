@@ -100,7 +100,7 @@ public class MinioService {
         return null;
     }
 
-    public String uploadFileFromFront(MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+    public String uploadFile(MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         try {
             String objectName = String.valueOf(UUID.randomUUID());
             minioClient.putObject(

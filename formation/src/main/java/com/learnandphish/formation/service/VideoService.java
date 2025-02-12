@@ -62,9 +62,9 @@ public class VideoService {
             return null;
         }
         try {
-            String videoUrl = minioService.uploadFileFromFront(videoFile);
-            String thumbnailUrl = minioService.uploadFileFromFront(thumbnailFile);
-            String captionUrl = minioService.uploadFileFromFront(captionFile);
+            String videoUrl = minioService.uploadFile(videoFile);
+            String thumbnailUrl = minioService.uploadFile(thumbnailFile);
+            String captionUrl = minioService.uploadFile(captionFile);
             if (videoUrl == null || thumbnailUrl == null || captionUrl == null) {
                 return null;
             }
