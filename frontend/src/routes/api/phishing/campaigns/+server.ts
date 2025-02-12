@@ -75,14 +75,18 @@ export async function PUT({ request, cookies }) {
  * Description : Delete an existing campaign
  */
 export async function DELETE({ request, cookies }) {
-	const groupId = await request.json();
+	// Read campaign id from URL query parameters
+	const url = new URL(request.url);
+	const campaignIdStr = url.searchParams.get('id');
+	if (!campaignIdStr) return new Response(JSON.stringify({ error: 'Campaign id is required' }), { status: 400 });
+	const campaignId = parseInt(campaignIdStr);
 	try {
-		const response = await PhishingService.deleteCampaign(cookies, groupId);
-		if (response != null) {
+		const response = await PhishingService.deleteCampaign(cookies, campaignId);
+		if (response && response.success) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.error('Error: No data found');
-			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
+			console.error('Error: Campaign not found');
+			return new Response(JSON.stringify({ error: 'Campaign not found' }), { status: 404 });
 		}
 	} catch (e) {
 		console.error(e);

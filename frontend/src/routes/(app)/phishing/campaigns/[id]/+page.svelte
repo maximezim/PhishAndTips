@@ -9,6 +9,7 @@
   import { Badge } from '$lib/components/ui/badge';
   import Separator from '$lib/components/custom/Separator.svelte';
   import { Button } from '$lib/components/ui/button';
+  import { goto } from '$app/navigation';
 
   interface CampaignSummary {
       id: string;
@@ -147,6 +148,25 @@
     }
   });
 
+  // Added deleteCampaign function
+  async function deleteCampaign() {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette campagne ?')) {
+      try {
+        const res = await fetch(`/api/phishing/campaigns?id=${encodeURIComponent(campaign.id)}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        if (res.ok) {
+          goto('/phishing/campaigns');
+        } else {
+          alert("Erreur lors de la suppression de la campagne");
+        }
+      } catch (error) {
+        console.error("Erreur lors de la suppression :", error);
+        alert("Erreur lors de la suppression de la campagne");
+      }
+    }
+  }
 
   function changePageUser(page: number) {
       if (page >= 1 && page <= totalPagesUser) {
@@ -236,12 +256,13 @@
     };
   }
 
-</script>
+  </script>
 
 {#if !loading_data}
 <div class="relative z-10 flex flex-col w-full py-5 px-5 sm:py-6 sm:px-8">
-  <div class="header flex items-center gap-4">
+  <div class="header flex items-center justify-between gap-4">
     <h1 class="text-xl font-semibold">Informations sur la campagne</h1>
+    <Button class="bg-accent" on:click={deleteCampaign}>Supprimer la campagne</Button>
   </div>
   <div class="grid grid-cols-3 gap-6 my-6">
     <div class="col-span-3 lg:col-span-1 flex flex-col gap-2 bg-muted rounded p-5 shadow">
@@ -413,4 +434,4 @@
 </div>
 </div>
 
-{/if} 
+{/if}
