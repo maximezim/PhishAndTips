@@ -6,7 +6,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/http.conf:/etc/nginx/templates/default.conf.template
+      - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template #change to http.conf in prod
       - ./nginx/certs:/root/ssl:ro
     env_file:
       - .env
@@ -289,6 +289,7 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_GATEWAY_URL: http://api-gateway:8080
+        VITE_API_URL: http://api-gateway:8080
         VITE_API_KEY: ${GOPHISH_API_KEY}
         VITE_S3_ENDPOINT: ${S3_ENDPOINT:-http://api-gateway:8080}
     env_file:
