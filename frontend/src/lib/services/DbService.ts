@@ -65,7 +65,6 @@ class DbService {
 	// Delete
 	public static async deleteUser(cookies: any, userEmail: any): Promise<any> {
 		try {
-			console.log(JSON.stringify({ email: userEmail }));
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/delete-user`, userEmail, {
 				headers: {
@@ -82,17 +81,18 @@ class DbService {
 	}
 
 	// Read-all
-	public static async getUsers(cookies: any): Promise<any[]> {
+	public static async getUsers(cookies: any, size: number, page: number): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${GATEWAY_URL}/get-all-users`, {
+			const response = await axios.get(`${GATEWAY_URL}/get-all-users?page=${page}&size=${size}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
-
-			// TODO: handle pagination
-			return response.data._embedded.userDTOList;
+			return {
+				users: response.data._embedded.userDTOList,
+				page: response.data.page
+			}
 		} catch (error: any) {
 			console.error('Error while fetching users data:', error.message);
 			console.error(error);
