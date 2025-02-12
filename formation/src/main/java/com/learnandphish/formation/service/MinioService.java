@@ -54,18 +54,18 @@ public class MinioService {
 
             if (currentPolicy == null || currentPolicy.isEmpty()) {
                 String policy = """
-                    {
-                        "Version": "2012-10-17",
-                        "Statement": [
-                            {
-                                "Effect": "Allow",
-                                "Principal": "*",
-                                "Action": ["s3:GetObject"],
-                                "Resource": ["arn:aws:s3:::%s/*"]
-                            }
-                        ]
-                    }
-                    """.formatted(bucketName);
+                        {
+                            "Version": "2012-10-17",
+                            "Statement": [
+                                {
+                                    "Effect": "Allow",
+                                    "Principal": "*",
+                                    "Action": ["s3:GetObject"],
+                                    "Resource": ["arn:aws:s3:::%s/*"]
+                                }
+                            ]
+                        }
+                        """.formatted(bucketName);
 
                 minioClient.setBucketPolicy(
                         SetBucketPolicyArgs.builder()
@@ -102,7 +102,6 @@ public class MinioService {
     }
 
 
-
     public String uploadFile(MultipartFile file) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
@@ -115,7 +114,7 @@ public class MinioService {
             try (InputStream inputStream = file.getInputStream()) {
                 minioClient.putObject(
                         PutObjectArgs.builder()
-                        .bucket(bucketName)
+                                .bucket(bucketName)
                                 .object(objectName)
                                 .stream(inputStream, file.getSize(), -1)
                                 .contentType(file.getContentType())
@@ -140,8 +139,14 @@ public class MinioService {
     }
 
     public void deleteFile(String url) {
+        if (url == null || url.isEmpty()) {
+            throw new IllegalArgumentException("URL is empty");
+        }
+        String objectName = extractObjectName(url);
+        if (objectName.isEmpty()) {
+            throw new IllegalArgumentException("Invalid URL");
+        }
         try {
-            String objectName = url.substring(url.lastIndexOf("/") + 1);
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
                             .bucket(bucketName)
@@ -151,8 +156,19 @@ public class MinioService {
         } catch (MinioException e) {
             log.error("Error occurred: {}", e.getMessage());
             log.error("HTTP trace: {}", e.httpTrace());
-        } catch (IOException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new RuntimeException(e);
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+            log.error("Failed to delete file", e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String extractObjectName(String url) {
+        try {
+            String[] parts = url.split("/");
+            return parts[parts.length - 1];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return "";
         }
     }
 }

@@ -61,11 +61,6 @@ public class FormationController {
         return ResponseEntity.ok(videos);
     }
 
-    private String sanitizeFileName(String originalFilename) {
-        // Remove or replace risky characters in the file name
-        return originalFilename.replaceAll("[\\\\/:*?\"<>|]", "_");
-    }
-
 
     // Create a video with file upload
     @PostMapping("/video/upload")
@@ -78,9 +73,9 @@ public class FormationController {
             Video video = new Video();
             video.setTitle(title);
             video.setDescription(description);
-            video.setVideoUrl(sanitizeFileName(Objects.requireNonNull(videoFile.getOriginalFilename())));
-            video.setThumbnailUrl(sanitizeFileName(Objects.requireNonNull(thumbnailFile.getOriginalFilename())));
-            video.setCaptionUrl(sanitizeFileName(Objects.requireNonNull(captionFile.getOriginalFilename())));
+            video.setVideoUrl(videoFile.getOriginalFilename());
+            video.setThumbnailUrl(thumbnailFile.getOriginalFilename());
+            video.setCaptionUrl(captionFile.getOriginalFilename());
 
             Video createdVideo = videoService.createVideo(video, videoFile, thumbnailFile, captionFile);
             if (createdVideo == null) {
@@ -123,14 +118,14 @@ public class FormationController {
 
     // Save user score
     @PostMapping("/quiz/score")
-    public ResponseEntity<String> saveUserScore(@RequestBody UserQuizScoreDTO userQuizScoreDTO){
-        if (userQuizScoreDTO.getUserEmail() == null || userQuizScoreDTO.getQuizId() == null || userQuizScoreDTO.getScore() == null){
+    public ResponseEntity<String> saveUserScore(@RequestBody UserQuizScoreDTO userQuizScoreDTO, @RequestHeader("email") String email){
+        if (userQuizScoreDTO.getQuizId() == null || userQuizScoreDTO.getScore() == null || email == null){
             return ResponseEntity.badRequest().body("Invalid request");
         }
         if (userQuizScoreDTO.getScore() < 0 || userQuizScoreDTO.getScore() > 1){
             return ResponseEntity.badRequest().body("Score must be between 0 and 1");
         }
-        quizService.saveUserScore(userQuizScoreDTO.getUserEmail(), userQuizScoreDTO.getQuizId(), userQuizScoreDTO.getScore());
+        quizService.saveUserScore(email, userQuizScoreDTO.getQuizId(), userQuizScoreDTO.getScore());
         return ResponseEntity.ok("Score saved successfully");
     }
 
@@ -143,7 +138,6 @@ public class FormationController {
             if(userQuizScoresList != null) {
                 for (UserQuizScore userQuizScore : userQuizScoresList){
                     UserQuizScoreDTO userQuizScoreDTO = new UserQuizScoreDTO();
-                    userQuizScoreDTO.setUserEmail(userQuizScore.getUserQuizId().getUserEmail());
                     userQuizScoreDTO.setQuizId(userQuizScore.getUserQuizId().getQuizId());
                     userQuizScoreDTO.setScore(userQuizScore.getScore());
                     userQuizScores.add(userQuizScoreDTO);
