@@ -15,5 +15,7 @@ COPY --from=builder /app/build build/
 COPY --from=builder /app/node_modules node_modules/
 COPY package.json .
 EXPOSE 3000
+ENV VITE_API_URL=http://api-gateway:8080
+ENV VITE_GATEWAY_URL=http://api-gateway:8080
 ENV NODE_ENV=production
 CMD [ "node", "build" ]

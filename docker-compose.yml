@@ -289,8 +289,10 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+    env_file:
+      - .env
     environment:
-      - VITE_GATEWAY_URL=http://api-gateway:8080
+      VITE_API_KEY: ${GOPHISH_API_KEY}
     ports:
       - "3000:3000"
     networks:
