@@ -61,15 +61,21 @@
       capture_passwords: capturePasswords,     
       modified_date: new Date().toISOString().slice(0, 19) + "+00:00", // formatted date
     };
-    
-    await fetch('/api/phishing/pages', {
-			method: 'POST',
-			body: JSON.stringify(pageJson),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-    closeAlertDialog();
+    try{
+      await fetch('/api/phishing/pages', {
+        method: 'POST',
+        body: JSON.stringify(pageJson),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      sessionStorage.setItem("showSuccessToast", "Modèle de page créé avec succès");
+    } catch(e) {
+      console.error('Error while creating page: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la création du modèle de page");
+    } finally {
+      closeAlertDialog();
+    }
   }
 
   function closeAlertDialog() {

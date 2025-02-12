@@ -72,15 +72,21 @@
   }
 
   async function resetPassword(){
-    await fetch('/api/db/user/reset-password', {
-      method: 'POST',
-      body: JSON.stringify(user.email),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    closeAlertDialog();
+    try{
+      await fetch('/api/db/user/reset-password', {
+        method: 'POST',
+        body: JSON.stringify(user.email),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      sessionStorage.setItem("showSuccessToast", "Le mot de passe de l'utilisateur a été réinitialisé avec succès");
+    } catch(e) {
+      console.error('Erreur lors de la réinitialisation du mot de passe: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la réinitialisation du mot de passe de l'utilisateur");
+    } finally {
+      closeAlertDialog();
+    }
   }
 
   async function updateUser() {
@@ -89,14 +95,21 @@
       return;
     }
 
-    await fetch('/api/db/user', {
-			method: 'PUT',
-			body: JSON.stringify(user),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-    closeAlertDialog();
+    try{
+      await fetch('/api/db/user', {
+        method: 'PUT',
+        body: JSON.stringify(user),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      sessionStorage.setItem("showSuccessToast", "Utilisateur modifié avec succès");
+    } catch(e) {
+      console.error('Erreur lors de la modification de l\'utilisateur: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la modification de l'utilisateur");
+    } finally {
+      closeAlertDialog();
+    }
   }
 
   function closeAlertDialog() {

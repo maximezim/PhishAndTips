@@ -34,12 +34,18 @@
       console.error(errors);
       return;
     }
-
-    await fetch('/api/db/users', {
-			method: 'POST',
-			body: formData,
-		});
-    closeAlertDialog();
+    try{
+      await fetch('/api/db/users', {
+        method: 'POST',
+        body: formData,
+      });
+      sessionStorage.setItem("showSuccessToast", "Utilisateurs importés avec succès");
+    } catch(e) {
+      console.error('Error while importing users: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de l'importation des utilisateurs");
+    } finally {
+      closeAlertDialog();
+    }
   }
 
   function closeAlertDialog() {

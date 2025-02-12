@@ -12,6 +12,7 @@
 	import { page } from "$app/stores";
     import { get } from "svelte/store";
     import type { User, UserPagination } from '$types/users';
+    import { showSuccessToast, showErrorToast } from "$lib/toast";
 
     interface Group {
         id: string;
@@ -89,26 +90,49 @@
             modified_date: modifiedDate,
             targets: selectedUsers
         };
-        await fetch(`/api/phishing/groups`, {
-            method: 'PUT',
-            body: JSON.stringify(groupJson),
-            headers: {
-                'Content-Type': 'application/json'
+        try{
+            let res = await fetch(`/api/phishing/groups`, {
+                method: 'PUT',
+                body: JSON.stringify(groupJson),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if(res.status === 200){
+                showSuccessToast("Groupe modifié avec succès");
+                closeAlertDialog();
+            } else {
+                console.error('Error while updating group: ', res);
+                showErrorToast("Une erreur s'est produite lors de la modification du groupe");
             }
-        });
-        closeAlertDialog();
+        } catch(e) {
+            console.error('Error while updating group: ', e);
+            sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la modification du groupe");
+        }
     }
 
     async function deleteGroup() {
         const groupID = Number(group.id);
-        await fetch(`/api/phishing/groups`, {
-            method: 'DELETE',
-            body: JSON.stringify(groupID),
-            headers: {
-                'Content-Type': 'application/json'
+
+        try{
+            let res = await fetch(`/api/phishing/groups`, {
+                method: 'DELETE',
+                body: JSON.stringify(groupID),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if(res.status === 200){
+                showSuccessToast("Groupe supprimé avec succès");
+                closeAlertDialog();
+            }else{
+                console.error('Error while deleting group: ', res);
+                showErrorToast("Une erreur s'est produite lors de la suppression du groupe");
             }
-        });
-        closeAlertDialog();
+        } catch(e) {
+            console.error('Error while deleting group: ', e);
+            showErrorToast("Une erreur s'est produite lors de la suppression du groupe");
+        }
     }
 
   </script>

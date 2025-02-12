@@ -5,6 +5,7 @@
 	import type { User, UserWithoutRole } from "$types/users";
 	import { Input } from "$lib/components/ui/input";
 	import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
+  import { showSuccessToast, showErrorToast } from "$lib/toast";
   
   let user: UserWithoutRole = {
     firstName: "",
@@ -60,14 +61,21 @@
       return;
     }
 
-    await fetch('/api/db/user', {
-			method: 'POST',
-			body: JSON.stringify(user),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-    closeAlertDialog();
+    try{
+      await fetch('/api/db/user', {
+        method: 'POST',
+        body: JSON.stringify(user),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      sessionStorage.setItem("showSuccessToast", "Utilisateur créé avec succès");
+    } catch(e) {
+      console.error('Error while creating user: ', e);
+      sessionStorage.setItem("showSuccessToast", "Une erreur s'est produite lors de la création de l'utilisateur");
+    } finally {
+      closeAlertDialog();
+    }
   }
 
   function closeAlertDialog() {

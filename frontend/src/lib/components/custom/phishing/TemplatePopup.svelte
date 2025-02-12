@@ -21,25 +21,39 @@
     }
 
     async function deletePage(): Promise<void> {
-        await fetch('/api/phishing/pages', {
-			method: 'DELETE',
-			body: JSON.stringify(element.id),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-        window.location.reload();
+        try {
+            await fetch('/api/phishing/pages', {
+                method: 'DELETE',
+                body: JSON.stringify(element.id),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            sessionStorage.setItem("showSuccessToast", "Modèle supprimée avec succès");
+        } catch (e) {
+            console.error('Error while deleting page: ', e);
+            sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la suppression du modèle");
+        } finally {
+            window.location.reload();
+        }
     }
 
     async function deleteTemplate(): Promise<void> {
-        await fetch('/api/phishing/templates', {
-			method: 'DELETE',
-			body: JSON.stringify(element.id),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-        window.location.reload();
+        try{
+            await fetch('/api/phishing/templates', {
+                method: 'DELETE',
+                body: JSON.stringify(element.id),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            sessionStorage.setItem("showSuccessToast", "Modèle de mail supprimé avec succès");
+        } catch(e) {
+            console.error('Error while deleting template: ', e);
+            sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la suppression du modèle de mail");
+        } finally {
+            window.location.reload();
+        }
     }
 </script>
 
