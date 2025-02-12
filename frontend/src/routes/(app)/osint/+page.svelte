@@ -4,7 +4,7 @@
     import * as Tabs from "$lib/components/ui/tabs";
     import * as Table from "$lib/components/ui/table";
     import * as AlertDialog from "$lib/components/ui/alert-dialog";
-    import type { User } from '$types/users';
+    import type { User, UserPagination } from '$types/users';
     import type { ParsedResult, ParsedData, ExportResult, ScanResult, MyScan, UserScan } from '$types/osint';
     import { typeTranslations } from '$types/osint';
     import { onMount } from 'svelte';
@@ -25,9 +25,9 @@
     let myScoreColor = "";
     let groupedResults = new Map<string, ParsedResult[]>();
 
-    let currentPageUser = 1;
+    let currentPage = 0;
     const rowsPerPageUser = 10;
-    let totalPagesUser = 1;
+    let data: UserPagination = {users: [],page: {size: 0,totalElements: 0,totalPages: 0,number: 0}};
 
     onMount(async () => {
       try {
@@ -35,41 +35,41 @@
         myScan = await fetch("/api/osint/user").then(res => res.json());
         myScore = await fetch("/api/scoring/osint").then(res => res.json());
         if(isAdmin){
-          usersFromDb = await fetch("/api/db/users").then(res => res.json());
-          users = await Promise.all(usersFromDb.map(async (user: User) => {
-            const groupJson = {
-              email : user.email
-            };
-            let scan = await fetch(`/api/osint/admin/get-scan`, {
-                method: 'POST',
-                body: JSON.stringify(groupJson),
-                headers: {
-                  'Content-Type': 'application/json'
-                }
-            }).then(res => res.json());
+          getUsers().then(async()=>{
+            users = await Promise.all(data.users.map(async (user: User) => {
+              const groupJson = {
+                email : user.email
+              };
+              let scan = await fetch(`/api/osint/admin/get-scan`, {
+                  method: 'POST',
+                  body: JSON.stringify(groupJson),
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+              }).then(res => res.json());
 
-            let userScore = await fetch(`/api/scoring/admin/osint`, {
-                method: 'POST',
-                body: JSON.stringify(groupJson),
-                headers: {
-                  'Content-Type': 'application/json'
-                }
-            }).then(res => res.json());
-            let userScoreColor = getScoreColor(userScore);
+              let userScore = await fetch(`/api/scoring/admin/osint`, {
+                  method: 'POST',
+                  body: JSON.stringify(groupJson),
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+              }).then(res => res.json());
+              let userScoreColor = getScoreColor(userScore);
 
-            let groupedResults = null;
-            console.log("SCAN U: ",scan.result);
-            if(scan && scan.result){
-              groupedResults = groupResultsByType(JSON.parse(scan.result).parsed_data.results);
-            }
-            return {
-              target: user,
-              scan: scan,
-              groupedResults: groupedResults,
-              score: userScore,
-              scoreColor: "rgb(" + userScoreColor.r + ", " + userScoreColor.g + ", " + userScoreColor.b + ")",
-            };
-          }));
+              let groupedResults = null;
+              if(scan && scan.result){
+                groupedResults = groupResultsByType(JSON.parse(scan.result).parsed_data.results);
+              }
+              return {
+                target: user,
+                scan: scan,
+                groupedResults: groupedResults,
+                score: userScore,
+                scoreColor: "rgb(" + userScoreColor.r + ", " + userScoreColor.g + ", " + userScoreColor.b + ")",
+              };
+            }));
+          });
         }
       } catch (error) {
         console.error("Erreur : ", error);
@@ -111,10 +111,6 @@
               status = "Inconnu";
               break;
           }
-          if(isAdmin){
-            totalPagesUser = Math.ceil(users.length / rowsPerPageUser);
-
-          }
         }else{
           status = "Inexistant";
           dateScan = "Aucun scan effectué";
@@ -122,6 +118,24 @@
         loading = false;
       }
     });
+
+    async function getUsers() {
+      try {
+        data = await fetch(`/api/db/users?size=${rowsPerPageUser}&page=${currentPage}`).then(res => res.json());
+      } catch(e) {
+        console.error('Error while fetching users: ', e);
+      }
+    }
+
+    async function nextPage(){
+      currentPage++;
+      await getUsers();
+    }
+
+    async function prevPage(){
+      currentPage--;
+      await getUsers();
+    }
 
     function checkDate(dateStr: string) {
       const dateScan = new Date(dateStr);
@@ -160,27 +174,10 @@
       }
     }
 
-    function changePageUser(page: number) {
-      if (page >= 1 && page <= totalPagesUser) {
-        currentPageUser = page;
-      }
-    }
-    function getCurrentPageRowsUser() {
-        const start = (currentPageUser - 1) * rowsPerPageUser;
-        const end = start + rowsPerPageUser;
-        return users.slice(start, end);
-    }
     function formatHtmlContent(content: string) {
       return content.replace(/\\n/g, '\n').replace(/\\t/g, '\t');
     }
-    function parseScanResult(scanResult: string) {
-      try {
-        return JSON.parse(scanResult);
-      } catch (error) {
-        console.error('Error parsing scan result:', error);
-        return null;
-      }
-    }
+
 
     const gradientColors = [
       { r: 100, g: 255, b: 100 },  // Vert
@@ -286,6 +283,7 @@
         <Table.Root class="w-full">
           <Table.Header class="bg-violet-50">
               <Table.Row>
+                  <Table.Head>Risque</Table.Head>
                   <Table.Head>Nom</Table.Head>
                   <Table.Head>Prénom</Table.Head>
                   <Table.Head class="hidden lg:table-cell">Email</Table.Head>
@@ -300,8 +298,11 @@
                 <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
               </div>
             {:else}
-            {#each getCurrentPageRowsUser() as user}
+            {#each users as user}
               <Table.Row class="hover:bg-gray-50 bg-white">
+                  <Table.Cell>
+                    <span class="flex w-8 h-3 rounded-full border border-accent" style='background-color: {user.scoreColor}'></span>
+                  </Table.Cell>
                   <Table.Cell>{user.target.lastName}</Table.Cell>
                   <Table.Cell>{user.target.firstName}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.target.email}</Table.Cell>
@@ -366,13 +367,13 @@
         <div class="w-full bg-gray-50 p-3 border-t-2 border-gray-100">
           <div class="w-full flex items-center justify-between">
             <div class="relative w-1/3">
-                <Button class="bg-accent" on:click={() => changePageUser(currentPageUser - 1)} disabled={currentPageUser=== 1}>Précédent</Button>
+                <Button class="bg-accent" on:click={prevPage} disabled={currentPage === 0}>Précédent</Button>
             </div>
             <div class="relative w-1/3 flex justify-center">
-                <span class="mx-2 text-sm italic">Page {currentPageUser} sur {totalPagesUser}</span>
+                <span class="mx-2 text-sm italic">Page {currentPage+1} sur {data.page.totalPages}</span>
             </div>
             <div class="relative w-1/3 flex justify-end">
-                <Button class="bg-accent" on:click={() => changePageUser(currentPageUser + 1)} disabled={currentPageUser === totalPagesUser}>Suivant</Button>
+                <Button class="bg-accent" on:click={nextPage} disabled={currentPage+1 === data.page.totalPages}>Suivant</Button>
             </div>
         </div>
         </div>

@@ -117,7 +117,7 @@
               {#if loading_data}
                   <p class="text-muted">Chargement des campagnes...</p>
               {:else}
-                {#each campaigns as campagne}
+                {#each [...campaigns].reverse() as campagne}
                     <a href="/phishing/campaigns/{campagne.id}">
                         <div class="relative w-64 h-32 bg-violet-50 cursor-pointer rounded flex items-center justify-center shrink-0">
                             <p class="absolute bottom-3 left-4 text-sm text-gray-700 font-semibold">{campagne.name}</p>
@@ -152,7 +152,7 @@
       </Card.Header>
       <Card.Content>
           <div class="w-full flex gap-4 overflow-x-auto">
-              {#each templates as template}
+              {#each [...templates].reverse() as template}
                   <TemplatePopup template={template} />
               {/each}
           </div>
@@ -172,7 +172,7 @@
       </Card.Header>
       <Card.Content>
           <div class="w-full flex gap-4 overflow-x-auto">
-              {#each pages as page}
+              {#each [...pages].reverse() as page}
                   <TemplatePopup page={page} />
               {/each}
           </div>
