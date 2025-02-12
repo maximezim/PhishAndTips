@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -16,9 +17,6 @@ import java.util.UUID;
 
 @Service
 public class MinioService {
-
-    @Value("${s3.endpoint}")
-    private String endpoint;
 
     @Value("${s3.bucket}")
     private String bucketName;
@@ -77,7 +75,6 @@ public class MinioService {
         }
     }
 
-
     public String uploadFile(File file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
         try {
             String objectName = String.valueOf(UUID.randomUUID());
@@ -90,7 +87,7 @@ public class MinioService {
                             .filename(filePath)
                             .build());
             log.info("File '{}' is successfully uploaded as object '{}' to bucket '{}'.", filePath, objectName, bucketName);
-            return endpoint + "/" + bucketName + "/" + objectName;
+            return "/" + bucketName + "/" + objectName;
         } catch (MinioException e) {
             log.error("Error occurred: {}", e.getMessage());
             log.error("HTTP trace: {}", e.httpTrace());
