@@ -69,6 +69,8 @@ services:
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=${SMTP_ENABLE_TLS:-false}
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=${SMTP_ENABLE_TLS:-false}
       - MAIL_FROM=${SMTP_FROM:-sender@example.com}
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL?error}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD?error}
     volumes:
       - ./authentication/templates:/var/authentication/templates
     profiles:
