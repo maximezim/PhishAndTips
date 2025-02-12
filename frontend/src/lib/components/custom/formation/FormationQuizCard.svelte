@@ -8,6 +8,7 @@
 
   export let canModify: boolean = false;
   export let quizzes: Quiz[];
+  export let canAddQuiz: boolean = false;
 </script>
 
 <Card.Root class="col-span-10 row-span-2">

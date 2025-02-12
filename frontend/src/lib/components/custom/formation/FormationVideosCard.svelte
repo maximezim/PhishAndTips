@@ -6,8 +6,8 @@
 	import FormationVideoPopup from '$lib/components/custom/formation/FormationVideoPopup.svelte';
 	import UserAddPopup from '../admin/UserAddPopup.svelte';
 
-  export let canModify: boolean = false;
   export let videos: Video[];
+  export let canAddVideo: boolean = false;
 </script>
 
 <Card.Root class="col-span-10 row-span-2">
@@ -17,7 +17,7 @@
         <iconify-icon class="text-3xl text-accent flex flex-col align-middle" icon="mingcute:video-fill"></iconify-icon>
         <span>Vidéos</span>
       </div>
-      {#if canModify}
+      {#if canAddVideo}
         <UserAddPopup />
       {/if}
     </Card.Title>
