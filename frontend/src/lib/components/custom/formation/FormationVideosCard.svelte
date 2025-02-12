@@ -4,7 +4,7 @@
 	import type { Video } from '$types/formation';
   import 'iconify-icon';
 	import FormationVideoPopup from '$lib/components/custom/formation/FormationVideoPopup.svelte';
-	import UserAddPopup from '../admin/UserAddPopup.svelte';
+	import VideoAddPopup from '$lib/components/custom/admin/VideoAddPopup.svelte';
 
   export let videos: Video[];
   export let canAddVideo: boolean = false;
@@ -18,7 +18,7 @@
         <span>Vidéos</span>
       </div>
       {#if canAddVideo}
-        <UserAddPopup />
+        <VideoAddPopup />
       {/if}
     </Card.Title>
   </Card.Header>

@@ -22,7 +22,7 @@
       });
 
       const fetchedQuizzes = await fetch("/api/formation/quiz").then(res => res.json());
-
+      
       quizzes = fetchedQuizzes.map((quiz: any) => {
         quiz.id = quiz.id;
         quiz.title = JSON.parse(quiz.json)['title'];
@@ -31,7 +31,7 @@
         return quiz;
       });
     } catch (error) {
-      console.error("Erreur lors de la récupération des vidéos et quiz:", error);
+      console.error("Error while getting videos and quizzes:", error);
     } finally {
       loading_data = false;
     }
