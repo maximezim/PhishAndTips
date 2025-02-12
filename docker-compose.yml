@@ -148,8 +148,7 @@ services:
       - ROUNDCUBEMAIL_DEFAULT_USE_SSL=false
       - ROUNDCUBEMAIL_SMTP_USER=%u
       - ROUNDCUBEMAIL_SMTP_PASS=%p
-    ports:
-      - "8070:80"
+      - ROUNDCUBE_REQUEST_PATH=/mail/
     depends_on:
       - mailserver
     restart: unless-stopped
@@ -172,10 +171,7 @@ services:
     environment:
       - GOPHISH_INITIAL_ADMIN_API_TOKEN=${GOPHISH_API_KEY}
     ports:
-      - "3333:3333" # Remove in prod
       - "8081:8081"
-    depends_on:
-      - mailserver
     restart: unless-stopped
     networks:
       - backend
@@ -297,8 +293,6 @@ services:
         VITE_S3_ENDPOINT: ${S3_ENDPOINT:-http://api-gateway:8080}
     env_file:
       - .env
-    ports:
-      - "3000:3000"
     networks:
       - backend
     depends_on:
@@ -328,7 +322,7 @@ services:
       retries: 3
     profiles:
       - dev
-      - local_s3
+      - s3
 
 networks:
   backend:
