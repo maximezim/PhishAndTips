@@ -18,6 +18,7 @@ services:
     networks:
       - backend
     profiles:
+      - prod
       - dev
 
   postgres:
@@ -133,6 +134,7 @@ services:
       - backend
     profiles:
       - dev
+      - smtp
 
   webmail:
     image: roundcube/roundcubemail:latest
@@ -158,6 +160,7 @@ services:
       - backend
     profiles:
       - dev
+      - smtp
 
   gophish:
     image: gophish/gophish:latest
