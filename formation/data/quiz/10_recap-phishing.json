@@ -1,0 +1,345 @@
+{
+    "title": "Enquête interactive sur un mail frauduleux",
+    "description": "Quiz d’enquête interactive sur une situation liée à un mail frauduleux. Ceci est un quiz récapitulatif des sujets de vidéos et quiz contenu dans la plateforme. Il a pour vocation de faire un bilan sur ce qui a été appris au cours de la formation au phishing.",
+    "logo": "/var/formation/data/quiz/img/Phishtips.png",
+    "logoWidth": "200px",
+    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+    "pages": [
+      {
+        "name": "page1",
+        "title": "Contexte :",
+        "description": "\n",
+        "elements": [
+          {
+            "type": "expression",
+            "name": "contextesurvey",
+            "title": "Vous êtes employé(e) dans une entreprise et recevez un e-mail étrange. Votre mission est de déterminer s'il s'agit d'un e-mail légitime ou d'une tentative de phishing en suivant plusieurs étapes d’investigation.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "title": "Étape 1 : Analyse de l'expéditeur",
+        "description": "L’e-mail semble provenir de votre service informatique : it-support@entreprise-securite.com",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question1",
+            "title": "Que faites-vous en premier ?",
+            "hideNumber": true,
+            "correctAnswer": 11,
+            "isRequired": true,
+            "choices": [
+              {
+                "value": 11,
+                "text": "Vérifier l’adresse de l’expéditeur et la comparer à celle utilisée habituellement"
+              },
+              {
+                "value": 12,
+                "text": "Répondre pour demander confirmation"
+              },
+              {
+                "value": 13,
+                "text": "Cliquer sur le lien pour voir si votre compte fonctionne toujours"
+              },
+              {
+                "value": 14,
+                "text": "Ignorer, ça doit être un bug informatique"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info1",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "- Les cybercriminels utilisent souvent des adresses ressemblant à celles des services légitimes. Il faut comparer avec les e-mails précédemment reçus. \r\n- Répondre peut mettre en danger les informations souhaitant être transmises et peut également informer l’attaquant que votre adresse est active et surveillée.\r\n- Cliquer sans précaution peut compromettre vos identifiants si le site est frauduleux.\r\n- Ignorer un potentiel phishing peut exposer d’autres employés au risque.\r\n",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "title": "Étape 2 : Vérification du contenu",
+        "description": "Il est écrit dans le mail : \r\n\"Cher employé, une activité suspecte a été détectée sur votre compte. \nCliquez immédiatement sur ce lien pour réinitialiser votre mot de passe : www.entreprise-securite.com/login \"\r\n",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question2",
+            "title": "Quels indices doivent attirer votre attention ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "other",
+              "Item 12",
+              "Item 13"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 12",
+                "text": "L’absence de personnalisation (\"Cher employé\")"
+              },
+              {
+                "value": "Item 13",
+                "text": "L’utilisation d’un ton urgent et alarmant"
+              },
+              {
+                "value": "Item 14",
+                "text": "L’URL qui semble correcte"
+              },
+              {
+                "value": "Item 15",
+                "text": "Une signature officielle et bien formulée"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info2",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Les e-mails frauduleux utilisent un ton alarmant et impersonnel pour inciter à l’action rapide. Méfiez-vous des liens demandant des informations sensibles et vérifiez toujours l’authenticité du message.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "title": "Étape 3 : Analyse du lien\r\n",
+        "description": "Vous survolez le lien dans l’e-mail (sans cliquer). Il pointe vers :\r\nwww.entreprise-securite.com/login\r\n",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question3",
+            "title": "Comment vérifiez-vous s’il est légitime ?\r\n",
+            "hideNumber": true,
+            "correctAnswer": [
+              "other",
+              "Item 6",
+              "Item 10",
+              "Item 11",
+              "Item 13",
+              "Item 16",
+              "Item 18"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 15",
+                "text": "Vous copiez-collez l’URL dans Google pour voir si elle est référencée"
+              },
+              {
+                "value": "Item 16",
+                "text": "Vous regardez attentivement la barre d’état pour voir la véritable URL"
+              },
+              {
+                "value": "Item 17",
+                "text": "Vous cliquez dessus pour voir si c’est bien le site officiel"
+              },
+              {
+                "value": "Item 18",
+                "text": "Vous utilisez un outil de vérification d’URL comme IPQualityScore"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info3",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Passez la souris sur les liens pour voir l’URL réelle sans cliquer. Vérifiez qu’elle correspond exactement au site officiel. En cas de doute, utilisez des outils en ligne pour analyser sa légitimité.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page5",
+        "title": "Étape 4 : Détection d’une tentative de vol de mot de passe",
+        "description": "En visitant la page, vous remarquez qu’elle ressemble exactement au site officiel de votre entreprise.\r\n",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question4",
+            "title": "Que faites-vous ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 4",
+              "other",
+              "Item 6",
+              "Item 7",
+              "Item 8",
+              "Item 2"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Vous entrez vos identifiants, mais en changeant une lettre pour tester"
+              },
+              {
+                "value": "Item 2",
+                "text": "Vous vérifiez l’URL dans la barre d’adresse et cherchez le cadenas"
+              },
+              {
+                "value": "Item 3",
+                "text": "Vous testez en entrant un faux mot de passe pour voir la réaction du site"
+              },
+              {
+                "value": "Item 4",
+                "text": "SI l’URL s’avère inexact, vous fermez immédiatement la page et signalez l’e-mail"
+              }
+            ],
+            "choicesOrder": "random"
+          },
+          {
+            "type": "expression",
+            "name": "info4",
+            "visible": false,
+            "title": "Info : ",
+            "description": "Un site frauduleux peut imiter parfaitement l’original. Vérifiez toujours l’URL dans la barre d’adresse, recherchez le cadenas HTTPS et fermez immédiatement la page si l’adresse semble suspecte.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page6",
+        "title": "Étape 5 : Analyse des pièces jointes",
+        "description": "L’e-mail contient un fichier nommé \"Secure_MAJ.exe\"",
+        "elements": [
+          {
+            "type": "ranking",
+            "name": "question5",
+            "title": "Que devez-vous faire et dans quel ordre ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 2",
+              "Item 3",
+              "Item 4",
+              "Item 1"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 2",
+                "text": "Vérifier son extension et voir s’il provient d’une source fiable"
+              },
+              {
+                "value": "Item 3",
+                "text": "Le soumettre à son antivirus"
+              },
+              {
+                "value": "Item 4",
+                "text": "Informer l’équipe IT pour confirmation"
+              },
+              {
+                "value": "Item 1",
+                "text": "Informer le maximum de personnes afin de réduire le risque de téléchargement du fichier"
+              }
+            ],
+            "choicesOrder": "random"
+          },
+          {
+            "type": "expression",
+            "name": "info5",
+            "visible": false,
+            "title": "Info : ",
+            "description": "Les pièces jointes inconnues, surtout en .exe ou .zip, peuvent contenir des malwares. Ne les ouvrez jamais sans vérification. Soumettez-les à un antivirus et consultez votre service IT en cas de doute.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page7",
+        "title": "Étape 6 : Vérification de votre empreinte numérique",
+        "description": "Vous réalisez que l’e-mail contient des informations précises sur vous, comme votre fonction au sein de l’entreprise et un projet récent dans lequel vous êtes impliqué.",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question6",
+            "title": "Comment les pirates ont-ils pu obtenir ces informations ?\r\n",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Image 6",
+              "Image 7"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Image 5",
+                "text": "En piratant votre compte"
+              },
+              {
+                "value": "Image 6",
+                "text": "En utilisant des outils OSINT (Open Source Intelligence) pour récupérer des infos en ligne"
+              },
+              {
+                "value": "Image 7",
+                "text": "En devinant grâce à des informations publiques sur LinkedIn et les réseaux sociaux"
+              },
+              {
+                "value": "Image 8",
+                "text": "En demandant à votre entreprise directement"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info6",
+            "visible": false,
+            "title": "Info : ",
+            "description": "Les pirates exploitent des données publiques (réseaux sociaux, sites d’entreprise) pour personnaliser leurs attaques. Limitez les informations sensibles que vous partagez en ligne pour réduire les risques liés à l’utilisation de celles-ci pour la création de message de phishing ou tentative d’ingénierie sociale.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page8",
+        "title": "Étape 7 : Votre réaction au mail frauduleux",
+        "description": "Vous avez confirmé qu’il s’agit d’un e-mail de phishing.",
+        "elements": [
+          {
+            "type": "ranking",
+            "name": "question7",
+            "title": "Que faites-vous maintenant ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 3",
+              "Item 2",
+              "Item 1",
+              "Item 4"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Vous signalez le mail comme spam/hameçonnage avec SignalSpam ou PhishingInitiative"
+              },
+              {
+                "value": "Item 2",
+                "text": "Vous avertissez vos collègues pour éviter qu’ils ne tombent pas dans le piège"
+              },
+              {
+                "value": "Item 3",
+                "text": "Vous contactez votre équipe ou service IT afin qu'il puisse bloquer cette adresse mail frauduleuse"
+              },
+              {
+                "value": "Item 4",
+                "text": "Je supprime le mail de ma boîte mail ou je le mets dans la section spam"
+              }
+            ],
+            "choicesOrder": "random"
+          },
+          {
+            "type": "expression",
+            "name": "info7",
+            "visible": false,
+            "title": "Info : ",
+            "description": "Ne répondez pas et ne cliquez sur aucun lien. Signalez l’e-mail à votre service IT et aux plateformes dédiées (SignalSpam, Phishing Initiative). Avertissez vos collègues pour éviter qu’ils ne tombent dans le piège. \n\r\nNe cachez jamais la présence d’une menace comme celle-ci même si cela est dû à une erreur de votre part! Parlez-en autour de vous afin de prévenir!\r\n",
+            "hideNumber": true
+          }
+        ]
+      }
+    ],
+    "widthMode": "responsive"
+  }

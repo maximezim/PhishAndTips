@@ -10,7 +10,6 @@
   $: if (usersCSV) {
     formData = new FormData();
     formData.append("file", usersCSV);
-    console.log("Form Data : ", formData);
   }
 
   let errors = {
@@ -35,8 +34,6 @@
       console.error(errors);
       return;
     }
-
-    console.log(formData);
 
     await fetch('/api/db/users', {
 			method: 'POST',
@@ -65,8 +62,16 @@
       <!-- CSV File -->
       <div class="name flex flex-col gap-2">
         <p class="text-sm">Format accepté : CSV</p>
-        <Input accept=".csv" type="file" bind:value={usersCSV} on:change="{() => console.log(usersCSV)}" class="w-full" />
-          {#if errors.usersCSV}
+        <Input
+          type="file"
+          accept=".csv"
+          class="w-full"
+          on:change="{(e) => {
+            usersCSV = (e.target! as HTMLInputElement).files![0];
+          }}"
+        />
+
+        {#if errors.usersCSV}
           <p class="text-red-500 text-sm">{errors.usersCSV}</p>
         {/if}
       </div>

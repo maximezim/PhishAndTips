@@ -1,0 +1,134 @@
+{
+    "title": "Connaissances sur l'hameçonnage (phishing)",
+    "description": "Quiz de connaissances sur ce qu'est le phishing dit hameçonnage en français.",
+    "logo": "/var/formation/data/quiz/img/Phishtips.png",
+    "logoWidth": "200px",
+    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+    "pages": [
+      {
+        "name": "page1",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question1",
+            "title": " Qu'est-ce que le phishing ?",
+            "hideNumber": true,
+            "correctAnswer": "Item 1",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Une technique de piratage informatique visant à arnaquer une potentielle victime."
+              },
+              {
+                "value": "Item 2",
+                "text": "Une méthode de marketing en ligne pour attirer de nouveaux clients."
+              },
+              {
+                "value": "Item 3",
+                "text": "Une nouvelle forme de monnaie virtuelle."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question2",
+            "title": "Quels sont les objectifs principaux d’un mail de phishing ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 1",
+              "Item 2",
+              "Item 4"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Vol d'argent"
+              },
+              {
+                "value": "Item 2",
+                "text": "Téléchargement d'un virus informatique"
+              },
+              {
+                "value": "Item 3",
+                "text": "Dégradation d'un site web"
+              },
+              {
+                "value": "Item 4",
+                "text": "Vol de données"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question3",
+            "title": "Quel part des cyberattaques représente les attaques d’hameçonnage en 2023 selon cybermalveillance.gouv?",
+            "hideNumber": true,
+            "correctAnswer": "Item 2",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Environ 10%"
+              },
+              {
+                "value": "Item 2",
+                "text": "Environ 33%"
+              },
+              {
+                "value": "Item 3",
+                "text": "Environ 50%"
+              },
+              {
+                "value": "Item 4",
+                "text": "Environ 75%"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "page5",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question4",
+            "title": "Dans la situation de la vidéo, quel était l’organisme dont l’identité a été usurpée?",
+            "hideNumber": true,
+            "correctAnswer": "Item 3",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Crédit Agricole"
+              },
+              {
+                "value": "Item 2",
+                "text": "Carrefour"
+              },
+              {
+                "value": "Item 3",
+                "text": "SNCF"
+              },
+              {
+                "value": "Item 4",
+                "text": "Louis Vuitton"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "widthMode": "responsive"
+  }

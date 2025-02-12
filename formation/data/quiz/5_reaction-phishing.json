@@ -1,0 +1,205 @@
+{
+    "title": "Réaction à un incident de phishing",
+    "description": "Quiz de réaction à un incident de phishing dû à une erreur d'un utilisateur. Image et contexte illustratifs de situations envisageables",
+    "logo": "/var/formation/data/quiz/img/Phishtips.png",
+    "logoWidth": "200px",
+    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+    "pages": [
+      {
+        "name": "page1",
+        "elements": [
+          {
+            "type": "image",
+            "name": "video1",
+            "imageLink": "/var/formation/data/quiz/vid/quiz5_réaction_à_incident.mp4",
+            "contentMode": "video",
+            "imageFit": "cover",
+            "imageHeight": "auto",
+            "imageWidth": "50%"
+          },
+          {
+            "type": "checkbox",
+            "name": "question1",
+            "title": "Quels sont les risques liés à cette action ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 3",
+              "Item 1",
+              "Item 2",
+              "Item 4"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Usurpation d'identité"
+              },
+              {
+                "value": "Item 2",
+                "text": "Vol de données"
+              },
+              {
+                "value": "Item 3",
+                "text": "Compromission du système"
+              },
+              {
+                "value": "Item 4",
+                "text": "Atteinte à l'image"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info1",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Cliquer sur un lien frauduleux peut compromettre des comptes, infecter un appareil ou causer des pertes de données.",
+            "hideNumber": true
+          },
+          {
+            "type": "checkbox",
+            "name": "question2",
+            "title": "Que devez-vous faire en priorité dans ce cas-là?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 2",
+              "Item 4"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Utiliser des identifiants pour se connecter"
+              },
+              {
+                "value": "Item 2",
+                "text": "Fermer immédiatement le navigateur"
+              },
+              {
+                "value": "Item 3",
+                "text": "Jeter votre ordinateur à la poubelle ou par la fenêtre"
+              },
+              {
+                "value": "Item 4",
+                "text": "Vérifier et annuler tous les téléchargements"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info2",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Ces réflexes limitent l’exécution d’un logiciel malveillant ou le vol de données.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "elements": [
+          {
+            "type": "expression",
+            "name": "context3",
+            "title": "Vous recevez le mail suivant, et vous décidez d'y répondre en envoyant les informations demandées car vous pensez connaître votre interlocuteur : \n",
+            "description": "De : jusurpevotreidentite@fausse-entreprise.com\nÀ : [adresse mail de l'utilisateur\n\nBonjour Monsieur,\n\nJe suis en déplacement et j’ai un souci avec notre service de paiement. La comptabilité a besoin de tes coordonnées bancaires au plus vite pour finaliser un virement important. Sans cela, nous risquons un retard de paiement critique.\n\nPeux-tu m’envoyer rapidement :\n\nTon IBAN\nLe nom de ta banque\nTon adresse complète liée au compte\nC’est vraiment urgent, je compte sur toi. Merci de me répondre dès que possible pour éviter tout blocage.\n\nMerci d’avance et désolé pour le dérangement !\n\nBertrand Boyer, Service Informatique",
+            "hideNumber": true
+          },
+          {
+            "type": "checkbox",
+            "name": "question3",
+            "title": "Que dois-je faire dans cette situation ?\r\n",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 3",
+              "Item 2",
+              "Item 4",
+              "Item 6"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Ne rien faire, tout va bien, je connais le destinataire"
+              },
+              {
+                "value": "Item 2",
+                "text": "Je fais opposition immédiatement sur mon compte bancaire"
+              },
+              {
+                "value": "Item 3",
+                "text": "Je change mon mot de passe de banque"
+              },
+              {
+                "value": "Item 4",
+                "text": "Je signale à la banque ou la personne en question l’adresse mail qui usurpe son identité"
+              },
+              {
+                "value": "Item 5",
+                "text": "Je propose à mon collègue de faire de même pour m'aider"
+              },
+              {
+                "value": "Item 6",
+                "text": "Je fais des captures d’écran du mail et de toute preuve de l’arnaque"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info3",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Prévenir la banque et conserver des preuves permet d’éviter des pertes financières et d’aider à l’enquête.",
+            "hideNumber": true
+          },
+          {
+            "type": "checkbox",
+            "name": "question4",
+            "title": "Quelles organisations contacter si vous êtes victimes de phishing ?\r\n",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 4",
+              "Item 2",
+              "Item 6"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Jaimepaslesspams.com"
+              },
+              {
+                "value": "Item 2",
+                "text": "Phshing Initiative"
+              },
+              {
+                "value": "Item 3",
+                "text": "la CNON"
+              },
+              {
+                "value": "Item 4",
+                "text": "Signal Spam"
+              },
+              {
+                "value": "Item 5",
+                "text": "Signal Moi"
+              },
+              {
+                "value": "Item 6",
+                "text": "la CNIL"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info4",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Ces trois organisations gouvernementales françaises permettent de signaler des tentatives de phishing et d’obtenir de l’aide.",
+            "hideNumber": true
+          }
+        ]
+      }
+    ],
+    "widthMode": "responsive"
+  }

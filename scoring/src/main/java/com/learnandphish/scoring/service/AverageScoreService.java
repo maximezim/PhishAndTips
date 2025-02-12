@@ -15,7 +15,7 @@ public class AverageScoreService {
     public double getUserAverageScore(String email) {
         List<QuizScoreDTO> scores = formationService.getUserQuizScores(email);
         if(scores.isEmpty()){
-            return 0;
+            return 10;
         }
         double totalScore = scores.stream().mapToDouble(QuizScoreDTO::getScore).sum();
         return totalScore / scores.size() * 10;

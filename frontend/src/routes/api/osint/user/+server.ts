@@ -19,10 +19,9 @@ export async function POST({ cookies }) {
 	try {
 		const response = await OsintService.newScan(cookies);
 		if (response != null) {
-            console.log("RESPONSE SERVER : ", response);
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
-			console.log('Error: No data found');
+			console.error('Error: No data found');
 			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
 		}
 	} catch (e) {

@@ -1,0 +1,188 @@
+{
+    "title": "Ingénierie Sociale",
+    "description": "Quiz composé de 3 vidéos qui représentent 3 situations dans lesquelles la personne peut s’identifier et s’immerger dans la situation",
+    "logoWidth": "200px",
+    "logo": "/var/formation/data/quiz/img/Phishtips.png",
+    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+    "pages": [
+      {
+        "name": "page2",
+        "title": "Situation 1 : Vishing",
+        "description": "Vous recevez un message vocal par téléphone ou autre (cas d’ingénierie sociale par téléphone ou message vocal)",
+        "elements": [
+          {
+            "type": "image",
+            "name": "video1",
+            "imageLink": "/var/formation/data/quiz/vid/video_message_vocal.mp4",
+            "contentMode": "video",
+            "imageHeight": "auto",
+            "imageWidth": "75%"
+          },
+          {
+            "type": "checkbox",
+            "name": "question1",
+            "title": "Dans cette situation, que faîtes-vous?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 2",
+              "Item 4"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Je lui envoie un message dans lequel je fournis mes informations bancaires"
+              },
+              {
+                "value": "Item 2",
+                "text": "Je consulte mes collègues ou mon service informatique afin d’avoir un avis extérieur"
+              },
+              {
+                "value": "Item 3",
+                "text": "Je rappelle le numéro afin de lui donner les informations qu’il demande"
+              },
+              {
+                "value": "Item 4",
+                "text": "Je peux bloquer ce numéro"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info1",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Vérifier avant de répondre empêche de divulguer des informations sensibles à un escroc par inadvertance. L’urgence et la demande de données sensibles sont des indices de tentative d’ingénierie sociale et ici plus précisément de Vishing.\r\n",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "title": "Situation 2 : Vérification express de mail",
+        "description": "Vous allez visionner une très courte vidéo de 40 secondes présentant 4 mails de phishing afin de pouvoir répondre à la question.",
+        "elements": [
+          {
+            "type": "image",
+            "name": "video2",
+            "imageLink": "/var/formation/data/quiz/vid/4mails_40sec.mp4",
+            "contentMode": "video",
+            "imageHeight": "auto",
+            "imageWidth": "100%"
+          },
+          {
+            "type": "imagepicker",
+            "name": "question2",
+            "title": "Sélectionner parmi les mails observés, les mails frauduleux :",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 3",
+              "Item 1"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Mail livraison GLS",
+                "imageLink": "/var/formation/data/quiz/img/GLS_mail.png"
+              },
+              {
+                "value": "Item 2",
+                "text": "Mail réservation Ouigo",
+                "imageLink": "/var/formation/data/quiz/img/Ouigo_mail.png"
+              },
+              {
+                "value": "Item 3",
+                "text": "Mail jeu concours Vinci",
+                "imageLink": "/var/formation/data/quiz/img/Vinci_autoroutes_mail.png"
+              },
+              {
+                "value": "Item 4",
+                "text": "Mail offre Boursobank",
+                "imageLink": "/var/formation/data/quiz/img/Boursobank_mail.png"
+              }
+            ],
+            "choicesOrder": "random",
+            "imageFit": "cover",
+            "showLabel": true,
+            "multiSelect": true
+          },
+          {
+            "type": "expression",
+            "name": "info2",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Les entreprises officielles utilisent des adresses mails précises et sécurisées.\nLes mails de Vinci et GLS utilisent des mots exprimant l’urgence et écrits dans une grande police d’écriture. Les liens sont étranges et font référence à un nom de domaine complètement décorrélé du nom de l’entreprise envoyant le message.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "title": "Situation 3 : Mise en immersion dans un milieu bruyant\n",
+        "description": "Vous allez expérimenter une situation stressante dans laquelle vous aurez un temps défini pour répondre à une question. \nNous souhaitons vous immerger dans un contexte bien particulier qui testera votre aptitude à déceler des arnaques en toute circonstances.\r\nVeuillez cliquer sur la vidéo afin de répondre à la question ci-dessous.",
+        "elements": [
+          {
+            "type": "image",
+            "name": "video3",
+            "imageLink": "/var/formation/data/quiz/vid/openspace_simulator.mp4",
+            "contentMode": "video",
+            "imageFit": "cover",
+            "imageHeight": "auto",
+            "imageWidth": "100%"
+          },
+          {
+            "type": "checkbox",
+            "name": "question3",
+            "title": "Quels sont les points d’attention dans ce contexte ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 2",
+              "Item 4",
+              "Item 7"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "La longueur du mail, qui prouve qu’il est officiel"
+              },
+              {
+                "value": "Item 2",
+                "text": "L’urgence de la demande qui peut inciter à agir sans vérifier"
+              },
+              {
+                "value": "Item 3",
+                "text": "Le fait que votre collègue ne vous ait pas rappelé pour la pause"
+              },
+              {
+                "value": "Item 4",
+                "text": "La nature sensible des informations demandées (bancaires)"
+              },
+              {
+                "value": "Item 5",
+                "text": "L’adresse e-mail de l’expéditeur, qui peut être falsifiée"
+              },
+              {
+                "value": "Item 6",
+                "text": "Le fait que le message soit bien écrit, sans fautes"
+              },
+              {
+                "value": "Item 7",
+                "text": "Le fait que le mail soit envoyé juste avant votre pause"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info3",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Les cybercriminels exploitent l’urgence et les moments de distraction pour piéger leurs victimes. Ici, la demande pressante d’informations bancaires juste avant votre pause est suspecte. Vérifiez toujours l’adresse de l’expéditeur, la légitimité de la demande et contactez directement le service concerné par un autre canal avant de répondre. Ne partagez jamais d’informations sensibles sans confirmation.",
+            "hideNumber": true
+          }
+        ]
+      }
+    ],
+    "widthMode": "responsive"
+  }

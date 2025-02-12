@@ -1,0 +1,214 @@
+{
+    "title": "Recherche d'indices liés à des mails de phishing",
+    "description": "Quiz de recherche d'indices liés à la détection de potentiels mails de phishing à partir d'illustration photo.",
+    "logo": "/var/formation/data/quiz/img/Phishtips.png",
+    "logoWidth": "200px",
+    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+    "pages": [
+      {
+        "name": "page1",
+        "elements": [
+          {
+            "type": "image",
+            "name": "image1",
+            "imageLink": "/var/formation/data/quiz/img/mail_phishing.png",
+            "imageFit": "cover",
+            "imageHeight": "auto",
+            "imageWidth": "20%"
+          },
+          {
+            "type": "checkbox",
+            "name": "question1",
+            "title": "Dans cette image, quels sont les indices qui peuvent montrer que ce message est un message de phishing ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 3",
+              "Item 1"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "L'absence de personnalisation"
+              },
+              {
+                "value": "Item 2",
+                "text": "Des fautes d'orthographe"
+              },
+              {
+                "value": "Item 3",
+                "text": "Des logos non adéquats"
+              },
+              {
+                "value": "Item 4",
+                "text": "Une demande d'informations personnelles"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info1",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Un e-mail générique sans information liée au compte inscrit au sein de l’organisation et des logos mal reproduits ou non adéquats peuvent indiquer une tentative de phishing. Il est clair qu’ici les logos de réseaux sociaux n’ont rien à faire dans un mail de la SNCF.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "elements": [
+          {
+            "type": "image",
+            "name": "image2",
+            "imageLink": "/var/formation/data/quiz/img/dhl_livraison.png",
+            "imageFit": "cover",
+            "imageHeight": "auto",
+            "imageWidth": "30%"
+          },
+          {
+            "type": "checkbox",
+            "name": "question2",
+            "title": "Dans cette image, quels sont les indices qui peuvent montrer que ce message est un message de phishing ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 2"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Une adresse mail professionnelle"
+              },
+              {
+                "value": "Item 2",
+                "text": "Un sentiment d'urgence exagéré"
+              },
+              {
+                "value": "Item 3",
+                "text": "Un message personnalisé avec votre nom"
+              },
+              {
+                "value": "Item 4",
+                "text": "Une demande de mise à jour de vos coordonnées bancaires via un lien"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info2",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Les fraudeurs poussent leurs victimes à agir vite en prétendant qu’une action immédiate est requise et impliquent souvent des conséquences financières afin de forcer la main. Méfiez-vous des messages alarmants.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "elements": [
+          {
+            "type": "image",
+            "name": "image3",
+            "imageLink": "/var/formation/data/quiz/img/ex_spearphishing.png",
+            "imageFit": "cover",
+            "imageHeight": "auto",
+            "imageWidth": "25%"
+          },
+          {
+            "type": "checkbox",
+            "name": "question3",
+            "title": "Dans cette image, quels sont les indices qui peuvent montrer que ce message est un message de phishing ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 3",
+              "Item 5"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Une absence de fautes d’orthographe"
+              },
+              {
+                "value": "Item 2",
+                "text": "Une mise en page inhabituelle"
+              },
+              {
+                "value": "Item 3",
+                "text": "Une demande d’informations personnelles et/ou confidentielles"
+              },
+              {
+                "value": "Item 4",
+                "text": "Une pièce jointe suspecte"
+              },
+              {
+                "value": "Item 5",
+                "text": "Insistance trop prononcée"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info3",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "La personne vous demande étrangement des informations confidentielles et demande instamment que vos échanges restent secrets. Ce genre de mail sont plus difficile à traiter mais vérifiez toujours l’identité de la personne qui vous envoie le message et sa relation avec les informations demandées. Il s’agit ici d’une usurpation d’identité qui a pour but de provoquer un virement vers un compte tiers.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "elements": [
+          {
+            "type": "image",
+            "name": "image4",
+            "imageLink": "/var/formation/data/quiz/img/exemple_spearphishing.png",
+            "imageFit": "cover",
+            "imageHeight": "auto",
+            "imageWidth": "30%"
+          },
+          {
+            "type": "checkbox",
+            "name": "question4",
+            "title": "Dans cette image, quels sont les indices qui peuvent montrer que ce message est un message de phishing ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 1",
+              "Item 3",
+              "Item 4"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 1",
+                "text": "Une adresse mail non-habituelle"
+              },
+              {
+                "value": "Item 2",
+                "text": "Une menace de conséquences immédiates si vous ne répondez pas"
+              },
+              {
+                "value": "Item 3",
+                "text": "Des liens et boutons étranges"
+              },
+              {
+                "value": "Item 4",
+                "text": "Une demande incongrue"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info4",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Un expéditeur inconnu, une adresse légèrement modifiée ou des liens inhabituels cachent souvent une tentative de fraude. Vérifiez toujours la source avant d’interagir.",
+            "hideNumber": true
+          }
+        ]
+      }
+    ],
+    "widthMode": "responsive"
+  }

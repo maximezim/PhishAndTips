@@ -1,0 +1,196 @@
+{
+    "title": "Eléments de protection au phishing",
+    "description": "Quiz portant sur les éléments de protection au phishing afin de définir les bonnes pratiques à adopter pour s'en prémunir. ",
+    "logo": "/var/formation/data/quiz/img/Phishtips.png",
+    "logoWidth": "200px",
+    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+    "pages": [
+      {
+        "name": "page1",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question1",
+            "title": "Quelle est la bonne habitude à prendre pour se protéger des attaques d’hameçonnage?",
+            "hideNumber": true,
+            "correctAnswer": 2,
+            "isRequired": true,
+            "choices": [
+              {
+                "value": 1,
+                "text": "Cliquer rapidement sur les liens pour vérifier leur contenu"
+              },
+              {
+                "value": 2,
+                "text": "Vérifier l’adresse de l’expéditeur et l’URL avant d’ouvrir un lien"
+              },
+              {
+                "value": 5,
+                "text": "Partager ses identifiants avec ses collègues pour éviter de les oublier"
+              },
+              {
+                "value": 6,
+                "text": "Ignorer tous les e-mails reçus"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info1",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Vérifier constamment ces éléments permet d’éviter de tomber dans le piège d’un site frauduleux. Cela évite de traiter les mails, messages et autres à la va-vite.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "elements": [
+          {
+            "type": "image",
+            "name": "image2",
+            "imageLink": "/var/formation/data/quiz/img/exemple_phishing_fait_main.png",
+            "imageFit": "cover",
+            "imageHeight": "auto",
+            "imageWidth": "50%"
+          },
+          {
+            "type": "checkbox",
+            "name": "question2",
+            "title": "Quels sont les points qui doivent retenir votre attention sur cette image ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 4",
+              "Item 5",
+              "Item 6",
+              "Item 7",
+              "Item 8",
+              "Item 9"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 4",
+                "text": "1 L’adresse de l’expéditeur"
+              },
+              {
+                "value": "Item 5",
+                "text": "2 L’orthographe et la grammaire du message"
+              },
+              {
+                "value": "Item 6",
+                "text": "3 L’URL des liens proposés"
+              },
+              {
+                "value": "Item 7",
+                "text": "4 Les pièces jointes suspectes"
+              },
+              {
+                "value": "Item 8",
+                "text": "5 Le ton du message (urgence, menace, récompense)"
+              },
+              {
+                "value": "Item 9",
+                "text": "6 La demande d’informations personnelles"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info2",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Un email frauduleux présente souvent plusieurs indices comme des fautes, un ton alarmant ou des liens suspects.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question3",
+            "title": "Quelles sont les extensions de fichiers qui peuvent receler des programmes malveillants ? ",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 4",
+              "Item 7"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 4",
+                "text": ".exe, .bat, .scr"
+              },
+              {
+                "value": "Item 5",
+                "text": ".pdf, .docx, .jpg"
+              },
+              {
+                "value": "Item 6",
+                "text": ".mp3, .mp4, .avi"
+              },
+              {
+                "value": "Item 7",
+                "text": ".txt, .csv, .zip"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info3",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Certains fichiers exécutables ou compressés peuvent contenir des logiciels malveillants.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question4",
+            "title": "Pourquoi est-il risqué de cliquer sur un lien inconnu dans un e-mail ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 4",
+              "Item 5",
+              "Item 6"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 5",
+                "text": "Le lien peut rediriger vers un faux site imitant un site officiel"
+              },
+              {
+                "value": "Item 6",
+                "text": "Il peut installer un logiciel malveillant sur votre appareil"
+              },
+              {
+                "value": "Item 7",
+                "text": "Cela peut immédiatement vider votre compte bancaire"
+              },
+              {
+                "value": "Item 8",
+                "text": "Il peut s'agir d'un simple lien publicitaire sans danger"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info4",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Les cybercriminels utilisent de faux sites et des malwares pour voler des données ou infecter des systèmes. Les sites frauduleux peuvent être très difficilement différentiables des originaux, d’où l’importance de vérifier avant de cliquer sur un lien.",
+            "hideNumber": true
+          }
+        ]
+      }
+    ],
+    "widthMode": "responsive"
+  }

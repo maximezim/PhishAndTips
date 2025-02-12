@@ -113,7 +113,7 @@
         </div>
         
         <div class="group flex flex-col gap-2">
-          <p class="text-sm text-left">Expéditeur de l'enveloppe</p>
+          <p class="text-sm text-left">Enveloppe de l'expéditeur (spoofing)</p>
           <Input type="text" bind:value={envelopeSender} placeholder="Expéditeur" class="w-full" />
           {#if errors.envelopeSender}
             <p class="text-red-500 text-sm text-left">{errors.envelopeSender}</p>

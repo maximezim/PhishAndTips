@@ -1,0 +1,247 @@
+{
+    "title": "Bonnes pratiques pour le partage de données",
+    "description": "Quiz portant sur les bonnes pratiques à adopter pour favoriser le partage de données de manière plus sûre et plus réfléchie.",
+    "logo": "/var/formation/data/quiz/img/Phishtips.png",
+    "logoWidth": "200px",
+    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+    "pages": [
+      {
+        "name": "page1",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question1",
+            "title": "Qu’est ce que l’empreinte numérique ?",
+            "hideNumber": true,
+            "correctAnswer": 7,
+            "isRequired": true,
+            "choices": [
+              {
+                "value": 7,
+                "text": "L’ensemble des données laissées publiques sur internet par un utilisateur"
+              },
+              {
+                "value": 8,
+                "text": "Une technique pour sécuriser ses comptes avec une empreinte digitale"
+              },
+              {
+                "value": 9,
+                "text": "Une base de données contenant toutes nos informations personnelles"
+              },
+              {
+                "value": 10,
+                "text": "Un virus informatique qui collecte des données"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info1",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Toute activité en ligne laisse des traces pouvant être exploitées par des tiers.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page2",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question2",
+            "title": "Quels sont les 3 réflexes à adopter lors d’un partage volontaire d’informations ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 5",
+              "Item 6",
+              "Item 7",
+              "Item 8",
+              "Item 9",
+              "Item 10",
+              "Item 12",
+              "Item 15"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 10",
+                "text": "Vérifier la source et la destination des données"
+              },
+              {
+                "value": "Item 11",
+                "text": "Publier uniquement sur des réseaux sociaux privés"
+              },
+              {
+                "value": "Item 12",
+                "text": "Vérifier que la communication se fait via un moyen de communication sécurisée"
+              },
+              {
+                "value": "Item 13",
+                "text": "Supprimer immédiatement tout partage après publication"
+              },
+              {
+                "value": "Item 14",
+                "text": "Limiter la quantité d’informations personnelles partagées"
+              },
+              {
+                "value": "Item 15",
+                "text": "Partager uniquement avec des contacts de confiance"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info2",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Limiter et sécuriser les partages de données réduit les risques d’usurpation d’identité.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page3",
+        "elements": [
+          {
+            "type": "radiogroup",
+            "name": "question3",
+            "title": "Que veut dire OSINT ? \r\n",
+            "hideNumber": true,
+            "correctAnswer": "Item 9",
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 8",
+                "text": "Online Security and Internet Network Technology"
+              },
+              {
+                "value": "Item 9",
+                "text": "Open Source Intelligence"
+              },
+              {
+                "value": "Item 10",
+                "text": "Official System for Identifying Network Threats"
+              },
+              {
+                "value": "Item 11",
+                "text": "Open Source Internet Tracking"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info3",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Info : L’OSINT est une technique de collecte d’informations publiques utilisée notamment en cybersécurité. Cette technique peut-être utilisée à mauvais escient par les cybercriminels pour obtenir des informations sensibles, personnaliser leurs arnaques ou usurper l’identité d’un tiers.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page4",
+        "elements": [
+          {
+            "type": "checkbox",
+            "name": "question4",
+            "title": "Comment faire pour maîtriser son empreinte numérique ?",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 5",
+              "Item 6",
+              "Item 10",
+              "Item 11",
+              "Item 13"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 9",
+                "text": "Partager uniquement des contenus positifs et professionnels"
+              },
+              {
+                "value": "Item 10",
+                "text": "Vérifier régulièrement les informations disponibles sur soi en ligne"
+              },
+              {
+                "value": "Item 11",
+                "text": "Paramétrer ses comptes avec des réglages de confidentialité stricts"
+              },
+              {
+                "value": "Item 12",
+                "text": "Ignorer les paramètres de confidentialité, car ils ne sont pas efficaces"
+              },
+              {
+                "value": "Item 13",
+                "text": "Utiliser des mots de passe forts et uniques pour chaque compte"
+              },
+              {
+                "value": "Item 14",
+                "text": "Accepter toutes les demandes d’amis pour élargir son réseau"
+              }
+            ]
+          },
+          {
+            "type": "expression",
+            "name": "info4",
+            "visible": false,
+            "title": "Info : \n",
+            "description": "Protéger ses comptes et surveiller sa présence en ligne limite les risques d’usurpation.",
+            "hideNumber": true
+          }
+        ]
+      },
+      {
+        "name": "page5",
+        "elements": [
+          {
+            "type": "ranking",
+            "name": "question5",
+            "title": "Classez les étapes permettant un partage sécurisé de données dans le bon ordre :",
+            "hideNumber": true,
+            "correctAnswer": [
+              "Item 4",
+              "Item 5",
+              "Item 6",
+              "Item 7",
+              "Item 8"
+            ],
+            "isRequired": true,
+            "choices": [
+              {
+                "value": "Item 4",
+                "text": "Vérifier la fiabilité de la source et du destinataire"
+              },
+              {
+                "value": "Item 5",
+                "text": "S’assurer que la communication est sécurisée (HTTPS, chiffrement, etc.)"
+              },
+              {
+                "value": "Item 6",
+                "text": "Limiter la quantité d’informations partagées au strict nécessaire"
+              },
+              {
+                "value": "Item 7",
+                "text": "Configurer les paramètres de confidentialité pour restreindre l’accès"
+              },
+              {
+                "value": "Item 8",
+                "text": "Effectuer une vérification post-partage pour s’assurer de l’absence de fuites"
+              }
+            ],
+            "choicesOrder": "random"
+          },
+          {
+            "type": "expression",
+            "name": "info5",
+            "visible": false,
+            "title": "Info : ",
+            "description": "Une approche méthodique permet de réduire considérablement les risques liés au partage de données personnelles ou sensibles.",
+            "hideNumber": true
+          }
+        ]
+      }
+    ],
+    "widthMode": "responsive"
+  }
