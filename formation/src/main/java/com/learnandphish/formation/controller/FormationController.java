@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,43 @@ public class FormationController {
     public ResponseEntity<List<Video>> getAllVideos() {
         List<Video> videos = videoService.getAllVideos();
         return ResponseEntity.ok(videos);
+    }
+    
+
+    // Create a video with file upload
+    @PostMapping("/video/upload")
+    public ResponseEntity<?> uploadVideo(@RequestParam("videoFile") MultipartFile videoFile,
+                                         @RequestParam("thumbnailFile") MultipartFile thumbnailFile,
+                                         @RequestParam("captionFile") MultipartFile captionFile,
+                                         @RequestParam("title") String title,
+                                         @RequestParam("description") String description) {
+        try {
+            Video video = new Video();
+            video.setTitle(title);
+            video.setDescription(description);
+            video.setVideoUrl(videoFile.getOriginalFilename());
+            video.setThumbnailUrl(thumbnailFile.getOriginalFilename());
+            video.setCaptionUrl(captionFile.getOriginalFilename());
+
+            Video createdVideo = videoService.createVideo(video, videoFile, thumbnailFile, captionFile);
+            if (createdVideo == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error creating video");
+            }
+            return ResponseEntity.ok(createdVideo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading video");
+        }
+    }
+
+    // Delete a video
+    @DeleteMapping("/video/{videoId}")
+    public ResponseEntity<?> deleteVideo(@PathVariable Integer videoId) {
+        Video video = videoService.getVideoById(videoId);
+        if (video == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Video not found");
+        }
+        videoService.deleteVideo(videoId);
+        return ResponseEntity.ok().build();
     }
 
     // Set isWatched to true for a user and a video

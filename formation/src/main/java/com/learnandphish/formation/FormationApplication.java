@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.json.GsonJsonParser;
 import org.springframework.context.annotation.Bean;
 
 import java.io.File;
@@ -192,6 +191,7 @@ public class FormationApplication {
                                     if (videoUrl == null || thumbnailUrl == null || captionUrl == null) {
                                         throw new Exception("Video upload failed");
                                     }
+                                    video.setId(null);
                                     video.setVideoUrl(videoUrl);
                                     video.setThumbnailUrl(thumbnailUrl);
                                     video.setCaptionUrl(captionUrl);

@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -90,6 +92,25 @@ public class MinioService {
                             .filename(filePath)
                             .build());
             log.info("File '{}' is successfully uploaded as object '{}' to bucket '{}'.", filePath, objectName, bucketName);
+            return endpoint + "/" + bucketName + "/" + objectName;
+        } catch (MinioException e) {
+            log.error("Error occurred: {}", e.getMessage());
+            log.error("HTTP trace: {}", e.httpTrace());
+        }
+        return null;
+    }
+
+    public String uploadFileFromFront(MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+        try {
+            String objectName = String.valueOf(UUID.randomUUID());
+            minioClient.putObject(
+                    PutObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .stream(file.getInputStream(), file.getSize(), -1)
+                            .contentType(file.getContentType())
+                            .build());
+            log.info("File '{}' is successfully uploaded as object '{}' to bucket '{}'.", file.getOriginalFilename(), objectName, bucketName);
             return endpoint + "/" + bucketName + "/" + objectName;
         } catch (MinioException e) {
             log.error("Error occurred: {}", e.getMessage());
