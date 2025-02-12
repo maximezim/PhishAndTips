@@ -5,7 +5,7 @@
   import { Textarea } from "$lib/components/ui/textarea";
   import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
 	import Separator from "../Separator.svelte";
-
+  import { Checkbox } from "$lib/components/ui/checkbox";
 
   let pageName = "";
   let html = "";
@@ -16,6 +16,9 @@
     html: "",
     redirect_url: "",
   };
+
+  let captureCredentials = true;
+  let capturePasswords = true;
 
   function validateForm(): boolean {
     let isValid = true;
@@ -54,8 +57,8 @@
       name: pageName,
       html: html,
       redirect_url: redirect_url,
-      capture_credentials: true,
-      capture_passwords: true,
+      capture_credentials: captureCredentials, 
+      capture_passwords: capturePasswords,     
       modified_date: new Date().toISOString().slice(0, 19) + "+00:00", // formatted date
     };
     
@@ -112,8 +115,24 @@
       </div>
     </AlertDialog.Header>
     <AlertDialog.Footer>
-      <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
-      <ConfirmPopup description="Création du page" name="Créer" style="bg-accent" functionToCall={createpage} />
+      <div class="flex w-full items-center justify-between">
+        <div class="flex gap-4">
+          <!-- Updated checkbox for credentials -->
+          <div class="flex items-center gap-2">
+            <Checkbox id="checkbox-credentials" bind:checked={captureCredentials} />
+            <label for="checkbox-credentials" class="cursor-pointer">Capturer les données</label>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <Checkbox id="checkbox-passwords" bind:checked={capturePasswords} />
+            <label for="checkbox-passwords" class="cursor-pointer">Capturer les mots de passe</label>
+          </div>
+        </div>
+        <div class="flex gap-2">
+          <AlertDialog.Cancel>Annuler</AlertDialog.Cancel>
+          <ConfirmPopup description="Création du page" name="Créer" style="bg-accent" functionToCall={createpage} />
+        </div>
+      </div>
     </AlertDialog.Footer>
   </AlertDialog.Content>
 </AlertDialog.Root>
