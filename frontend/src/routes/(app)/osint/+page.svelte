@@ -8,6 +8,7 @@
     import type { ParsedResult, ParsedData, ExportResult, ScanResult, MyScan, UserScan } from '$types/osint';
     import { typeTranslations } from '$types/osint';
     import { onMount } from 'svelte';
+    import { showSuccessToast, showErrorToast } from "$lib/toast";
 
     let myScan: MyScan | [];
     let scanResult: ScanResult | null = null;
@@ -168,8 +169,28 @@
               'Content-Type': 'application/json'
             }
         });
+        sessionStorage.setItem("showSuccessToast", "Le scan a été lancé avec succès");
       }catch(e){
         console.log(e);
+        sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors du lancement du scan");
+      } finally {
+        location.reload();
+      }
+    }
+
+    async function searchOsintUser(email: string) {
+      try{
+        await fetch(`/api/osint/admin/new-scan`, {
+            method: 'POST',
+            body: JSON.stringify({email}),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+        });
+        sessionStorage.setItem("showSuccessToast", "Le scan a été lancé avec succès");
+      }catch(e){
+        console.log(e);
+        sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors du lancement du scan");
       } finally {
         location.reload();
       }
@@ -311,7 +332,21 @@
                   <Table.Cell class="hidden lg:table-cell">{user.scan && Array.isArray(user.scan) && user.scan.length === 0 ? "-" : user.scan ? formatDate(user.scan.updatedAt) : "-"}</Table.Cell>
                   <Table.Cell>
                     {#if user.scan && Array.isArray(user.scan) && user.scan.length === 0}
-                      -
+                    <AlertDialog.Root>
+                      <AlertDialog.Trigger>
+                        <iconify-icon class="text-2xl" style="color: #9183ec" icon="mingcute:scan-line"></iconify-icon>
+                      </AlertDialog.Trigger>
+                      <AlertDialog.Content>
+                        <AlertDialog.Header>
+                          <AlertDialog.Title class="text-base">Lancer un scan</AlertDialog.Title>
+                          <AlertDialog.Description class="text-sm">Voulez-vous lancer un scan pour {user.target.firstName} {user.target.lastName} ?</AlertDialog.Description>
+                        </AlertDialog.Header>
+                        <AlertDialog.Footer>
+                          <AlertDialog.Action>Fermer</AlertDialog.Action>
+                          <Button class="bg-accent" on:click={()=>{searchOsintUser(user.target.email)}}>Lancer le scan</Button>
+                        </AlertDialog.Footer>
+                      </AlertDialog.Content>
+                    </AlertDialog.Root>
                     {:else}
                     <AlertDialog.Root>
                       <AlertDialog.Trigger>
@@ -335,7 +370,7 @@
                         {#if user.scan}
                           <AlertDialog.Header class="flex flex-col gap-2 sm:gap-0 sm:flex-row sm:justify-between sm:items-center px-6">
                             <AlertDialog.Title class="text-base sm:text-medium text-left">Scan du {formatDate(user.scan.updatedAt)}</AlertDialog.Title>
-                            <Button class="w-full sm:w-auto bg-accent" on:click={() => {}}>Nouveau scan</Button>
+                            <Button class="w-full sm:w-auto bg-accent" on:click={()=>{searchOsintUser(user.target.email)}}>Nouveau scan</Button>
                           </AlertDialog.Header>
                           <div class="h-[50vh] overflow-y-auto px-6">
                             {#if user.groupedResults}

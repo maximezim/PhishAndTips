@@ -47,8 +47,10 @@
 				'Content-Type': 'application/json'
 			}
 		});
+      sessionStorage.setItem("showSuccessToast", "Utilisateur supprimé avec succès");
     } catch(e) {
       console.error('Error while fetching users: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la suppression de l'utilisateur");
     } finally {
       closeAlertDialog();
     }

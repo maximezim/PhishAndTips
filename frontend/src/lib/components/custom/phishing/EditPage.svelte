@@ -56,16 +56,23 @@
       return;
     } 
 
-    page.modified_date = new Date().toISOString().slice(0, 19) + "+00:00", // formatted date
+    page.modified_date = new Date().toISOString().slice(0, 19) + "+00:00"; // formatted date
 
-    await fetch('/api/phishing/pages', {
-			method: 'PUT',
-			body: JSON.stringify(page),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-    closeAlertDialog();
+    try{
+      await fetch('/api/phishing/pages', {
+        method: 'PUT',
+        body: JSON.stringify(page),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      sessionStorage.setItem("showSuccessToast", "Page modifiée avec succès");
+    } catch(e) {
+      console.error('Error while updating page: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la modification de la page");
+    } finally {
+      closeAlertDialog();
+    }
   }
 
   function closeAlertDialog() {

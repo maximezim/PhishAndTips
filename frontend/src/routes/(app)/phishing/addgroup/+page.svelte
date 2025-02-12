@@ -10,6 +10,7 @@
     import ConfirmPopup from "$lib/components/custom/ConfirmPopup.svelte";
     import { goto } from "$app/navigation";
     import type { User, UserPagination } from '$types/users';
+    import { showSuccessToast, showErrorToast } from "$lib/toast";
 
     let group_name= "";
     let loading_data = true;
@@ -62,14 +63,24 @@
             name: group_name,
             targets: selectedUsers,
         };
-        await fetch(`/api/phishing/groups`, {
-            method: 'POST',
-            body: JSON.stringify(groupJson),
-            headers: {
-                'Content-Type': 'application/json'
+        try{
+            let res = await fetch(`/api/phishing/groups`, {
+                method: 'POST',
+                body: JSON.stringify(groupJson),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }); 
+            if(res.status !== 200){
+                showErrorToast("Une erreur s'est produite lors de la création du groupe");
+            } else {
+                showSuccessToast("Groupe créé avec succès");
+                closeAlertDialog();
             }
-        });
-        closeAlertDialog();
+        } catch(e) {
+            console.error('Error while creating group: ', e);
+            showErrorToast("Une erreur s'est produite lors de la création du groupe");
+        }
     }
 
   </script>

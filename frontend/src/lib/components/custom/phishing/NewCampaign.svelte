@@ -99,15 +99,21 @@
       send_by_date: endDate ? endDate.toString() : null,
       groups: [{ name: selectedGroup?.name ?? "" }],
     };
-    
-    await fetch('/api/phishing/campaigns', {
-			method: 'POST',
-			body: JSON.stringify(groupJson),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-    closeAlertDialog();
+    try{
+      await fetch('/api/phishing/campaigns', {
+        method: 'POST',
+        body: JSON.stringify(groupJson),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      sessionStorage.setItem("showSuccessToast", "Campagne créée avec succès");
+    } catch(e) {
+      console.error('Error while creating campaign: ', e);
+      sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors de la création de la campagne");
+    } finally{
+      closeAlertDialog();
+    }
   }
 
   function getFormattedDate(value: DateValue | undefined): string {

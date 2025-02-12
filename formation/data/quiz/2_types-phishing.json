@@ -1,244 +1,244 @@
 {
-    "title": "Détection du type de phishing",
-    "description": "Quiz de détection du type de phishing à partir d'exemple photo des types abordés dans la vidéo sur les 5 types de phishing à connaître.",
-    "logo": "/var/formation/data/quiz/img/Phishtips.png",
-    "logoWidth": "200px",
-    "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
-    "pages": [
-      {
-        "name": "page1",
-        "elements": [
-          {
-            "type": "image",
-            "name": "image1",
-            "imageLink": "/var/formation/data/quiz/img/arnaque_ameli.png",
-            "contentMode": "image",
-            "imageHeight": "auto",
-            "imageWidth": "25%"
-          },
-          {
-            "type": "radiogroup",
-            "name": "question1",
-            "title": " Qu'est-ce que le phishing ?",
-            "hideNumber": true,
-            "correctAnswer": "Item 3",
-            "isRequired": true,
-            "choices": [
-              {
-                "value": "Item 1",
-                "text": "Social Phishing"
-              },
-              {
-                "value": "Item 2",
-                "text": "Phishing par mail"
-              },
-              {
-                "value": "Item 3",
-                "text": "Smishing"
-              },
-              {
-                "value": "Item 4",
-                "text": "Spear Phishing"
-              }
-            ]
-          },
-          {
-            "type": "expression",
-            "name": "info1",
-            "visible": false,
-            "title": "Info : \n",
-            "description": "Le smishing est une attaque par SMS où un pirate envoie un message frauduleux incitant la victime à cliquer sur un lien malveillant ou à divulguer des informations personnelles.",
-            "hideNumber": true
-          }
-        ]
-      },
-      {
-        "name": "page3",
-        "elements": [
-          {
-            "type": "image",
-            "name": "image2",
-            "imageLink": "/var/formation/data/quiz/img/ex_phishing.png",
-            "imageHeight": "auto",
-            "imageWidth": "25%"
-          },
-          {
-            "type": "radiogroup",
-            "name": "question2",
-            "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
-            "hideNumber": true,
-            "correctAnswer": "Item 4",
-            "isRequired": true,
-            "choices": [
-              {
-                "value": "Item 1",
-                "text": "Vishing"
-              },
-              {
-                "value": "Item 2",
-                "text": "Smishing"
-              },
-              {
-                "value": "Item 3",
-                "text": "Spearphishing"
-              },
-              {
-                "value": "Item 4",
-                "text": "Phishing par mail"
-              }
-            ]
-          },
-          {
-            "type": "expression",
-            "name": "info2",
-            "visible": false,
-            "title": "Info : \n",
-            "description": "Cette technique consiste à envoyer des e-mails frauduleux se faisant passer pour des entités légitimes afin de voler des identifiants, des informations bancaires ou infecter un appareil.",
-            "hideNumber": true
-          }
-        ]
-      },
-      {
-        "name": "page4",
-        "elements": [
-          {
-            "type": "image",
-            "name": "image3",
-            "imageLink": "/var/formation/data/quiz/img/faux_concours_insta.png",
-            "imageFit": "cover",
-            "imageHeight": "auto",
-            "imageWidth": "15%"
-          },
-          {
-            "type": "radiogroup",
-            "name": "question3",
-            "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
-            "hideNumber": true,
-            "correctAnswer": "Item 3",
-            "isRequired": true,
-            "choices": [
-              {
-                "value": "Item 1",
-                "text": "Vishing"
-              },
-              {
-                "value": "Item 2",
-                "text": "Smishing"
-              },
-              {
-                "value": "Item 3",
-                "text": "Social Phishing"
-              },
-              {
-                "value": "Item 4",
-                "text": "Spear Phishing"
-              }
-            ]
-          },
-          {
-            "type": "expression",
-            "name": "info3",
-            "visible": false,
-            "title": "Info : \n",
-            "description": "Ce type d’attaque repose sur l’ingénierie sociale. Les cybercriminels exploitent les réseaux sociaux ou d’autres canaux pour manipuler les victimes et obtenir des informations sensibles.\n",
-            "hideNumber": true
-          }
-        ]
-      },
-      {
-        "name": "page5",
-        "elements": [
-          {
-            "type": "image",
-            "name": "image4",
-            "imageLink": "/var/formation/data/quiz/img/mail_phishing.png",
-            "imageFit": "cover",
-            "imageHeight": "auto",
-            "imageWidth": "15%"
-          },
-          {
-            "type": "radiogroup",
-            "name": "question4",
-            "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
-            "hideNumber": true,
-            "correctAnswer": "Item 1",
-            "isRequired": true,
-            "choices": [
-              {
-                "value": "Item 1",
-                "text": "Phishing par mail"
-              },
-              {
-                "value": "Item 2",
-                "text": "Smishing"
-              },
-              {
-                "value": "Item 3",
-                "text": "Social Phishing"
-              },
-              {
-                "value": "Item 4",
-                "text": "Vishing"
-              }
-            ]
-          },
-          {
-            "type": "expression",
-            "name": "info4",
-            "visible": false,
-            "title": "Info : \n",
-            "description": "Cette attaque vise à tromper les victimes via des e-mails frauduleux usurpant des entités légitimes, pour proposer des fausses offres contenant des liens piégés.",
-            "hideNumber": true
-          }
-        ]
-      },
-      {
-        "name": "page6",
-        "elements": [
-          {
-            "type": "image",
-            "name": "image5",
-            "imageLink": "/var/formation/data/quiz/img/ex_spearphishing.png",
-            "imageFit": "cover",
-            "imageHeight": "auto",
-            "imageWidth": "25%"
-          },
-          {
-            "type": "radiogroup",
-            "name": "question5",
-            "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
-            "hideNumber": true,
-            "correctAnswer": "Item 2",
-            "isRequired": true,
-            "choices": [
-              {
-                "value": "Item 1",
-                "text": "Social Phishing"
-              },
-              {
-                "value": "Item 2",
-                "text": "Spear Phishing"
-              },
-              {
-                "value": "Item 3",
-                "text": "Smishing"
-              },
-              {
-                "value": "Item 4",
-                "text": "Vishing"
-              }
-            ]
-          },
-          {
-            "type": "expression",
-            "name": "info5",
-            "visibleIf": "{question1} notempty and {question1} empty",
-            "title": "Info : \n",
-            "description": "Contrairement au phishing classique, le spear phishing cible des personnes spécifiques avec des e-mails personnalisés, utilisant des informations crédibles pour paraître légitimes.",
-            "hideNumber": true
-          }
-        ]
-      }
-    ],
-    "widthMode": "responsive"
-  }
+  "title": "Détection du type de phishing",
+  "description": "Quiz de détection du type de phishing à partir d'exemple photo des types abordés dans la vidéo sur les 5 types de phishing à connaître.",
+  "logo": "/var/formation/data/quiz/img/Phishtips.png",
+  "logoWidth": "200px",
+  "completedHtml": "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>",
+  "pages": [
+    {
+      "name": "page1",
+      "elements": [
+        {
+          "type": "image",
+          "name": "image1",
+          "imageLink": "/var/formation/data/quiz/img/arnaque_ameli.png",
+          "contentMode": "image",
+          "imageHeight": "auto",
+          "imageWidth": "25%"
+        },
+        {
+          "type": "radiogroup",
+          "name": "question1",
+          "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
+          "hideNumber": true,
+          "correctAnswer": "Item 3",
+          "isRequired": true,
+          "choices": [
+            {
+              "value": "Item 1",
+              "text": "Social Phishing"
+            },
+            {
+              "value": "Item 2",
+              "text": "Phishing par mail"
+            },
+            {
+              "value": "Item 3",
+              "text": "Smishing"
+            },
+            {
+              "value": "Item 4",
+              "text": "Spear Phishing"
+            }
+          ]
+        },
+        {
+          "type": "expression",
+          "name": "info1",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Le smishing est une attaque par SMS où un pirate envoie un message frauduleux incitant la victime à cliquer sur un lien malveillant ou à divulguer des informations personnelles.",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page3",
+      "elements": [
+        {
+          "type": "image",
+          "name": "image2",
+          "imageLink": "/var/formation/data/quiz/img/ex_phishing.png",
+          "imageHeight": "auto",
+          "imageWidth": "25%"
+        },
+        {
+          "type": "radiogroup",
+          "name": "question2",
+          "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
+          "hideNumber": true,
+          "correctAnswer": "Item 4",
+          "isRequired": true,
+          "choices": [
+            {
+              "value": "Item 1",
+              "text": "Vishing"
+            },
+            {
+              "value": "Item 2",
+              "text": "Smishing"
+            },
+            {
+              "value": "Item 3",
+              "text": "Spearphishing"
+            },
+            {
+              "value": "Item 4",
+              "text": "Phishing par mail"
+            }
+          ]
+        },
+        {
+          "type": "expression",
+          "name": "info2",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Cette technique consiste à envoyer des e-mails frauduleux se faisant passer pour des entités légitimes afin de voler des identifiants, des informations bancaires ou infecter un appareil.",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page4",
+      "elements": [
+        {
+          "type": "image",
+          "name": "image3",
+          "imageLink": "/var/formation/data/quiz/img/faux_concours_insta.png",
+          "imageFit": "cover",
+          "imageHeight": "auto",
+          "imageWidth": "15%"
+        },
+        {
+          "type": "radiogroup",
+          "name": "question3",
+          "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
+          "hideNumber": true,
+          "correctAnswer": "Item 3",
+          "isRequired": true,
+          "choices": [
+            {
+              "value": "Item 1",
+              "text": "Vishing"
+            },
+            {
+              "value": "Item 2",
+              "text": "Smishing"
+            },
+            {
+              "value": "Item 3",
+              "text": "Social Phishing"
+            },
+            {
+              "value": "Item 4",
+              "text": "Spear Phishing"
+            }
+          ]
+        },
+        {
+          "type": "expression",
+          "name": "info3",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Ce type d’attaque repose sur l’ingénierie sociale. Les cybercriminels exploitent les réseaux sociaux ou d’autres canaux pour manipuler les victimes et obtenir des informations sensibles.\n",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page5",
+      "elements": [
+        {
+          "type": "image",
+          "name": "image4",
+          "imageLink": "/var/formation/data/quiz/img/mail_phishing.png",
+          "imageFit": "cover",
+          "imageHeight": "auto",
+          "imageWidth": "15%"
+        },
+        {
+          "type": "radiogroup",
+          "name": "question4",
+          "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
+          "hideNumber": true,
+          "correctAnswer": "Item 1",
+          "isRequired": true,
+          "choices": [
+            {
+              "value": "Item 1",
+              "text": "Phishing par mail"
+            },
+            {
+              "value": "Item 2",
+              "text": "Smishing"
+            },
+            {
+              "value": "Item 3",
+              "text": "Social Phishing"
+            },
+            {
+              "value": "Item 4",
+              "text": "Vishing"
+            }
+          ]
+        },
+        {
+          "type": "expression",
+          "name": "info4",
+          "visible": false,
+          "title": "Info : \n",
+          "description": "Cette attaque vise à tromper les victimes via des e-mails frauduleux usurpant des entités légitimes, pour proposer des fausses offres contenant des liens piégés.",
+          "hideNumber": true
+        }
+      ]
+    },
+    {
+      "name": "page6",
+      "elements": [
+        {
+          "type": "image",
+          "name": "image5",
+          "imageLink": "/var/formation/data/quiz/img/ex_spearphishing.png",
+          "imageFit": "cover",
+          "imageHeight": "auto",
+          "imageWidth": "25%"
+        },
+        {
+          "type": "radiogroup",
+          "name": "question5",
+          "title": "D’après cette image quel est le type d’hameçonnage représenté ici ?",
+          "hideNumber": true,
+          "correctAnswer": "Item 2",
+          "isRequired": true,
+          "choices": [
+            {
+              "value": "Item 1",
+              "text": "Social Phishing"
+            },
+            {
+              "value": "Item 2",
+              "text": "Spear Phishing"
+            },
+            {
+              "value": "Item 3",
+              "text": "Smishing"
+            },
+            {
+              "value": "Item 4",
+              "text": "Vishing"
+            }
+          ]
+        },
+        {
+          "type": "expression",
+          "name": "info5",
+          "visibleIf": "{question1} notempty and {question1} empty",
+          "title": "Info : \n",
+          "description": "Contrairement au phishing classique, le spear phishing cible des personnes spécifiques avec des e-mails personnalisés, utilisant des informations crédibles pour paraître légitimes.",
+          "hideNumber": true
+        }
+      ]
+    }
+  ],
+  "widthMode": "responsive"
+}
