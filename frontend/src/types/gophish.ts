@@ -43,6 +43,20 @@ export type Campaign = {
 	modified_date: string;
   };
   status: string;
+  results: {
+	id: string;
+	status: string;
+	ip: string;
+	latitude: number;
+	longitude: number;
+	send_date: string;
+	reported: boolean;
+	modified_date: string;
+	email: string;
+	first_name: string;
+	last_name: string;
+	position: string;
+  }[],  
   timeline: {
 	email: string;
 	time: string;

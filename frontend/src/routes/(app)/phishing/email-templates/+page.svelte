@@ -39,7 +39,7 @@
     <Separator color='bg-accent' width='w-1/5' height="h-[2.5px]" margin_top="mt-3"/>
 
     <div class={styleTemplate}>
-        {#each templates as template}
+        {#each [...templates].reverse() as template}
             <TemplatePopup template={template} isHtmlPopup={true} styleElementItem={styleTemplateItem}/>
         {/each}
     </div>

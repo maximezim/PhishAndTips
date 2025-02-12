@@ -52,6 +52,21 @@ class OsintService {
 			return [];
 		}
 	}
+
+	public static async userNewScan(cookies: any, body: any): Promise<any[]> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.post(`${GATEWAY_URL}/admin/scan`, body, {
+				headers: {
+					Authorization: `Bearer ${jwt}`
+				}
+			});
+			return response.data;
+		} catch (error: any) {
+			console.error('Error while fetching user new scan:', error.message);
+			return [];
+		}
+	}
 }
 
 export default OsintService;

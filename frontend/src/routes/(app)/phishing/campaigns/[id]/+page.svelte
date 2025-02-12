@@ -16,7 +16,7 @@
   
   let campaign: Campaign;
   let campaignSummary: CampaignSummary;
-  let usersFromDb: User[] = [];
+
   let users: User[] = [];
   
   let timelineActions = {
@@ -54,17 +54,19 @@
         }
       });
       campaignSummary = await campaignResponseSummary.json();
-      usersFromDb = await fetch("/api/db/users").then(res => res.json());
     } else {
       console.error('ID is undefined');
     }
     } catch (error) {
       console.error("Erreur lors de la récupération des campagnes:", error);
     } finally {
-      const timelineEmails = Array.from(
-        new Set(campaign.timeline.map(event => event.email).filter(email => email))
-      );
-      users = usersFromDb.filter(user => timelineEmails.includes(user.email));
+      users = campaign.results.map(result => ({
+        firstName: result.first_name,
+        lastName: result.last_name,
+        email: result.email,
+        position: result.position || "",
+        role: ""
+      }));
 
       valueSent.set(campaignSummary.stats.sent);
       setTimeout(() => {
@@ -91,43 +93,39 @@
     }
   });
 
-  // Added deleteCampaign function
   async function deleteCampaign() {
-    if (confirm('Êtes-vous sûr de vouloir supprimer cette campagne ?')) {
-      try {
-        const res = await fetch(`/api/phishing/campaigns?id=${encodeURIComponent(campaign.id)}`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        if (res.ok) {
-          goto('/phishing/campaigns');
-        } else {
-          alert("Erreur lors de la suppression de la campagne");
-        }
-      } catch (error) {
-        console.error("Erreur lors de la suppression :", error);
-        alert("Erreur lors de la suppression de la campagne");
+    try {
+      const res = await fetch(`/api/phishing/campaigns?id=${encodeURIComponent(campaign.id)}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        sessionStorage.setItem("showSuccessToast", "Campagne supprimée avec succès");
+        goto('/phishing/campaigns');
+      } else {
+        sessionStorage.setItem("showErrorToast", "Erreur lors de la suppression de la campagne");
       }
+    } catch (error) {
+      console.error("Erreur lors de la suppression :", error);
+      sessionStorage.setItem("showErrorToast", "Erreur lors de la suppression de la campagne");
     }
   }
 
-  // Added completeCampaign function
   async function completeCampaign() {
-    if (confirm('Êtes-vous sûr de vouloir marquer cette campagne comme complétée ?')) {
-      try {
-        const res = await fetch(`/api/phishing/campaigns/${campaign.id}/complete`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        if (res.ok) {
-          location.reload();
-        } else {
-          alert("Erreur lors de la complétion de la campagne");
-        }
-      } catch (error) {
-        console.error("Erreur lors de la complétion :", error);
-        alert("Erreur lors de la complétion de la campagne");
+    try {
+      const res = await fetch(`/api/phishing/campaigns/${campaign.id}/complete`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (res.ok) {
+        sessionStorage.setItem("showSuccessToast", "Campagne terminée avec succès");
+        location.reload();
+      } else {
+        sessionStorage.setItem("showErrorToast", "Erreur lors de la complétion de la campagne");
       }
+    } catch (error) {
+      console.error("Erreur lors de la complétion :", error);
+      sessionStorage.setItem("showErrorToast", "Erreur lors de la complétion de la campagne");
     }
   }
 
