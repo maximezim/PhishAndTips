@@ -69,8 +69,8 @@ services:
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=${SMTP_ENABLE_TLS:-false}
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=${SMTP_ENABLE_TLS:-false}
       - MAIL_FROM=${SMTP_FROM:-sender@example.com}
-      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL?error}
-      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD?error}
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:?error}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:?error}
     volumes:
       - ./authentication/templates:/var/authentication/templates
     profiles:
@@ -122,9 +122,9 @@ services:
     environment:
       - PERMIT_RELOAD=1
     volumes:
-      - ./volumes/mailserver/data:/var/mail
-      - ./volumes/mailserver/state:/var/mail-state
-      - ./volumes/mailserver/logs:/var/log/mail
+      - maildata:/var/mail
+      - mailstate:/var/mail-state
+      - maillogs:/var/log/mail
       - ./config/:/tmp/docker-mailserver/
     ports:
       - "25:25"     # SMTP
@@ -336,3 +336,8 @@ services:
 networks:
   backend:
     driver: bridge
+
+volumes:
+  maildata:
+  mailstate:
+  maillogs:
