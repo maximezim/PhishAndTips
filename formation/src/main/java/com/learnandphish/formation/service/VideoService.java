@@ -21,6 +21,7 @@ public class VideoService {
     private final UserVideoWatchedRepository userVideoWatchedRepository;
     private final MinioService minioService;
 
+    private final List<String> ALLOWED_FILE_TYPES = List.of("video/mp4", "video/webm","image/jpeg", "image/png");
     private final List<String> ALLOWED_VIDEO_TYPES = List.of("video/mp4", "video/webm");
     private final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png");
     private final List<String> ALLOWED_CAPTION_TYPES = List.of("text/vtt", "text/srt");
@@ -57,6 +58,7 @@ public class VideoService {
     }
 
     // Delete a video
+    @Transactional
     public void deleteVideo(Integer videoId) {
         Video video = videoRepository.findById(videoId).orElseThrow(() -> new RuntimeException("Video not found"));
         try{
@@ -131,4 +133,24 @@ public class VideoService {
             }
         }
     }
+
+    // Upload a file
+    @Transactional
+    public String uploadFile(MultipartFile file) {
+        // Validate file
+        validateFile(file, "file", ALLOWED_FILE_TYPES);
+
+        String fileUrl = null;
+
+        try {
+            fileUrl = minioService.uploadFile(file);
+            return fileUrl;
+        } catch (Exception e) {
+            // Cleanup any uploaded files on failure
+            cleanupUploadedFiles(fileUrl);
+            log.error("Failed to upload file", e);
+            throw new RuntimeException("Failed to upload file", e);
+        }
+    }
+
 }

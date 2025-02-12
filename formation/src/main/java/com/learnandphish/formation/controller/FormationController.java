@@ -178,4 +178,18 @@ public class FormationController {
         Badge badge = badgeService.getBadgeById(badgeId);
         return ResponseEntity.ok(badge != null ? badge : new Badge());
     }
+
+    // Upload a file
+    @PostMapping("/upload")
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+        try {
+            String fileUrl = videoService.uploadFile(file);
+            if (fileUrl == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
+            }
+            return ResponseEntity.ok(fileUrl);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading file");
+        }
+    }
 }
