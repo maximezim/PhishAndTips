@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -100,22 +101,58 @@ public class MinioService {
         return null;
     }
 
-    public String uploadFile(MultipartFile file) throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+
+
+    public String uploadFile(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("File is empty");
+        }
+        if (!isAllowedContentType(file.getContentType())) {
+            throw new IllegalArgumentException("File type not allowed");
+        }
         try {
             String objectName = String.valueOf(UUID.randomUUID());
-            minioClient.putObject(
-                    PutObjectArgs.builder()
-                            .bucket(bucketName)
-                            .object(objectName)
-                            .stream(file.getInputStream(), file.getSize(), -1)
-                            .contentType(file.getContentType())
-                            .build());
-            log.info("File '{}' is successfully uploaded as object '{}' to bucket '{}'.", file.getOriginalFilename(), objectName, bucketName);
-            return endpoint + "/" + bucketName + "/" + objectName;
+            try (InputStream inputStream = file.getInputStream()) {
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                        .bucket(bucketName)
+                                .object(objectName)
+                                .stream(inputStream, file.getSize(), -1)
+                                .contentType(file.getContentType())
+                                .build());
+                log.info("File '{}' is successfully uploaded as object '{}' to bucket '{}'.", file.getOriginalFilename(), objectName, bucketName);
+                return endpoint + "/" + bucketName + "/" + objectName;
+            } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+                throw new RuntimeException(e);
+            }
         } catch (MinioException e) {
             log.error("Error occurred: {}", e.getMessage());
             log.error("HTTP trace: {}", e.httpTrace());
+            return null;
+        } catch (IOException e) {
+            log.error("Failed to read file", e);
+            return null;
         }
-        return null;
+    }
+
+    private boolean isAllowedContentType(String contentType) {
+        return contentType != null && (contentType.startsWith("video/") || contentType.startsWith("image/") || contentType.equals("text/vtt"));
+    }
+
+    public void deleteFile(String url) {
+        try {
+            String objectName = url.substring(url.lastIndexOf("/") + 1);
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(bucketName)
+                            .object(objectName)
+                            .build());
+            log.info("File '{}' is successfully deleted from bucket '{}'.", objectName, bucketName);
+        } catch (MinioException e) {
+            log.error("Error occurred: {}", e.getMessage());
+            log.error("HTTP trace: {}", e.httpTrace());
+        } catch (IOException | NoSuchAlgorithmException | InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

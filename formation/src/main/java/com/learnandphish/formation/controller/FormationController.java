@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/formation")
@@ -60,6 +61,11 @@ public class FormationController {
         return ResponseEntity.ok(videos);
     }
 
+    private String sanitizeFileName(String originalFilename) {
+        // Remove or replace risky characters in the file name
+        return originalFilename.replaceAll("[\\\\/:*?\"<>|]", "_");
+    }
+
 
     // Create a video with file upload
     @PostMapping("/video/upload")
@@ -72,9 +78,9 @@ public class FormationController {
             Video video = new Video();
             video.setTitle(title);
             video.setDescription(description);
-            video.setVideoUrl(videoFile.getOriginalFilename());
-            video.setThumbnailUrl(thumbnailFile.getOriginalFilename());
-            video.setCaptionUrl(captionFile.getOriginalFilename());
+            video.setVideoUrl(sanitizeFileName(Objects.requireNonNull(videoFile.getOriginalFilename())));
+            video.setThumbnailUrl(sanitizeFileName(Objects.requireNonNull(thumbnailFile.getOriginalFilename())));
+            video.setCaptionUrl(sanitizeFileName(Objects.requireNonNull(captionFile.getOriginalFilename())));
 
             Video createdVideo = videoService.createVideo(video, videoFile, thumbnailFile, captionFile);
             if (createdVideo == null) {
