@@ -86,7 +86,7 @@
     <AlertDialog.Header>
       <AlertDialog.Title>Ajouter un utilisateur</AlertDialog.Title>
     </AlertDialog.Header>
-    <div class="grid grid-cols-1 w-full gap-x-8 gap-y-4 pt-5 overflow-auto">
+    <div class="grid grid-cols-1 p-1 w-full gap-x-8 gap-y-4 pt-5 overflow-auto">
       <!-- First Name -->
       <div class="name flex flex-col gap-2">
         <p class="text-sm">Entrer un prénom</p>

@@ -139,10 +139,9 @@ class DbService {
 	public static async resetUserPassword(cookies: any, email: string): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/reset-password`, { email: email }, {
+			const response = await axios.post(`${GATEWAY_URL}/reset-password?email=${email}`, {}, {
 				headers: {
-					Authorization: `Bearer ${jwt}`,
-					'Content-Type': 'application/json'
+					Authorization: `Bearer ${jwt}`
 				}
 			});
 			return response.data;
