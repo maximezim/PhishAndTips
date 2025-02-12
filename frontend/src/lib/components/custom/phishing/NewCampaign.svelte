@@ -176,7 +176,7 @@
         
         <!-- Row 2: URL spanning full width -->
         <div class="url flex flex-col gap-2 col-span-2">
-          <p class="text-sm text-left">Saisir l'URL</p>
+          <p class="text-sm text-left">Saisir l'URL de la landing page</p>
           <Input type="text" bind:value={campaignUrl} placeholder="http://exemple.com" class="w-full" />
           {#if errors.campaignUrl}
             <p class="text-red-500 text-sm text-left">{errors.campaignUrl}</p>
