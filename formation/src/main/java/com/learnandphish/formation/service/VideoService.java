@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -21,10 +22,13 @@ public class VideoService {
     private final UserVideoWatchedRepository userVideoWatchedRepository;
     private final MinioService minioService;
 
-    private final List<String> ALLOWED_FILE_TYPES = List.of("video/mp4", "video/webm","image/jpeg", "image/png");
-    private final List<String> ALLOWED_VIDEO_TYPES = List.of("video/mp4", "video/webm");
-    private final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png");
-    private final List<String> ALLOWED_CAPTION_TYPES = List.of("text/vtt", "text/srt");
+    private static final List<String> ALLOWED_VIDEO_TYPES = List.of("video/mp4", "video/webm");
+    private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png");
+    private static final List<String> ALLOWED_CAPTION_TYPES = List.of("text/vtt", "text/srt");
+    private static final List<String> ALLOWED_FILE_TYPES = new ArrayList<>(){{
+        addAll(ALLOWED_VIDEO_TYPES);
+        addAll(ALLOWED_IMAGE_TYPES);
+    }};
 
     // Get a video by id
     public Video getVideoById(Integer id) {
@@ -84,7 +88,9 @@ public class VideoService {
         // Validate files
         validateFile(videoFile, "video", ALLOWED_VIDEO_TYPES);
         validateFile(thumbnailFile, "thumbnail", ALLOWED_IMAGE_TYPES);
-        validateFile(captionFile, "caption", ALLOWED_CAPTION_TYPES);
+        if (captionFile != null && !captionFile.isEmpty()){
+            validateFile(captionFile, "caption", ALLOWED_CAPTION_TYPES);
+        }
 
 
         if (video.getId()!=null && videoRepository.existsById(video.getId())) {
@@ -98,7 +104,9 @@ public class VideoService {
         try {
             videoUrl = minioService.uploadFile(videoFile);
             thumbnailUrl = minioService.uploadFile(thumbnailFile);
-            captionUrl = minioService.uploadFile(captionFile);
+            if (captionFile != null && !captionFile.isEmpty()){
+                captionUrl = minioService.uploadFile(captionFile);
+            }
 
             video.setVideoUrl(videoUrl);
             video.setThumbnailUrl(thumbnailUrl);

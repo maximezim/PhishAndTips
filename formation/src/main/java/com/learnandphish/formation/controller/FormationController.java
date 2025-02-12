@@ -65,7 +65,7 @@ public class FormationController {
     @PostMapping("/admin/formation/video/upload")
     public ResponseEntity<?> uploadVideo(@RequestParam("videoFile") MultipartFile videoFile,
                                          @RequestParam("thumbnailFile") MultipartFile thumbnailFile,
-                                         @RequestParam("captionFile") MultipartFile captionFile,
+                                         @RequestParam(value = "captionFile", required = false) MultipartFile captionFile,
                                          @RequestParam("title") String title,
                                          @RequestParam("description") String description) {
         try {
@@ -74,7 +74,9 @@ public class FormationController {
             video.setDescription(description);
             video.setVideoUrl(videoService.sanitizeFileName(Objects.requireNonNull(videoFile.getOriginalFilename())));
             video.setThumbnailUrl(videoService.sanitizeFileName(Objects.requireNonNull(thumbnailFile.getOriginalFilename())));
-            video.setCaptionUrl(videoService.sanitizeFileName(Objects.requireNonNull(captionFile.getOriginalFilename())));
+            if (captionFile != null && !captionFile.isEmpty()){
+                video.setCaptionUrl(videoService.sanitizeFileName(Objects.requireNonNull(captionFile.getOriginalFilename())));
+            }
 
             Video createdVideo = videoService.createVideo(video, videoFile, thumbnailFile, captionFile);
             if (createdVideo == null) {

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS video(
     title VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
     video_url VARCHAR NOT NULL,
-    caption_url VARCHAR NOT NULL,
+    caption_url VARCHAR,
     thumbnail_url VARCHAR NOT NULL
 );
 
