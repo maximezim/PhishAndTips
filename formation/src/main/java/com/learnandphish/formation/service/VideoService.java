@@ -23,7 +23,7 @@ public class VideoService {
     private final MinioService minioService;
 
     private static final List<String> ALLOWED_VIDEO_TYPES = List.of("video/mp4", "video/webm");
-    private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png");
+    private static final List<String> ALLOWED_IMAGE_TYPES = List.of("image/jpeg", "image/png", "image/jpg");
     private static final List<String> ALLOWED_CAPTION_TYPES = List.of("text/vtt", "text/srt");
     private static final List<String> ALLOWED_FILE_TYPES = new ArrayList<>(){{
         addAll(ALLOWED_VIDEO_TYPES);
