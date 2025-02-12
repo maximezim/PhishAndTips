@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -99,9 +98,9 @@ public class VideoService {
             thumbnailUrl = minioService.uploadFile(thumbnailFile);
             captionUrl = minioService.uploadFile(captionFile);
 
-            video.setVideoUrl(sanitizeFileName(Objects.requireNonNull(videoFile.getOriginalFilename())));
-            video.setThumbnailUrl(sanitizeFileName(Objects.requireNonNull(thumbnailFile.getOriginalFilename())));
-            video.setCaptionUrl(sanitizeFileName(Objects.requireNonNull(captionFile.getOriginalFilename())));
+            video.setVideoUrl(videoUrl);
+            video.setThumbnailUrl(thumbnailUrl);
+            video.setCaptionUrl(captionUrl);
             return videoRepository.save(video);
         } catch (Exception e) {
             // Cleanup any uploaded files on failure
@@ -109,11 +108,6 @@ public class VideoService {
             log.error("Failed to create video", e);
             throw new RuntimeException("Failed to create video", e);
         }
-    }
-
-    private String sanitizeFileName(String originalFilename) {
-        // Remove or replace risky characters in the file name
-        return originalFilename.replaceAll("[\\\\/:*?\"<>|]", "_");
     }
 
     private void validateFile(MultipartFile file, String type, List<String> allowedTypes) {

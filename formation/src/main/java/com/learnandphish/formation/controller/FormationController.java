@@ -73,9 +73,9 @@ public class FormationController {
             Video video = new Video();
             video.setTitle(title);
             video.setDescription(description);
-            video.setVideoUrl(videoFile.getOriginalFilename());
-            video.setThumbnailUrl(thumbnailFile.getOriginalFilename());
-            video.setCaptionUrl(captionFile.getOriginalFilename());
+            video.setVideoUrl(sanitizeFileName(Objects.requireNonNull(videoFile.getOriginalFilename())));
+            video.setThumbnailUrl(sanitizeFileName(Objects.requireNonNull(thumbnailFile.getOriginalFilename())));
+            video.setCaptionUrl(sanitizeFileName(Objects.requireNonNull(captionFile.getOriginalFilename())));
 
             Video createdVideo = videoService.createVideo(video, videoFile, thumbnailFile, captionFile);
             if (createdVideo == null) {
@@ -85,6 +85,11 @@ public class FormationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading video");
         }
+    }
+
+    private String sanitizeFileName(String originalFilename) {
+        // Remove or replace risky characters in the file name
+        return originalFilename.replaceAll("[\\\\/:*?\"<>|]", "_");
     }
 
     // Delete a video
