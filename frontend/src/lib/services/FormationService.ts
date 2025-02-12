@@ -1,4 +1,3 @@
-import Cookies from 'js-cookie';
 import axios from 'axios';
 import AuthService from './AuthService';
 
@@ -17,6 +16,26 @@ class FormationService {
 		} catch (error: any) {
 			console.error('Erreur lors de la récupération des vidéos:', error.message);
 			return [];
+		}
+	}
+
+	public static async setVideoWatched(cookies: any, videoId: string): Promise<any> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+			const response = await axios.post(
+				`${GATEWAY_URL}/formation/video/watched/${videoId}`,
+				{},
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						'Content-Type': 'application/json'
+					}
+				}
+			);
+			return response;
+		} catch (error: any) {
+			console.error('Error while setting video watched:', error.message);
+			return;
 		}
 	}
 
@@ -50,15 +69,10 @@ class FormationService {
 		}
 	}
 
-	public static async setQuizScore(
-		cookies: any,
-		quizId: string,
-		userEmail: string,
-		score: string
-	): Promise<any> {
+	public static async setQuizScore(cookies: any, quizId: string, score: string): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const requestJson = JSON.stringify({ quizId: quizId, userEmail: userEmail, score: score });
+			const requestJson = JSON.stringify({ quizId: quizId, score: score });
 			const response = await axios.post(`${GATEWAY_URL}/formation/quiz/score`, requestJson, {
 				headers: {
 					Authorization: `Bearer ${jwt}`,

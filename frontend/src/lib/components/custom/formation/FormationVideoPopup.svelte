@@ -1,10 +1,8 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
   import { Button } from '$lib/components/ui/button';
   import * as AlertDialog from '$lib/components/ui/alert-dialog';
   import type { Video } from '$types/formation';
   import { AspectRatio } from '$lib/components/ui/aspect-ratio';
-  import Plyr from 'plyr';
 
   export let video: Video = {
     id: 0,
@@ -15,26 +13,23 @@
     thumbnailUrl: "",
   };
 
-  let videoElement: HTMLVideoElement;
-  let player: Plyr;
-
-  onMount(() => {
-    if (videoElement) {
-      player = new Plyr(videoElement, {
-        controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
-      });
-
-      player.on('ended', () => {
-        console.log("fini");
-      });
-    }
-  });
+  async function onVideoEnded() {
+    await fetch('/api/formation/quiz', {
+      method: 'POST',
+      body: JSON.stringify({
+        videoId: video.id
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+  }
 </script>
 
 <AlertDialog.Root>
   <AlertDialog.Trigger asChild let:builder>
     <Button class="w-full h-full p-0 shadow bg-white cursor-pointer border-2 flex flex-col justify-start items-start text-left hover:bg-white hover:border-accent" builders={[builder]}>
-      <AspectRatio ratio={16/9} class="bg-muted  overflow-hidden">
+      <AspectRatio ratio={16/9} class="bg-muted overflow-hidden">
         <img src={video.thumbnailUrl} alt={video.title} class="w-full h-full object-cover" />
       </AspectRatio>
       <div class="flex flex-col gap-1 py-2 px-5 justify-start items-start w-full">
@@ -54,7 +49,9 @@
       </div>
       <AlertDialog.Cancel>Fermer</AlertDialog.Cancel>
     </AlertDialog.Header>
-    <video bind:this={videoElement} playsinline controls data-poster={video.thumbnailUrl}>
+
+
+    <video controlslist="nodownload" playsinline controls data-poster={video.thumbnailUrl} on:ended={onVideoEnded}>
       <source src={video.videoUrl} type="video/mp4" />
       <track kind="captions" label="Français" src={video.captionUrl} srclang="fr" default />
     </video>

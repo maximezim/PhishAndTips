@@ -10,7 +10,6 @@
     description: "",
     json: "",
   }
-  
 </script>
 
 <Button on:click={() => goto(`/formation/quiz/${quiz.id}`)} class="w-full h-full p-0 shadow bg-white cursor-pointer border-2 flex flex-col justify-start items-start text-left hover:bg-white hover:border-accent" >

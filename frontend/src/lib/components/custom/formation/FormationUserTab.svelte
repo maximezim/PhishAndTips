@@ -1,7 +1,7 @@
 <script lang="ts">
 	import FormationVideosCard from "$lib/components/custom/formation/FormationVideosCard.svelte";
 	import FormationQuizCard from "$lib/components/custom/formation/FormationQuizCard.svelte";
-	import FormationQuizPopup from "./FormationQuizPopup.svelte";
+	import FormationQuizPopup from "./FormationQuizButton.svelte";
 
   export let videos: any[] = [];
   export let quizzes: any[] = [];
