@@ -120,9 +120,9 @@ services:
     environment:
       - PERMIT_RELOAD=1
     volumes:
-      - maildata:/var/mail
-      - mailstate:/var/mail-state
-      - maillogs:/var/log/mail
+      - ./mailserver/data:/var/mail
+      - ./mailserver/state:/var/mail-state
+      - ./mailserver/logs:/var/log/mail
       - ./config/:/tmp/docker-mailserver/
     ports:
       - "25:25"     # SMTP
@@ -166,7 +166,7 @@ services:
     image: gophish/gophish:latest
     user: "0"
     volumes:
-      - ./volumes/gophish:/opt/gophish
+      - ./volumes/gophish/data:/opt/gophish/data
       - ./gophish/config.json:/opt/gophish/config.json
       - ./gophish/landing-pages:/opt/gophish/static/endpoint
     env_file:
@@ -334,10 +334,3 @@ services:
 networks:
   backend:
     driver: bridge
-
-volumes:
-  maildata:
-  mailstate:
-  maillogs:
-  webmail_data:
-  gophish-data:

@@ -6,5 +6,6 @@ build/
 minio/*
 databases/*
 nginx/certs/*
+/volumes/*
 !databases/scripts/
 .env
