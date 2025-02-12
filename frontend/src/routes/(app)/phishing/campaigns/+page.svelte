@@ -4,21 +4,20 @@
     import { onMount } from 'svelte';
     import { goto } from "$app/navigation";
 	import Button from "$lib/components/ui/button/button.svelte";
-    import { browser } from "$app/environment";
 	import Separator from '$lib/components/custom/Separator.svelte';
-
-    function nav_back() {
-        if (browser) window.history.back();
-    }
 
     let campaigns: any[] = [];
     let campaignStyle = "";
     let campagneStyleItem = "";
 
-    onMount(() => {
-        const urlParams = new URLSearchParams(window.location.search);
-        campaigns = JSON.parse(urlParams.get('campaigns') || '[]');
-        handleStyle();
+    onMount(async () => {
+        try{
+            campaigns = await fetch("/api/phishing/campaigns").then(res => res.json());
+        }catch(error){
+            console.error(error);
+        }finally{
+            handleStyle();
+        }
     });
 
     function formatDate(dateString: string): string {
@@ -31,15 +30,6 @@
       const month = months[date.getMonth()];
       const year = date.getFullYear();
       return `${day} ${month} ${year}`;
-    }
-
-    function scaleHTML(html: string): string {
-        //take account of the gap between the differents items
-        const scale = window.innerWidth / (1920 + window.innerWidth / 12);
-        return html.replace(
-            /<html([^>]*)>/, // Capture la balise <html> et ses attributs éventuels
-            `<html$1 style="transform: scale(${scale}); transform-origin: top left;">`
-        );
     }
 
     function handleStyle(){
