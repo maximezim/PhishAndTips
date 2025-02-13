@@ -61,7 +61,6 @@
               
               let groupedResults = null;
               if(scan && !Array.isArray(scan) && scan.status && scan.status === "completed"){
-                console.log(scan, scan.result);
                 groupedResults = groupResultsByType(JSON.parse(scan.result).parsed_data.results);
               }
               return {
@@ -173,7 +172,7 @@
         });
         sessionStorage.setItem("showSuccessToast", "Le scan a été lancé avec succès");
       }catch(e){
-        console.log(e);
+        console.error(e);
         sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors du lancement du scan");
       } finally {
         location.reload();
@@ -191,7 +190,7 @@
         });
         sessionStorage.setItem("showSuccessToast", "Le scan a été lancé avec succès");
       }catch(e){
-        console.log(e);
+        console.error(e);
         sessionStorage.setItem("showErrorToast", "Une erreur s'est produite lors du lancement du scan");
       } finally {
         location.reload();
@@ -261,7 +260,7 @@
       <Tabs.Content value="user" class="w-full" >
         <div class="w-full p-6 light-bg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div class="flex flex-col text-left gap-2">
-            <p class="text-medium font-semibold">Status : {status} {nbResults}</p>
+            <p class="text-medium font-semibold">Statut : {status} {nbResults}</p>
             <p class="text-sm italic text-gray-600">{dateScan}</p>
           </div>
           <Button class="w-full sm:w-auto bg-accent sm:px-12 sm:py-6 relative z-10"  on:click={searchOsint} disabled={!canScan && !running}>
@@ -437,7 +436,7 @@
 
     <div class="w-full p-6 light-bg flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div class="flex flex-col text-left gap-2">
-        <p class="text-medium font-semibold">Status : {status} {nbResults}</p>
+        <p class="text-medium font-semibold">Statut : {status} {nbResults}</p>
         <p class="text-sm italic text-gray-600">{dateScan}</p>
       </div>
       <Button class="w-full sm:w-auto bg-accent sm:px-12 sm:py-6 relative z-10"  on:click={searchOsint} disabled={!canScan && !running}>

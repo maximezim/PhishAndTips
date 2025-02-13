@@ -31,7 +31,6 @@ export async function POST({ request, cookies }) {
 		// get formData from request
 		const formData = await request.formData();
 		const response = await FormationService.uploadVideo(cookies, formData);
-		console.log(response);
 		if (response != null) {
 			return new Response(JSON.stringify(response), { status: 200 });
 		} else {
