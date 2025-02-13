@@ -7,14 +7,16 @@
 	import Separator from "../Separator.svelte";
 
 
-  let subject: "";
+  let subject = "";
   let templateName = "";
+  let envelopeSender = "";
   let html = "";
 
   let errors = {
     templateName: "",
-    html: "",
     subject: "",
+    envelopeSender: "",
+    html: "",
   };
 
   function validateForm(): boolean {
@@ -32,6 +34,13 @@
       isValid = false;
     } else {
       errors.subject = "";
+    }
+    
+    if (!envelopeSender.trim()) {
+      errors.envelopeSender = "L'expéditeur de l'enveloppe est obligatoire.";
+      isValid = false;
+    } else {
+      errors.envelopeSender = "";
     }
 
     if (!html.trim()) {
@@ -55,6 +64,7 @@
       subject: subject,
       text: "",
       html: html,
+      envelope_sender: envelopeSender,
       modified_date: new Date().toISOString().slice(0, 19) + "+00:00", // formatted date
     };
     
@@ -106,6 +116,14 @@
           <Input type="text" bind:value={subject} placeholder="Objet du modèle" class="w-full" />
           {#if errors.subject}
             <p class="text-red-500 text-sm text-left">{errors.subject}</p>
+          {/if}
+        </div>
+        
+        <div class="group flex flex-col gap-2">
+          <p class="text-sm text-left">Enveloppe de l'expéditeur (spoofing)</p>
+          <Input type="text" bind:value={envelopeSender} placeholder="Expéditeur" class="w-full" />
+          {#if errors.envelopeSender}
+            <p class="text-red-500 text-sm text-left">{errors.envelopeSender}</p>
           {/if}
         </div>
           
