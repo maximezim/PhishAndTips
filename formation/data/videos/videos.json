@@ -19,7 +19,7 @@
     "id": 3,
     "title": "Phishing par réseaux sociaux",
     "description": "Vidéo sur le phishing par réseaux sociaux",
-    "videoUrl": "/var/formation/data/videos/videos/Phishing - Phishing par reseaux sociaux.mp4",
+    "videoUrl": "/var/formation/data/videos/videos/Phishing - Social Phishing.mp4",
     "captionUrl": "/var/formation/data/videos/captions/Phishing par reseaux sociaux.fr.vtt",
     "thumbnailUrl": "/var/formation/data/videos/thumbnails/Phishing par reseaux sociaux.jpg"
   },
@@ -35,7 +35,7 @@
     "id": 5,
     "title": "Smishing",
     "description": "Vidéo sur le smishing",
-    "videoUrl": "/var/formation/data/videos/videos/Phishing - Phishing par SMS ou Smishing.mp4",
+    "videoUrl": "/var/formation/data/videos/videos/Phishing - Smishing.mp4",
     "captionUrl": "/var/formation/data/videos/captions/Phishing par SMS ou Smishing.fr.vtt",
     "thumbnailUrl": "/var/formation/data/videos/thumbnails/Phishing par SMS ou Smishing.jpg"
   },
@@ -75,7 +75,7 @@
     "id": 10,
     "title": "Partage d'informations",
     "description": "Vidéo de prévention sur le partage d'informations",
-    "videoUrl": "/var/formation/data/videos/videos/Phishing - Les bonnes pratiques.mp4",
+    "videoUrl": "/var/formation/data/videos/videos/Phishing - Partage d'informations - Les bonnes pratiques.mp4",
     "captionUrl": "/var/formation/data/videos/captions/Les bonnes pratiques.fr.vtt",
     "thumbnailUrl": "/var/formation/data/videos/thumbnails/Les bonnes pratiques.jpg"
   },
