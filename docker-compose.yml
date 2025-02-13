@@ -5,8 +5,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/http.conf:/etc/nginx/templates/default.conf.template
-      # - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template
+      # - ./nginx/http.conf:/etc/nginx/templates/default.conf.template
+      - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template
       - ./nginx/certs:/root/ssl:ro
     env_file:
       - .env
@@ -14,7 +14,7 @@ services:
       MAX_BODY_SIZE: ${MAX_UPLOAD_SIZE_MB:-500}
     depends_on:
       - api-gateway
-      - frontend
+      # - frontend
     networks:
       - backend
     profiles:

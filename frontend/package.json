@@ -21,6 +21,7 @@
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"@types/js-cookie": "^3.0.6",
+		"@types/pino": "^7.0.4",
 		"autoprefixer": "^10.4.20",
 		"bits-ui": "^0.21.16",
 		"clsx": "^2.1.1",
@@ -51,12 +52,15 @@
 	"dependencies": {
 		"@sveltejs/adapter-node": "^5.2.12",
 		"axios": "^1.7.9",
+		"axios-retry": "^4.5.0",
 		"cobe": "^0.6.3",
 		"iconify-icon": "^2.1.0",
 		"js-cookie": "^3.0.5",
+		"pino": "^9.6.0",
 		"plyr": "^3.7.8",
 		"survey-core": "^1.11.10",
 		"survey-js-ui": "^1.11.10",
+		"winston": "^3.17.0",
 		"zxcvbn": "^4.4.2"
 	}
 }

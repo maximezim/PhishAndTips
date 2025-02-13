@@ -1,9 +1,7 @@
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import AuthService from './AuthService';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL;
-const API_URL = import.meta.env.VITE_API_URL;
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 class PhishingService {
@@ -14,7 +12,7 @@ class PhishingService {
 	public static async getCampaigns(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/campaigns/?api_key=${API_KEY}`, {
+			const response = await axios.get(`${GATEWAY_URL}/api/campaigns/?api_key=${API_KEY}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -30,11 +28,15 @@ class PhishingService {
 	public static async createCampaign(cookies: any, campaign: any) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${API_URL}/api/campaigns/?api_key=${API_KEY}`, campaign, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
+			const response = await axios.post(
+				`${GATEWAY_URL}/api/campaigns/?api_key=${API_KEY}`,
+				campaign,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
 				}
-			});
+			);
 
 			if (response.data) {
 				const body = await response.data.json();
@@ -50,7 +52,7 @@ class PhishingService {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.put(
-				`${API_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
+				`${GATEWAY_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
 				campaign,
 				{
 					headers: {
@@ -68,7 +70,7 @@ class PhishingService {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const { data } = await axios.delete(
-				`${API_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
+				`${GATEWAY_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
 				{
 					headers: {
 						Authorization: `Bearer ${jwt}`
@@ -86,7 +88,7 @@ class PhishingService {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.get(
-				`${API_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
+				`${GATEWAY_URL}/api/campaigns/${campaignId}?api_key=${API_KEY}`,
 				{
 					headers: {
 						Authorization: `Bearer ${jwt}`
@@ -104,7 +106,7 @@ class PhishingService {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.get(
-				`${API_URL}/api/campaigns/${campaignId}/summary?api_key=${API_KEY}`,
+				`${GATEWAY_URL}/api/campaigns/${campaignId}/summary?api_key=${API_KEY}`,
 				{
 					headers: {
 						Authorization: `Bearer ${jwt}`
@@ -122,7 +124,7 @@ class PhishingService {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.get(
-				`${API_URL}/api/campaigns/${campaignId}/complete?api_key=${API_KEY}`,
+				`${GATEWAY_URL}/api/campaigns/${campaignId}/complete?api_key=${API_KEY}`,
 				{
 					headers: {
 						Authorization: `Bearer ${jwt}`
@@ -144,7 +146,7 @@ class PhishingService {
 	public static async getTemplates(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/templates/?api_key=${API_KEY}`, {
+			const response = await axios.get(`${GATEWAY_URL}/api/templates/?api_key=${API_KEY}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -159,11 +161,15 @@ class PhishingService {
 	public static async createTemplate(cookies: any, template: any) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${API_URL}/api/templates/?api_key=${API_KEY}`, template, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
+			const response = await axios.post(
+				`${GATEWAY_URL}/api/templates/?api_key=${API_KEY}`,
+				template,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
 				}
-			});
+			);
 			if (response.data) {
 				const body = await response.data.json();
 				return body;
@@ -178,7 +184,7 @@ class PhishingService {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.put(
-				`${API_URL}/api/templates/${templateId}?api_key=${API_KEY}`,
+				`${GATEWAY_URL}/api/templates/${templateId}?api_key=${API_KEY}`,
 				template,
 				{
 					headers: {
@@ -196,7 +202,7 @@ class PhishingService {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.delete(
-				`${API_URL}/api/templates/${templateId}?api_key=${API_KEY}`,
+				`${GATEWAY_URL}/api/templates/${templateId}?api_key=${API_KEY}`,
 				{
 					headers: {
 						Authorization: `Bearer ${jwt}`
@@ -217,7 +223,7 @@ class PhishingService {
 	public static async getPages(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/pages/?api_key=${API_KEY}`, {
+			const response = await axios.get(`${GATEWAY_URL}/api/pages/?api_key=${API_KEY}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -232,7 +238,7 @@ class PhishingService {
 	public static async createPage(cookies: any, page: any) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${API_URL}/api/pages/?api_key=${API_KEY}`, page, {
+			const response = await axios.post(`${GATEWAY_URL}/api/pages/?api_key=${API_KEY}`, page, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -251,11 +257,15 @@ class PhishingService {
 	public static async updatePage(cookies: any, pageId: number, page: any) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.put(`${API_URL}/api/pages/${pageId}?api_key=${API_KEY}`, page, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
+			const response = await axios.put(
+				`${GATEWAY_URL}/api/pages/${pageId}?api_key=${API_KEY}`,
+				page,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
 				}
-			});
+			);
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while updating the Gophish page:', error.message);
@@ -265,7 +275,7 @@ class PhishingService {
 	public static async deletePage(cookies: any, pageId: number) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.delete(`${API_URL}/api/pages/${pageId}?api_key=${API_KEY}`, {
+			const response = await axios.delete(`${GATEWAY_URL}/api/pages/${pageId}?api_key=${API_KEY}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -284,7 +294,7 @@ class PhishingService {
 	public static async getGroups(cookies: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/groups/?api_key=${API_KEY}`, {
+			const response = await axios.get(`${GATEWAY_URL}/api/groups/?api_key=${API_KEY}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -299,7 +309,7 @@ class PhishingService {
 	public static async getGroupDetails(cookies: any, groupId: number): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.get(`${API_URL}/api/groups/${groupId}?api_key=${API_KEY}`, {
+			const response = await axios.get(`${GATEWAY_URL}/api/groups/${groupId}?api_key=${API_KEY}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -314,7 +324,7 @@ class PhishingService {
 	public static async createGroup(cookies: any, group: any) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${API_URL}/api/groups/?api_key=${API_KEY}`, group, {
+			const response = await axios.post(`${GATEWAY_URL}/api/groups/?api_key=${API_KEY}`, group, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
@@ -330,7 +340,7 @@ class PhishingService {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.put(
-				`${API_URL}/api/groups/${groupId}?api_key=${API_KEY}`,
+				`${GATEWAY_URL}/api/groups/${groupId}?api_key=${API_KEY}`,
 				group,
 				{
 					headers: {
@@ -347,11 +357,14 @@ class PhishingService {
 	public static async deleteGroup(cookies: any, groupId: number) {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.delete(`${API_URL}/api/groups/${groupId}?api_key=${API_KEY}`, {
-				headers: {
-					Authorization: `Bearer ${jwt}`
+			const response = await axios.delete(
+				`${GATEWAY_URL}/api/groups/${groupId}?api_key=${API_KEY}`,
+				{
+					headers: {
+						Authorization: `Bearer ${jwt}`
+					}
 				}
-			});
+			);
 			return response.data;
 		} catch (error: any) {
 			console.error('Error while deleting the Gophish group:', error.message);

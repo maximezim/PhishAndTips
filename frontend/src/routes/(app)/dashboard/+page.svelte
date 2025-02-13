@@ -39,6 +39,8 @@
   async function getFormationScore() {
     try {
       formationScore = await fetch("/api/scoring/formation").then(res => res.json());
+      console.log("Score de formation:", formationScore);
+      
       formationScore = (10 -  formationScore) * 10;
     } catch(e) {
       console.error('Erreur lors de l\'appel de l\'API svelte de score formation: ', e);

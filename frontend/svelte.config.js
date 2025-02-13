@@ -1,5 +1,5 @@
-// import adapter from '@sveltejs/adapter-auto';
-import adapter from '@sveltejs/adapter-node';
+import adapter from '@sveltejs/adapter-auto';
+// import adapter from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 
@@ -18,7 +18,8 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 		alias: {
-			$types: path.resolve('./src/types')
+			$types: path.resolve('./src/types'),
+			$utils: path.resolve('./src/utils')
 		}
 	}
 };

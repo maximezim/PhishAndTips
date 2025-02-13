@@ -1,16 +1,30 @@
 import axios from 'axios';
 import AuthService from './AuthService';
-import type { UserWithoutRole } from '$types/users';
+import axiosRetry from 'axios-retry';
+import logger from '$utils/logger';
 
 const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL;
 
+// Retry failed requests up to 3 times with exponential delay
+axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
+
+// Centralized error messages
+const ERROR_MESSAGES = {
+	noResponse: 'No response from server',
+	internalError: 'An internal error occurred',
+	fetchFailed: 'Failed to fetch data'
+};
+
 class DbService {
 	/*
-	 * User
-	 * CRUD, read-all and import CSV
+	 * Create user
+	 * Create a new user
+	 * @param cookies: Cookies from the request
+	 * @param user: User object
+	 * @returns Response: Response object
+	 * @throws Error: Throws an error if the request fails
 	 */
-	// Create
-	public static async createUser(cookies: any, user: any): Promise<any> {
+	public static async createUser(cookies: any, user: JSON): Promise<Response> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.post(`${GATEWAY_URL}/register`, user, {
@@ -19,16 +33,40 @@ class DbService {
 					'Content-Type': 'application/json'
 				}
 			});
-			return response;
+			return new Response(JSON.stringify(response.data.score), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' }
+			});
 		} catch (error: any) {
-			console.error('Error while creating user:', error.message);
-
-			return;
+			logger.error('Error while creating user:', error);
+			if (error.response) {
+				return new Response(
+					JSON.stringify({ error: error.response.data?.message || ERROR_MESSAGES.fetchFailed }),
+					{ status: error.response.status, headers: { 'Content-Type': 'application/json' } }
+				);
+			} else if (error.request) {
+				return new Response(JSON.stringify({ error: ERROR_MESSAGES.noResponse }), {
+					status: 504,
+					headers: { 'Content-Type': 'application/json' }
+				});
+			} else {
+				return new Response(JSON.stringify({ error: ERROR_MESSAGES.internalError }), {
+					status: 500,
+					headers: { 'Content-Type': 'application/json' }
+				});
+			}
 		}
 	}
 
-	// Read
-	public static async getUser(cookies: any, userEmail: string): Promise<any> {
+	/*
+	 * Read user
+	 * Get a user by email
+	 * @param cookies: Cookies from the request
+	 * @param userEmail: User email
+	 * @returns Response: Response object
+	 * @throws Error: Throws an error if the request fails
+	 */
+	public static async getUser(cookies: any, userEmail: string): Promise<Response> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
 			const response = await axios.get(`${GATEWAY_URL}/get-user?email=${userEmail}`, {
@@ -36,11 +74,28 @@ class DbService {
 					Authorization: `Bearer ${jwt}`
 				}
 			});
-			return response.data;
+			return new Response(JSON.stringify(response.data), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' }
+			});
 		} catch (error: any) {
-			console.error('Error while fetching user data:', error.message);
-
-			return;
+			logger.error(`Error while fetching user ${userEmail}:`, error);
+			if (error.response) {
+				return new Response(
+					JSON.stringify({ error: error.response.data?.message || ERROR_MESSAGES.fetchFailed }),
+					{ status: error.response.status, headers: { 'Content-Type': 'application/json' } }
+				);
+			} else if (error.request) {
+				return new Response(JSON.stringify({ error: ERROR_MESSAGES.noResponse }), {
+					status: 504,
+					headers: { 'Content-Type': 'application/json' }
+				});
+			} else {
+				return new Response(JSON.stringify({ error: ERROR_MESSAGES.internalError }), {
+					status: 500,
+					headers: { 'Content-Type': 'application/json' }
+				});
+			}
 		}
 	}
 

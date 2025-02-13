@@ -10,7 +10,7 @@ export async function GET({ cookies }) {
 	try {
 		const response = await ScoringService.getPhishingScore(cookies);
 		if (response != null) {
-			return new Response(JSON.stringify(response), { status: 200 });
+			return response;
 		} else {
 			console.error('Error: No data found');
 			return new Response(JSON.stringify({ error: 'No data found' }), { status: 404 });
