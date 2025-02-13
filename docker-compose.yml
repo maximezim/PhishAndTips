@@ -1,5 +1,4 @@
 services:
-
   nginx:
     container_name: nginx
     image: nginx:1-alpine
@@ -192,9 +191,9 @@ services:
       - ./volumes/formation-db/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=${FORMATION_PG_USER}" ]
-      interval: 10s
-      timeout: 5s
+      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
+      interval: 15s
+      timeout: 10s
       retries: 5
     profiles:
       - prod

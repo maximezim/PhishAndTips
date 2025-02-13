@@ -135,14 +135,6 @@
                   <p class="text-sm italic text-gray-600">{result.Data}</p>
                 {/each}
               </div>
-
-              <div class="result-group flex flex-col mt-2 gap-2 p-4 bg-gray-50 shadow overflow-auto">
-                <p class="text-medium font-semibold">{getTypeTranslation(type)}</p>
-                {#each results as result}
-                  <p class="text-sm italic text-gray-600">{result.Data}</p>
-                {/each}
-              </div>
-
             {/each}
           {/if}
         </div>
