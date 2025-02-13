@@ -164,18 +164,20 @@ services:
       - ./volumes/gophish/data:/opt/gophish/data
       - ./gophish/config.json:/opt/gophish/config.json
       - ./gophish/landing-pages:/opt/gophish/static/endpoint
+      - ./gophish/entrypoint.sh:/entrypoint.sh
+    ports:
+      - "3333:3333"
     env_file:
       - .env
     environment:
       - GOPHISH_INITIAL_ADMIN_API_TOKEN=${GOPHISH_API_KEY}
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
     restart: unless-stopped
     networks:
       - backend
     profiles:
       - prod
       - dev
-    post_start:
-    - command: sh -c "mkdir -p /var/lib/apt/lists/partial && which sqlite3 || (apt-get update && apt-get install -y sqlite3); if [ ! -f /opt/gophish/.initialized ]; then sqlite3 /opt/gophish/gophish.db \"INSERT INTO smtp (id, user_id, interface_type, name, host, username, password, from_address, modified_date, ignore_cert_errors) VALUES (1, 1, 'SMTP', 'smtp', '${SMTP_HOST}:${SMTP_PORT}', '${SMTP_MAIL_USERNAME}', '${SMTP_MAIL_PASSWORD}', '${SMTP_MAIL_USERNAME}', datetime('now'), '${IGNORE_TLS_ERRORS}');\" && touch /opt/gophish/.initialized; fi"
 
   postgres-formation:
     container_name: postgres-formation
