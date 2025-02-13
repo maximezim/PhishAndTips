@@ -165,8 +165,6 @@ services:
       - ./gophish/config.json:/opt/gophish/config.json
       - ./gophish/landing-pages:/opt/gophish/static/endpoint
       - ./gophish/entrypoint.sh:/entrypoint.sh
-    ports:
-      - "3333:3333"
     env_file:
       - .env
     environment:
