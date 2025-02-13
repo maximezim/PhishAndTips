@@ -12,17 +12,29 @@ public class MailConfig {
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(System.getenv("SPRING_MAIL_HOST"));
-        mailSender.setPort(Integer.parseInt(System.getenv("SPRING_MAIL_PORT")));
 
-        mailSender.setUsername(System.getenv("SPRING_MAIL_USERNAME"));
-        mailSender.setPassword(System.getenv("SPRING_MAIL_PASSWORD"));
+        String host = System.getenv("SPRING_MAIL_HOST");
+        String port = System.getenv("SPRING_MAIL_PORT");
+        String username = System.getenv("SPRING_MAIL_USERNAME");
+        String password = System.getenv("SPRING_MAIL_PASSWORD");
+        String starttls = System.getenv("SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE");
+
+        if (host == null || port == null || username == null || password == null || starttls == null) {
+            throw new IllegalStateException("Required mail configuration environment variables are missing");
+        }
+
+        mailSender.setHost(host);
+        mailSender.setPort(Integer.parseInt(port));
+        mailSender.setUsername(username);
+        mailSender.setPassword(password);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", System.getenv("SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE"));
+        props.put("mail.smtp.starttls.enable", starttls);
         props.put("mail.debug", "false");
+        props.put("mail.smtp.connectiontimeout", "5000");
+        props.put("mail.smtp.timeout", "5000");
 
         return mailSender;
     }

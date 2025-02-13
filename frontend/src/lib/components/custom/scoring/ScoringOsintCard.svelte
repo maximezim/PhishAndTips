@@ -135,7 +135,6 @@
                   <p class="text-sm italic text-gray-600">{result.Data}</p>
                 {/each}
               </div>
-
             {/each}
           {/if}
         </div>

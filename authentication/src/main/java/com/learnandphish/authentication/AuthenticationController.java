@@ -318,6 +318,12 @@ public class AuthenticationController {
     @RolesAllowed("ADMIN")
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request) {
+
+        if (!userUtilsService.emailDomainAllowed(request.getEmail())) {
+            logger.error("Email domain not allowed: {}", request.getEmail());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Email domain not allowed");
+        }
+
         if (!userDataRepository.findByEmail(request.getEmail()).isEmpty()) {
             logger.error("User already exists: {}", request.getEmail());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");

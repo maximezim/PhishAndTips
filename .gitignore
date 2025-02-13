@@ -2,8 +2,10 @@
 .github/
 .idea/
 .vscode/
-/build/
-/minio/*
-/databases/*
-!/databases/scripts/
+build/
+minio/*
+databases/*
+nginx/certs/*
+/volumes/*
+!databases/scripts/
 .env

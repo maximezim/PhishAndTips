@@ -1,5 +1,6 @@
 package com.learnandphish.authentication;
 
+import com.learnandphish.authentication.mail.EmailSender;
 import com.learnandphish.authentication.user.Roles;
 import com.learnandphish.authentication.user.UserData;
 import com.learnandphish.authentication.user.UserDataRepository;
@@ -9,6 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class AuthenticationApplication {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private JavaMailSender mailSender;
+
 	final Logger logger = LoggerFactory.getLogger(AuthenticationApplication.class);
 
 	public static void main(String[] args) {
@@ -40,57 +45,29 @@ public class AuthenticationApplication {
 		return args -> {
 			if (userDataRepository.findByEmail("admin@example.com").isEmpty()) {
 				UserData defaultUser = new UserData();
-				defaultUser.setFirstName("Test");
+				defaultUser.setFirstName("Admin");
 				defaultUser.setLastName("Admin");
-				defaultUser.setEmail("admin@example.com");
-				defaultUser.setPasswordHash(passwordEncoder.encode("password"));
+				defaultUser.setEmail(System.getenv("DEFAULT_ADMIN_EMAIL"));
+				defaultUser.setPasswordHash(passwordEncoder.encode(System.getenv("DEFAULT_ADMIN_PASSWORD")));
 				defaultUser.setRole(Roles.ADMIN);
 				defaultUser.setPosition("Administrator");
-				defaultUser.setChangePassword(false);
+				defaultUser.setChangePassword(true);
 				userDataRepository.save(defaultUser);
-				logger.info("Test admin user created.");
+				logger.info("Default admin user created.");
 			} else {
-				logger.info("Test admin user already exists.");
+				logger.info("Default admin user already exists.");
 			}
 		};
 	}
 
 	@Bean
-	public CommandLineRunner initializeDefaultUser() {
+	public CommandLineRunner checkSMTPStatus() {
 		return args -> {
-			if (userDataRepository.findByEmail("user@example.com").isEmpty()) {
-				UserData defaultUser = new UserData();
-				defaultUser.setFirstName("Test");
-				defaultUser.setLastName("User");
-				defaultUser.setEmail("user@example.com");
-				defaultUser.setPasswordHash(passwordEncoder.encode("password"));
-				defaultUser.setRole(Roles.USER);
-				defaultUser.setPosition("User");
-				defaultUser.setChangePassword(false);
-				userDataRepository.save(defaultUser);
-				logger.info("Test user user created.");
+			EmailSender emailSender = new EmailSender(mailSender);
+			if (emailSender.isSmtpAvailable()) {
+				logger.info("SMTP server is up and running.");
 			} else {
-				logger.info("Test user already exists.");
-			}
-		};
-	}
-
-	@Bean
-	public CommandLineRunner initializeKarineUser() {
-		return args -> {
-			if (userDataRepository.findByEmail("karine@example.com").isEmpty()) {
-				UserData karineUser = new UserData();
-				karineUser.setFirstName("Karine");
-				karineUser.setLastName("Lafontaine");
-				karineUser.setEmail("karine@example.com");
-				karineUser.setPasswordHash(passwordEncoder.encode("password"));
-				karineUser.setRole(Roles.USER);
-				karineUser.setPosition("G.O.A.T.");
-				karineUser.setChangePassword(false);
-				userDataRepository.save(karineUser);
-				logger.info("Karine user user created.");
-			} else {
-				logger.info("Karine user already exists.");
+				logger.error("SMTP server is down.");
 			}
 		};
 	}

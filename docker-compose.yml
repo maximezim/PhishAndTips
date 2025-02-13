@@ -1,4 +1,25 @@
 services:
+  nginx:
+    container_name: nginx
+    image: nginx:1-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/http.conf:/etc/nginx/templates/default.conf.template
+      - ./nginx/certs:/root/ssl:ro
+    env_file:
+      - .env
+    environment:
+      MAX_BODY_SIZE: ${MAX_UPLOAD_SIZE_MB:-500}
+    depends_on:
+      - api-gateway
+      - frontend
+    networks:
+      - backend
+    profiles:
+      - prod
+      - dev
+
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -11,12 +32,12 @@ services:
     networks:
       - backend
     volumes:
-      - ./databases/authentication/pgdata:/var/lib/postgresql/data
+      - ./volumes/authentication-db/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/authentication_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=postgres" ]
-      interval: 15s
-      timeout: 10s
+      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=${AUTH_PG_USER}" ]
+      interval: 10s
+      timeout: 5s
       retries: 5
     profiles:
       - prod
@@ -47,6 +68,8 @@ services:
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=${SMTP_ENABLE_TLS:-false}
       - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=${SMTP_ENABLE_TLS:-false}
       - MAIL_FROM=${SMTP_FROM:-sender@example.com}
+      - DEFAULT_ADMIN_EMAIL=${DEFAULT_ADMIN_EMAIL:-admin@example.com}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:-password}
     volumes:
       - ./authentication/templates:/var/authentication/templates
     profiles:
@@ -59,8 +82,6 @@ services:
     build:
       context: ./gateway
       dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
     networks:
       - backend
     depends_on:
@@ -71,7 +92,7 @@ services:
 
   dozzle:
     container_name: dozzle
-    image: ghcr.io/amir20/dozzle:latest
+    image: amir20/dozzle:latest
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
@@ -102,16 +123,12 @@ services:
       - mailstate:/var/mail-state
       - maillogs:/var/log/mail
       - ./config/:/tmp/docker-mailserver/
-    ports:
-      - "25:25"     # SMTP
-      - "143:143"   # IMAP
-      - "587:587"   # Submission
-      - "993:993"   # IMAPS
     restart: unless-stopped
     networks:
       - backend
     profiles:
       - dev
+      - smtp
 
   webmail:
     image: roundcube/roundcubemail:latest
@@ -125,32 +142,33 @@ services:
       - ROUNDCUBEMAIL_DEFAULT_USE_SSL=false
       - ROUNDCUBEMAIL_SMTP_USER=%u
       - ROUNDCUBEMAIL_SMTP_PASS=%p
-    ports:
-      - "8070:80"
+      - ROUNDCUBE_REQUEST_PATH=/mail/
     depends_on:
       - mailserver
     restart: unless-stopped
     volumes:
-      - webmail_data:/var/www/html
+      - ./volumes/webmail:/var/www/html
       - ./roundcube/config/config.inc.php:/var/www/html/config/config.inc.php
     networks:
       - backend
     profiles:
       - dev
+      - smtp
 
   gophish:
-    image: gophish/gophish:latest
     container_name: gophish
+    image: gophish/gophish:latest
+    user: "0"
     volumes:
-      - gophish-data:/opt/gophish
+      - ./volumes/gophish/data:/opt/gophish/data
       - ./gophish/config.json:/opt/gophish/config.json
+      - ./gophish/landing-pages:/opt/gophish/static/endpoint
+      - ./gophish/entrypoint.sh:/entrypoint.sh
+    env_file:
+      - .env
     environment:
       - GOPHISH_INITIAL_ADMIN_API_TOKEN=${GOPHISH_API_KEY}
-    ports:
-      - "3333:3333" # Remove in prod
-      - "80:80"
-    depends_on:
-      - mailserver
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
     restart: unless-stopped
     networks:
       - backend
@@ -170,12 +188,12 @@ services:
     networks:
       - backend
     volumes:
-      - ./databases/formation/pgdata:/var/lib/postgresql/data
+      - ./volumes/formation-db/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
-      interval: 10s
-      timeout: 5s
+      interval: 15s
+      timeout: 10s
       retries: 5
     profiles:
       - prod
@@ -198,9 +216,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-formation:5432/formation_db
       - SPRING_DATASOURCE_USERNAME=${FORMATION_PG_USER}
       - SPRING_DATASOURCE_PASSWORD=${FORMATION_PG_PASSWORD}
-      - S3_ENDPOINT=${S3_ENDPOINT:-http://localhost:8080}
+      - S3_ENDPOINT=${S3_ENDPOINT:-http://api-gateway:8080}
       - S3_BUCKET=${S3_BUCKET:-assets}
-      - S3_USE_LOCAL=${S3_USE_LOCAL:-true}
     volumes:
       - ./formation/data:/var/formation/data
     profiles:
@@ -216,6 +233,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    volumes:
+      - ./gophish/landing-pages:/var/gophish/landing-pages
     env_file:
       - .env
     environment:
@@ -237,7 +256,6 @@ services:
       - backend
     profiles:
       - prod
-      - dev
   
   spiderfoot-api:
     container_name: spiderfoot-api
@@ -259,7 +277,6 @@ services:
       POSTGRES_HOST: postgres
     profiles:
       - prod
-      - dev
 
   frontend:
     container_name: frontend
@@ -267,10 +284,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    environment:
-      - VITE_GATEWAY_URL=http://api-gateway:8080
-    ports:
-      - "3000:3000"
+      args:
+        VITE_GATEWAY_URL: http://api-gateway:8080
+        VITE_API_URL: http://api-gateway:8080
+        VITE_API_KEY: ${GOPHISH_API_KEY}
+        VITE_S3_ENDPOINT: ${S3_ENDPOINT:-http://api-gateway:8080}
+    env_file:
+      - .env
     networks:
       - backend
     depends_on:
@@ -287,11 +307,10 @@ services:
       MINIO_ROOT_USER: ${S3_ACCESS_KEY}
       MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY}
       MINIO_DEFAULT_BUCKETS: ${S3_BUCKET:-assets}
-      S3_ENDPOINT: ${S3_ENDPOINT:-http://localhost:8080}
     command: server --address ':9000' /data
     volumes:
-      - ./minio/data:/data
-      - ./minio/config:/root/.minio
+      - ./volumes/minio/data:/data
+      - ./volumes/minio/config:/root/.minio
     networks:
       - backend
     healthcheck:
@@ -301,7 +320,7 @@ services:
       retries: 3
     profiles:
       - dev
-      - local_s3
+      - s3
 
 networks:
   backend:
@@ -311,5 +330,3 @@ volumes:
   maildata:
   mailstate:
   maillogs:
-  webmail_data:
-  gophish-data:
