@@ -39,7 +39,7 @@ import type { User } from '$types/users';
 
   export interface UserScan {
     target: User;
-    scan: MyScan | null;
+    scan: MyScan | [];
     groupedResults: Map<string, ParsedResult[]> | null;
     score: number;
     scoreColor: string;
