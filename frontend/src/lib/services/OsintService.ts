@@ -56,7 +56,7 @@ class OsintService {
 	public static async userNewScan(cookies: any, body: any): Promise<any[]> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			const response = await axios.post(`${GATEWAY_URL}/admin/scan`, body, {
+			const response = await axios.post(`${GATEWAY_URL}/admin/scan/new`, body, {
 				headers: {
 					Authorization: `Bearer ${jwt}`
 				}
