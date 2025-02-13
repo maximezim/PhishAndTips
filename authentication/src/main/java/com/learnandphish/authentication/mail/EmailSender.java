@@ -1,10 +1,13 @@
 package com.learnandphish.authentication.mail;
 
 import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
 import jakarta.mail.internet.MimeMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -36,5 +39,26 @@ public class EmailSender {
         }
 
         mailSender.send(message);
+    }
+
+    public boolean isSmtpAvailable() {
+        try {
+            JavaMailSenderImpl mailSenderImpl = (JavaMailSenderImpl) mailSender;
+            Session session = mailSenderImpl.getSession();
+
+            Transport transport = session.getTransport("smtp");
+            transport.connect(
+                    mailSenderImpl.getHost(),
+                    mailSenderImpl.getPort(),
+                    mailSenderImpl.getUsername(),
+                    mailSenderImpl.getPassword()
+            );
+
+            transport.close();
+            return true;
+        } catch (MessagingException e) {
+            logger.error("SMTP connection failed: {}", e.getMessage());
+            return false;
+        }
     }
 }

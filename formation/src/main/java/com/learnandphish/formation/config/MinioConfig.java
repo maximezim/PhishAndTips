@@ -16,12 +16,9 @@ public class MinioConfig {
     @Value("${s3.secret.key}")
     private String secretKey;
 
-    @Value("${s3.use.local}")
-    private boolean useLocal;
-
     @Bean
     public MinioClient minioClient() {
-        if (useLocal) {
+        if (endpoint.equals("http://api-gateway:8080") || endpoint.equals("http://localhost:8080")) {
             return MinioClient.builder()
                     .endpoint("http://s3:9000")
                     .credentials(accessKey, secretKey)

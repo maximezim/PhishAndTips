@@ -86,4 +86,14 @@ public class UserUtilsService {
         }
         return registerRequests;
     }
+
+    public Boolean emailDomainAllowed(String email) {
+        String domain = email.substring(email.indexOf("@") + 1);
+        String allowedDomainsEnv = System.getenv("ALLOWED_EMAIL_DOMAINS");
+        if (StringUtils.isBlank(allowedDomainsEnv)) {
+            return true;
+        }
+        List<String> allowedDomains = List.of(allowedDomainsEnv.split(","));
+        return allowedDomains.contains(domain);
+    }
 }
