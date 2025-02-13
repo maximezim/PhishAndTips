@@ -123,7 +123,7 @@
   <Card.Content class="flex-grow">
       {#if scan }
         <div class="flex flex-col text-left gap-2">
-          <p class="text-medium font-semibold">Status : {status} {nbResults}</p>
+          <p class="text-medium font-semibold">Statut : {status} {nbResults}</p>
           <p class="text-sm italic text-gray-600">{dateScan}</p>
         </div>
         <div class="max-h-[35vw] mt-6 overflow-auto h-full">

@@ -209,10 +209,9 @@
         });
       }
 
-      // Log the score to the console: correct answers / total questions
-      console.log(`Score: ${correctCount} / ${totalQuestions}`);
+      // Set the score for the quiz
       let score = correctCount / totalQuestions;
-      await fetch('/api/formation/quiz', {
+      await fetch('/api/formation/quiz/score', {
         method: 'POST',
         body: JSON.stringify({
           score: score,

@@ -33,7 +33,6 @@
     async function getUsers() {
         try {
         data = await fetch(`/api/db/users?size=${rowsPerPageUser}&page=${currentPage}`).then(res => res.json());
-        console.log(data.page.totalElements);
         } catch(e) {
         console.error('Error while fetching users: ', e);
         }

@@ -6,6 +6,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/http.conf:/etc/nginx/templates/default.conf.template
+      # - ./nginx/dev.conf:/etc/nginx/templates/default.conf.template
       - ./nginx/certs:/root/ssl:ro
     env_file:
       - .env
@@ -35,7 +36,11 @@ services:
       - ./volumes/authentication-db/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/authentication_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=authentication_db --username=${AUTH_PG_USER}" ]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready --dbname=authentication_db --username=${AUTH_PG_USER}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -96,16 +101,16 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
-        postgres:
-          condition: service_healthy
+      postgres:
+        condition: service_healthy
     environment:
-        - DOZZLE_ADDR=:3001
-        - DOZZLE_NO_ANALYTICS=true
-        - DOZZLE_BASE=/monitor
-        - DOZZLE_HOSTNAME=Phish&Tips
-        - DOZZLE_ENABLE_ACTIONS=true
+      - DOZZLE_ADDR=:3001
+      - DOZZLE_NO_ANALYTICS=true
+      - DOZZLE_BASE=/monitor
+      - DOZZLE_HOSTNAME=Phish&Tips
+      - DOZZLE_ENABLE_ACTIONS=true
     networks:
-        - backend
+      - backend
     profiles:
       - prod
       - dev
@@ -191,7 +196,8 @@ services:
       - ./volumes/formation-db/pgdata:/var/lib/postgresql/data
       - ./databases/scripts/formation_init.sql:/docker-entrypoint-initdb.d/initdb.sql
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres" ]
+      test:
+        ["CMD-SHELL", "pg_isready --dbname=formation_db --username=postgres"]
       interval: 15s
       timeout: 10s
       retries: 5
@@ -256,7 +262,7 @@ services:
       - backend
     profiles:
       - prod
-  
+
   spiderfoot-api:
     container_name: spiderfoot-api
     build:
@@ -314,7 +320,7 @@ services:
     networks:
       - backend
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://s3:9000/minio/health/live" ]
+      test: ["CMD", "curl", "-f", "http://s3:9000/minio/health/live"]
       interval: 30s
       timeout: 20s
       retries: 3

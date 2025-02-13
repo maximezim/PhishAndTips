@@ -240,7 +240,7 @@
       <span class="font-semibold text-lg py-4 px-6 bg-violet-100 rounded">{formatDate(campaignSummary.created_date)}</span>
     </div>
     <div class="col-span-3 lg:col-span-1  flex flex-col gap-2 bg-muted rounded p-5 shadow">
-      <span>Status</span>
+      <span>Statut</span>
       <span class="font-semibold text-lg py-4 px-6 {status_text} {status_bg} rounded">{formatStatus(campaignSummary.status)}</span>
     </div>
   </div>
