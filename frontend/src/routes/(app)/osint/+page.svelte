@@ -58,8 +58,10 @@
               }).then(res => res.json());
               let userScoreColor = getScoreColor(userScore);
 
+              
               let groupedResults = null;
-              if(scan && scan.result){
+              if(scan && !Array.isArray(scan) && scan.status && scan.status === "completed"){
+                console.log(scan, scan.result);
                 groupedResults = groupResultsByType(JSON.parse(scan.result).parsed_data.results);
               }
               return {
@@ -77,7 +79,7 @@
       } finally {
         let color = getScoreColor(myScore);
         myScoreColor = "rgb(" + color.r + ", " + color.g + ", " + color.b + ")";
-        if(myScan && !Array.isArray(myScan)){
+        if(myScan && !Array.isArray(myScan) && myScan.result){
           scanResult = JSON.parse(myScan.result);
           const dateStr = myScan.updatedAt;
           canScan = checkDate(dateStr);
@@ -330,7 +332,7 @@
                   <Table.Cell class="hidden lg:table-cell">{user.target.email}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.target.position}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">
-                    {#if user.scan}
+                    {#if user.scan && !Array.isArray(user.scan)}
                       {#if user.scan.status == "completed"}
                         {formatDate(user.scan.updatedAt)}
                       {:else if user.scan.status == "running"}
@@ -341,7 +343,7 @@
                     {/if}
                   </Table.Cell>
                   <Table.Cell>
-                    {#if user.scan && user.scan.status == "completed"}
+                    {#if user.scan && !Array.isArray(user.scan) && user.scan.status == "completed"}
                     <AlertDialog.Root>
                       <AlertDialog.Trigger>
                         <iconify-icon class="text-2xl" style="color: #9183ec" icon="mingcute:eye-2-fill"></iconify-icon>
@@ -388,7 +390,7 @@
                     </AlertDialog.Root>
                     {:else}
 
-                    {#if user.scan && user.scan.status == "running"}
+                    {#if user.scan && !Array.isArray(user.scan) && user.scan.status == "running"}
                       <iconify-icon class="text-2xl" style="color: #f6ad55" icon="mdi:progress-clock"></iconify-icon>
                     {:else}
 
