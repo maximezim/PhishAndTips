@@ -329,25 +329,19 @@
                   <Table.Cell>{user.target.firstName}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.target.email}</Table.Cell>
                   <Table.Cell class="hidden lg:table-cell">{user.target.position}</Table.Cell>
-                  <Table.Cell class="hidden lg:table-cell">{user.scan && Array.isArray(user.scan) && user.scan.length === 0 ? "-" : user.scan ? formatDate(user.scan.updatedAt) : "-"}</Table.Cell>
+                  <Table.Cell class="hidden lg:table-cell">
+                    {#if user.scan}
+                      {#if user.scan.status == "completed"}
+                        {formatDate(user.scan.updatedAt)}
+                      {:else if user.scan.status == "running"}
+                        En cours
+                      {:else}
+                        -
+                      {/if}
+                    {/if}
+                  </Table.Cell>
                   <Table.Cell>
-                    {#if user.scan && Array.isArray(user.scan) && user.scan.length === 0}
-                    <AlertDialog.Root>
-                      <AlertDialog.Trigger>
-                        <iconify-icon class="text-2xl" style="color: #9183ec" icon="mingcute:scan-line"></iconify-icon>
-                      </AlertDialog.Trigger>
-                      <AlertDialog.Content>
-                        <AlertDialog.Header>
-                          <AlertDialog.Title class="text-base">Lancer un scan</AlertDialog.Title>
-                          <AlertDialog.Description class="text-sm">Voulez-vous lancer un scan pour {user.target.firstName} {user.target.lastName} ?</AlertDialog.Description>
-                        </AlertDialog.Header>
-                        <AlertDialog.Footer>
-                          <AlertDialog.Action>Fermer</AlertDialog.Action>
-                          <Button class="bg-accent" on:click={()=>{searchOsintUser(user.target.email)}}>Lancer le scan</Button>
-                        </AlertDialog.Footer>
-                      </AlertDialog.Content>
-                    </AlertDialog.Root>
-                    {:else}
+                    {#if user.scan && user.scan.status == "completed"}
                     <AlertDialog.Root>
                       <AlertDialog.Trigger>
                         <iconify-icon class="text-2xl" style="color: #9183ec" icon="mingcute:eye-2-fill"></iconify-icon>
@@ -365,7 +359,6 @@
                           <div class="right">
                             <span class="shadow flex w-10 h-10 rounded-full border-2 border-accent" style='background-color: {user.scoreColor}'></span>
                           </div>
-
                         </div>
                         {#if user.scan}
                           <AlertDialog.Header class="flex flex-col gap-2 sm:gap-0 sm:flex-row sm:justify-between sm:items-center px-6">
@@ -393,7 +386,29 @@
                         </AlertDialog.Footer>
                       </AlertDialog.Content>
                     </AlertDialog.Root>
+                    {:else}
+
+                    {#if user.scan && user.scan.status == "running"}
+                      <iconify-icon class="text-2xl" style="color: #f6ad55" icon="mdi:progress-clock"></iconify-icon>
+                    {:else}
+
+                    <AlertDialog.Root>
+                      <AlertDialog.Trigger>
+                        <iconify-icon class="text-2xl" style="color: #9183ec" icon="mingcute:scan-line"></iconify-icon>
+                      </AlertDialog.Trigger>
+                      <AlertDialog.Content>
+                        <AlertDialog.Header>
+                          <AlertDialog.Title class="text-base">Lancer un scan</AlertDialog.Title>
+                          <AlertDialog.Description class="text-sm">Voulez-vous lancer un scan pour {user.target.firstName} {user.target.lastName} ?</AlertDialog.Description>
+                        </AlertDialog.Header>
+                        <AlertDialog.Footer>
+                          <AlertDialog.Action>Fermer</AlertDialog.Action>
+                          <Button class="bg-accent" on:click={()=>{searchOsintUser(user.target.email)}}>Lancer le scan</Button>
+                        </AlertDialog.Footer>
+                      </AlertDialog.Content>
+                    </AlertDialog.Root>
                     {/if}
+                  {/if}
                  </Table.Cell>
               </Table.Row>
               {/each}
