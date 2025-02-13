@@ -11,7 +11,6 @@ class MinioService {
 	public static async getAsset(cookies: any, assetURL: string): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
-			console.log(`${BUCKET_URL}${assetURL}`);
 			const response = await axios.get(`${BUCKET_URL}${assetURL}`, {
 				headers: {
 					Authorization: `Bearer ${jwt}`

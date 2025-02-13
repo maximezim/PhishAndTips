@@ -111,6 +111,7 @@ class FormationService {
 	public static async setQuizScore(cookies: any, quizId: string, score: string): Promise<any> {
 		try {
 			const jwt = await AuthService.getTokenFromServer(cookies);
+			console.log('Score envoyé : ', score);
 			const requestJson = JSON.stringify({ quizId: quizId, score: score });
 			const response = await axios.post(`${GATEWAY_URL}/formation/quiz/score`, requestJson, {
 				headers: {
@@ -118,6 +119,7 @@ class FormationService {
 					'Content-Type': 'application/json'
 				}
 			});
+			console.log(response);
 			return response;
 		} catch (error: any) {
 			console.error('Error while setting score:', error.message);

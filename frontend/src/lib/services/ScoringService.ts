@@ -144,6 +144,7 @@ class ScoringService {
 			return response.data.formationAverage;
 		} catch (error: any) {
 			console.error('Error while getting formation score:', error.message);
+			// console.error(error);
 			return [];
 		}
 	}
