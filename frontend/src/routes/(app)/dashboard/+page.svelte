@@ -7,8 +7,10 @@
 	import ScoringOsintCard from '$lib/components/custom/scoring/ScoringOsintCard.svelte';
 	import ScoringPhishingCard from '$lib/components/custom/scoring/ScoringPhishingCard.svelte';
 	import UsersCard from '$lib/components/custom/admin/UsersCard.svelte';
-  import { toast } from "svelte-sonner";
 	import { Button } from '$lib/components/ui/button';
+	import { goto } from '$app/navigation';
+
+  const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL;
 
   let canGetAllUsers: boolean = false;
   let osintScore: number = 0;
@@ -109,6 +111,7 @@
     <Tabs.Content value="admin" >
       <div class="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-10 w-full">
         <UsersCard />
+        <Button href="{GATEWAY_URL}/monitor">Monitoring</Button>
       </div>  
     </Tabs.Content>
   </Tabs.Root>
