@@ -8,10 +8,8 @@ export async function POST({ request, cookies }) {
 		const { json, title, description } = payload;
 		const result = await FormationService.createQuiz(cookies, json, title, description);
         console.log(result);
-        const idMatch = typeof result === 'string' ? result.match(/Quiz created successfully with id (\d+)/) : null;
-		if (idMatch && idMatch[1]) {
-            const id = idMatch[1];
-			return new Response(JSON.stringify({ message: "Quiz created", id }), { status: 200 });
+		if (result && result.id) {
+			return new Response(JSON.stringify({ id: result.id, message: "Quiz created" }), { status: 200 });
 		} else {
 			return new Response(JSON.stringify({ error: "Quiz creation failed" }), { status: 500 });
 		}
