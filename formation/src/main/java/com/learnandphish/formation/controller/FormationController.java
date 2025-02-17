@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -46,11 +47,16 @@ public class FormationController {
         return ResponseEntity.ok("Quiz updated successfully");
     }
 
-    // Create a quiz
+    // Create a quiz with error handling
     @PostMapping("/admin/formation/quiz")
     public ResponseEntity<?> createQuiz(@RequestBody Quiz quiz) {
-        quizService.createQuiz(quiz);
-        return ResponseEntity.ok("Quiz created successfully");
+        try {
+            Quiz createdQuiz = quizService.createQuiz(quiz);
+            return ResponseEntity.ok(Map.of("message", "Quiz created", "id", createdQuiz.getId()));
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error creating quiz: " + e.getMessage());
+        }
     }
 
     // Get all videos

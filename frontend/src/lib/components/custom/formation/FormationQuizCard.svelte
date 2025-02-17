@@ -5,6 +5,7 @@
   import 'iconify-icon';
 	import UserAddPopup from '../admin/UserAddPopup.svelte';
 	import FormationQuizButton from './FormationQuizButton.svelte';
+	import QuizAddPopup from '../admin/QuizAddPopup.svelte';
 
   export let quizzes: Quiz[];
   export let canAddQuiz: boolean = false;
@@ -18,7 +19,7 @@
         <span>Quiz</span>
       </div>
       {#if canAddQuiz}
-        <UserAddPopup />
+        <QuizAddPopup />
       {/if}
     </Card.Title>
   </Card.Header>

@@ -37,9 +37,14 @@ public class QuizService {
         return updatedQuiz;
     }
 
-    // Create a quiz
-    public void createQuiz(Quiz quiz) {
-        quizRepository.save(quiz);
+    // Create a quiz with error handling and return the created quiz
+    public Quiz createQuiz(Quiz quiz) {
+        try {
+            return quizRepository.save(quiz);
+        } catch(Exception e) {
+            log.error("Error creating quiz: {}", e.getMessage());
+            throw new RuntimeException("Quiz creation failed, please try again.");
+        }
     }
 
     // Save user score

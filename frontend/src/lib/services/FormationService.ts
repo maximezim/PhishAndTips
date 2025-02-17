@@ -138,6 +138,30 @@ class FormationService {
 			return;
 		}
 	}
+
+	public static async createQuiz(cookies: any, quiz: any, title: string, description: string): Promise<any> {
+		try {
+			const jwt = await AuthService.getTokenFromServer(cookies);
+				// Add additional details to the quiz object
+				quiz.title = title;
+				quiz.description = description;
+				quiz.logo = "/assets/db13f10d-d8d3-4a6e-a9b8-8671b6b5b1a0";
+				quiz.logoWidth = "200px";
+				quiz.completedHtml = "<h4>Merci d'avoir complété le quiz !</h4><p>Voici les corrections :</p>";
+				// Build payload with the quiz JSON string
+				const payload = { json: JSON.stringify(quiz) };
+				const response = await axios.post(`${GATEWAY_URL}/admin/formation/quiz`, payload, {
+					headers: {
+						Authorization: `Bearer ${jwt}`,
+						'Content-Type': 'application/json'
+					}
+				});
+				return response.data;
+			} catch (error: any) {
+				console.error('Error while creating quiz:', error.message);
+				return null;
+			}
+		}
 }
 
 export default FormationService;

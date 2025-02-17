@@ -51,45 +51,49 @@ public class FormationApplication {
                     Gson gson = new Gson();
                     for (File file : listOfFiles) {
                         String quizId = file.getName().split("_")[0];
-                        // Make sure the file's name is a number
                         if (!quizId.matches("\\d+")) {
                             log.error("Invalid quiz file name: {}", file.getName());
-                        } else {
-                            Quiz quiz = quizRepository.findById(Integer.parseInt(quizId)).orElse(new Quiz());
-                            // If the quiz doesn't already exist in the db, read the content of the file and create a quiz
-                            if (quiz.getId() == null) {
-                                String content = Files.readString(file.toPath());
-                                JsonObject jsonObject = JsonParser.parseString(content).getAsJsonObject();
-
-                                // Upload logo
-                                if (jsonObject.has("logo")) {
-                                    String logoPath = jsonObject.get("logo").getAsString();
-                                    String logoUrl = minioService.uploadFile(new File(logoPath));
-                                    if (logoUrl != null) {
-                                        jsonObject.addProperty("logo", logoUrl);
-                                    } else {
-                                        throw new Exception("Logo upload failed for quiz: " + quizId);
-                                    }
+                            continue;
+                        }
+                        int idInt = Integer.parseInt(quizId);
+                        if (quizRepository.existsById(idInt)) {
+                            log.info("Quiz with id {} already exists", quizId);
+                            continue;
+                        }
+                        try {
+                            String content = Files.readString(file.toPath());
+                            JsonObject jsonObject = JsonParser.parseString(content).getAsJsonObject();
+                            
+                            // Upload logo
+                            if (jsonObject.has("logo")) {
+                                String logoPath = jsonObject.get("logo").getAsString();
+                                String logoUrl = minioService.uploadFile(new File(logoPath));
+                                if (logoUrl != null) {
+                                    jsonObject.addProperty("logo", logoUrl);
+                                } else {
+                                    log.error("Logo upload failed for quiz: {}", quizId);
+                                    continue;
                                 }
-
-                                // Upload image links
-                                List<String> imageLinks = extractImageLinks(jsonObject);
-                                for (String imageLink : imageLinks) {
-                                    String imageUrl = minioService.uploadFile(new File(imageLink));
-                                    if (imageUrl != null) {
-                                        replaceImageLink(jsonObject, imageLink, imageUrl);
-                                    } else {
-                                        throw new Exception("Image upload failed for quiz: " + quizId);
-                                    }
-                                }
-
-                                String updatedJson = gson.toJson(jsonObject);
-                                quiz.setId(null);
-                                quiz.setJson(updatedJson);
-                                quizRepository.save(quiz);
-                            } else {
-                                log.info("Quiz with id {} already exists", quizId);
                             }
+                            
+                            // Upload image links
+                            List<String> imageLinks = extractImageLinks(jsonObject);
+                            for (String imageLink : imageLinks) {
+                                String imageUrl = minioService.uploadFile(new File(imageLink));
+                                if (imageUrl != null) {
+                                    replaceImageLink(jsonObject, imageLink, imageUrl);
+                                } else {
+                                    log.error("Image upload failed for quiz: {}", quizId);
+                                    continue;
+                                }
+                            }
+                            
+                            String updatedJson = gson.toJson(jsonObject);
+                            Quiz newQuiz = new Quiz();
+                            newQuiz.setJson(updatedJson);
+                            quizRepository.save(newQuiz);
+                        } catch (Exception e) {
+                            log.error("Error processing quiz file {}: {}", file.getName(), e.getMessage());
                         }
                     }
                 } else {
