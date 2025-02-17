@@ -178,7 +178,7 @@ public class FormationController {
 
     @GetMapping("/formation/badge/{badgeId}")
     public ResponseEntity<?> getBadgeById(@PathVariable Integer badgeId){
-        Badge badge = badgeService.getBadgeById(badzgeId);
+        Badge badge = badgeService.getBadgeById(badgeId);
         return ResponseEntity.ok(badge != null ? badge : new Badge());
     }
 
